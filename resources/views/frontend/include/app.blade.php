@@ -17,10 +17,10 @@
   <a class="skip-link" href="#main-content">Skip to content</a>
   @include('frontend.include.header')
   <main id="main-content">@yield('content')</main>
+  @include('frontend.include.footer')
   @if (request()->routeIs('index') && isset($homepageSections))
     @include('frontend.partial.homepage-sections', ['sections' => $homepageSections->where('location', 'after_footer')])
   @endif
-  @include('frontend.include.footer')
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
   @yield('script')
 </body>
