@@ -24,7 +24,7 @@
     <a class="btn btn-outline-primary rounded-pill mt-4" href="{{ route('index') }}">← Back to home</a>
   </article>
 </section>
-@endsectionn
+@endsection
 @if ($page === 'faq' && $faqs->isNotEmpty())
 @push('schema')
 <script type="application/ld+json">{!! json_encode(['@context'=>'https://schema.org','@type'=>'FAQPage','mainEntity'=>$faqs->map(fn($faq)=>['@type'=>'Question','name'=>strip_tags((string)$faq->question),'acceptedAnswer'=>['@type'=>'Answer','text'=>strip_tags((string)$faq->answer)]])->values()->all()], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
