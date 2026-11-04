@@ -13,6 +13,20 @@ class HomepageLayoutRegressionTest extends TestCase
 {
     use RefreshDatabase;
 
+
+    public function test_customer_shell_uses_bootstrap_five_and_does_not_load_the_legacy_theme(): void
+    {
+        $response = $this->get('/');
+
+        $response->assertOk()
+            ->assertSee('bootstrap@5.3.8/dist/css/bootstrap.min.css', false)
+            ->assertSee('frontend/css/gsk-design-system.css', false)
+            ->assertDontSee('site-theme.css', false)
+            ->assertDontSee('static-home.css', false)
+            ->assertDontSee('static-home.js', false)
+            ->assertDontSee('bootstrap-icons', false);
+    }
+
     public function test_homepage_sections_render_once_in_configured_positions_and_inactive_sections_stay_hidden(): void
     {
         HomePage::query()->create([

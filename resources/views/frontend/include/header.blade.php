@@ -29,6 +29,10 @@
     </div>
   </nav>
 </header>
-@if (filled(setting('web_marquee')))
-  <div class="gsk-announcement" role="status"><div class="container d-flex align-items-center gap-2"><span>📢</span><span>{{ setting('web_marquee') }}</span></div></div>
-@endif
+<div class="gsk-announcement" role="status"><div class="container d-flex align-items-center gap-2"><span>📢</span>
+  @if (filled(setting('web_marquee')))
+    <span>{{ setting('web_marquee') }}</span>
+  @else
+    <span>Today's results · Previous results · Market schedules · Historical charts · Year-wise records</span>
+  @endif
+</div></div>
