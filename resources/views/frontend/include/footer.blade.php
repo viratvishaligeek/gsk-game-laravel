@@ -34,7 +34,6 @@
           @foreach ($navPages ?? collect() as $navPage)
             <li><a href="{{ route('page', ['page' => $navPage->slug]) }}">{{ $navPage->name }} ↗</a></li>
           @endforeach
-          <li><a href="{{ route('page', ['page' => 'disclaimer']) }}">⚖️ Disclaimer</a></li>
         </ul>
         <h2 class="gsk-footer-heading mt-4">Connect</h2>
         <div class="d-flex flex-wrap gap-2">
