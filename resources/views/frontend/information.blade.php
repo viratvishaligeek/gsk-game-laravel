@@ -7,7 +7,13 @@
   <span class="gsk-kicker">📘 INFORMATION CENTER</span><h1 class="mt-3">{{ $title }}</h1>
   <p class="mb-0">Helpful information and guidance from {{ setting('title') }}.</p>
 </div></section>
-<section class="container py-4 py-lg-5"><article class="gsk-information-card">
+<section class="container py-4 py-lg-5">
+  <nav class="gsk-market-journey mb-3" aria-label="Explore more">
+    <a href="{{ route('index') }}#markets">🎮 Browse markets <span>→</span></a>
+    <a href="{{ route('charts.index') }}">📊 Monthly charts <span>→</span></a>
+    <a href="{{ route('community.index') }}">👥 Community <span>→</span></a>
+  </nav>
+  <article class="gsk-information-card">
   <div class="gsk-information-copy">{{ $copy }}</div>
   @if ($page === 'faq' && $faqs->isNotEmpty())
     <div class="accordion gsk-faq mt-4" id="informationFaq">
