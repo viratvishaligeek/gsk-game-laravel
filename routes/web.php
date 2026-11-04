@@ -17,5 +17,6 @@ Route::controller(MainController::class)->group(function () {
     Route::get('/charts', 'charts')->name('charts.index');
     Route::get('/charts/data', 'chartData')->middleware('throttle:60,1')->name('charts.data');
     Route::get('/page/{page}', 'page')->name('frontend.page');
+    Route::get('/information/{page?}', 'information')->name('information');
     Route::get('/{page}', 'page')->name('page');
 });
