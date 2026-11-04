@@ -6,29 +6,29 @@ use App\Models\Setting;
 use App\Services\AppSettingsService;
 use Illuminate\Database\Seeder;
 
-class PlayOnlineKhaiwalSettingsSeeder extends Seeder
+class GaliSattakingsSettingsSeeder extends Seeder
 {
     public function run(): void
     {
         $defaults = [
-            'title' => 'Play Online Khaiwal',
+            'title' => 'gali satta kings',
             'site_tagline' => 'SATTA KING RESULTS • MONTHLY CHARTS • HISTORICAL RECORDS',
-            'site_description' => 'Play Online Khaiwal provides a clear reference for Satta King results, Satta Matka market records, and game-wise monthly result charts. Browse saved historical data by market and month.',
-            'meta_title' => 'Play Online Khaiwal | Satta King Results & Monthly Charts',
-            'meta_description' => 'Browse Satta King results, Satta Matka market records, and game-wise monthly result charts on Play Online Khaiwal. View saved results by game, date, month, and year.',
+            'site_description' => 'gali satta kings provides a clear reference for Satta King results, Satta Matka market records, and game-wise monthly result charts. Browse saved historical data by market and month.',
+            'meta_title' => 'gali satta kings | Satta King Results & Monthly Charts',
+            'meta_description' => 'Browse Satta King results, Satta Matka market records, and game-wise monthly result charts on gali satta kings. View saved results by game, date, month, and year.',
             'meta_keywords' => 'Satta King, Online Khaiwal, Satta Matka, Satta King Result, Satta Result Chart, Satta King Monthly Chart',
-            'og_title' => 'Play Online Khaiwal | Satta King Results & Monthly Charts',
+            'og_title' => 'gali satta kings | Satta King Results & Monthly Charts',
             'og_description' => 'Game-wise Satta King result records and monthly charts, organized by date and market.',
             'robots_default' => 'index,follow',
             'twitter_card' => 'summary_large_image',
-            'canonical_url' => 'https://playonlinekhaiwal.com',
+            'canonical_url' => 'https://galisattakings.com',
             'homepage_heading_line1' => 'Every market.',
             'homepage_heading_line2' => 'Every record.',
             'homepage_heading_line3' => 'One clear board.',
             'homepage_intro' => 'Browse stored Satta King results, compare recent market records, and open game-wise monthly charts. Missing values are marked as pending, never predicted.',
-            'footer_description' => 'Play Online Khaiwal organizes stored market results and historical monthly charts for reference. Historical records do not predict future outcomes.',
+            'footer_description' => 'gali satta kings organizes stored market results and historical monthly charts for reference. Historical records do not predict future outcomes.',
             'disclaimer_content' => 'Results and historical charts are provided for information only and reflect stored records. They are not predictions, guarantees, or financial advice. Follow applicable local laws and use this information responsibly.',
-            'copyright_text' => '© ' . date('Y') . ' Play Online Khaiwal',
+            'copyright_text' => '© ' . date('Y') . ' gali satta kings',
             'chart_chunk_size' => '10',
             'latest_url' => '',
             'latest_version' => '',

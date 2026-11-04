@@ -6,8 +6,8 @@
     ' Satta King Result Chart | ' .
     setting(
     'title',
-    'Play Online
-    Khaiwal',
+    'gali satta
+    kings',
     ))
 @section('meta_description',
     'Browse saved date-wise Satta King results for ' .

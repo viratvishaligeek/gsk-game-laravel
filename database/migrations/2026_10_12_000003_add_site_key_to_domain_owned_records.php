@@ -29,7 +29,7 @@ return new class extends Migration {
 
     public function up(): void
     {
-        $defaultSite = (string) config('sites.default', 'play-online-khaiwal');
+        $defaultSite = (string) config('sites.default', 'gali-satta-kings');
 
         foreach ($this->tables as $tableName) {
             if (!Schema::hasTable($tableName) || Schema::hasColumn($tableName, 'site_key')) {

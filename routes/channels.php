@@ -8,7 +8,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 });
 
 $authorizeAdminSiteChannel = static function (\App\Models\Admin $admin, string $siteKey): bool {
-    $currentSiteKey = (string) config('sites.current_key', config('sites.default', 'play-online-khaiwal'));
+    $currentSiteKey = (string) config('sites.current_key', config('sites.default', 'gali-satta-kings'));
 
     return $admin->status === 'active' && hash_equals($currentSiteKey, $siteKey);
 };

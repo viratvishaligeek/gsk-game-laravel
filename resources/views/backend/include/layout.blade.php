@@ -6,9 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
-    <meta name="author" content="{{ setting('title', 'Play Online Khaiwal') }}" />
+    <meta name="author" content="{{ setting('title', 'gali satta kings') }}" />
     <meta name="robots" content="noindex,nofollow" />
-    <title>{{ $pageName ?? 'Dashboard' }} - {{ setting('title', 'Play Online Khaiwal') }} Admin</title>
+    <title>{{ $pageName ?? 'Dashboard' }} - {{ setting('title', 'gali satta kings') }} Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css" rel="stylesheet" />
     <link href="{{ URL::asset('backend') }}/css/styles.css" rel="stylesheet" />
@@ -38,7 +38,7 @@
                 <div class="container-xl px-4">
                     <div class="row">
                         <div class="col-md-6 small">
-                            {{ setting('copyright_text', '© ' . date('Y') . ' ' . setting('title', 'Play Online Khaiwal')) }}
+                            {{ setting('copyright_text', '© ' . date('Y') . ' ' . setting('title', 'gali satta kings')) }}
                         </div>
                     </div>
                 </div>
@@ -139,7 +139,7 @@
     <script>
         window.ADMIN_PAYMENT_ALERT_BROADCAST = {
             driver: @json(config('broadcasting.default')),
-            siteKey: @json(config('sites.current_key', config('sites.default', 'play-online-khaiwal'))),
+            siteKey: @json(config('sites.current_key', config('sites.default', 'gali-satta-kings'))),
             configured: @json(filled(config('broadcasting.connections.pusher.app_id')) && filled(config('broadcasting.connections.pusher.key')) && filled(config('broadcasting.connections.pusher.secret')) && filled(config('broadcasting.connections.pusher.options.cluster'))),
             key: @json(config('broadcasting.connections.' . config('broadcasting.default') . '.key')),
             cluster: @json(config('broadcasting.connections.pusher.options.cluster') ?? null),

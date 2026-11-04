@@ -60,12 +60,12 @@ class MainController extends Controller
         $monthlyTables = $charts->homepageTables($games, $monthStart, $monthEnd, $monthDays, $chunkSize);
         $monthLabel = $charts->monthLabel($selectedYear, $selectedMonth);
 
-        $homeCanonical = rtrim((string) app(AppSettingsService::class)->value('canonical_url', 'https://playonlinekhaiwal.com'), '/') . '/';
+        $homeCanonical = rtrim((string) app(AppSettingsService::class)->value('canonical_url', 'https://galisattakings.com'), '/') . '/';
         $homeGraph = [[
             '@type' => 'WebPage',
-            'name' => 'Play Online Khaiwal | Satta King Results & Monthly Charts',
+            'name' => 'gali satta kings | Satta King Results & Monthly Charts',
             'url' => $homeCanonical,
-            'description' => app(AppSettingsService::class)->value('meta_description', 'Satta King result records and monthly charts on Play Online Khaiwal.'),
+            'description' => app(AppSettingsService::class)->value('meta_description', 'Satta King result records and monthly charts on gali satta kings.'),
         ]];
         if ($faqs->isNotEmpty()) {
             $homeGraph[] = [
@@ -125,7 +125,7 @@ class MainController extends Controller
         $availableYears[] = $currentYear;
         $availableYears = array_values(array_unique(array_filter($availableYears, fn(int $availableYear) => $availableYear >= 2000 && $availableYear <= $currentYear)));
         rsort($availableYears);
-        $canonical = rtrim((string) app(AppSettingsService::class)->value('canonical_url', 'https://playonlinekhaiwal.com'), '/')
+        $canonical = rtrim((string) app(AppSettingsService::class)->value('canonical_url', 'https://galisattakings.com'), '/')
             . '/result/' . $game->slug;
 
         return response()

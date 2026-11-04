@@ -2,7 +2,7 @@
 @section('title',
     filled(setting('meta_title'))
     ? setting('meta_title')
-    : 'Play Online Khaiwal | Satta King Results &
+    : 'gali satta kings | Satta King Results &
     Monthly Charts')
 @section('robots_content', request()->hasAny(['year', 'month']) || (int) request()->query('page', 1) > 1 ?
     'noindex,follow' : setting('robots_default', 'index,follow'))
@@ -243,7 +243,7 @@
             <div class="text-center">
                 <h2>Today's & Yesterday's Satta Results<br>
                 </h2>
-                <p>Explore today's and yesterday's market-wise Satta results on Play Online Khaiwal. Check published
+                <p>Explore today's and yesterday's market-wise Satta results on gali satta kings. Check published
                     results, compare previous-day records and browse historical charts for each market.</p>
             </div>
         </div>

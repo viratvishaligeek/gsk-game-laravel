@@ -16,7 +16,7 @@ class PageSeeder extends Seeder
                 'content' => <<<'HTML'
 <h2>Terms &amp; Conditions</h2>
 
-<p>Play Online Khaiwal provides access to stored market result records and monthly charts for informational reference. The website does not verify third-party source records independently and does not predict future results.</p>
+<p>gali satta kings provides access to stored market result records and monthly charts for informational reference. The website does not verify third-party source records independently and does not predict future results.</p>
 
 <h3>Use of information</h3>
 <p>Visitors should check dates and market names carefully. Missing entries are shown as pending or unavailable and must not be interpreted as a result.</p>
@@ -36,7 +36,7 @@ HTML,
                 'content' => <<<'HTML'
 <h2>Privacy Policy</h2>
 
-<p>Play Online Khaiwal is a result-reference website. Public pages display market names, dates, and stored result values. The site does not publish private account names or contact details in its public winner section unless an administrator has recorded an approved public display name.</p>
+<p>gali satta kings is a result-reference website. Public pages display market names, dates, and stored result values. The site does not publish private account names or contact details in its public winner section unless an administrator has recorded an approved public display name.</p>
 
 <h3>Technical information</h3>
 <p>The hosting and application environment may process operational information such as request logs and security events. Exact retention and cookie behavior depend on the deployed configuration.</p>
@@ -51,9 +51,9 @@ HTML,
                 'name' => 'About Us',
                 'slug' => 'about-us',
                 'content' => <<<'HTML'
-<h2>About Play Online Khaiwal</h2>
+<h2>About gali satta kings</h2>
 
-<p>Play Online Khaiwal organizes stored Satta King and Satta Matka result records into date-wise market boards and monthly charts. Visitors can select a market, year, and month to review the records available in the database.</p>
+<p>gali satta kings organizes stored Satta King and Satta Matka result records into date-wise market boards and monthly charts. Visitors can select a market, year, and month to review the records available in the database.</p>
 
 <h3>How records are displayed</h3>
 <p>Published values are displayed as stored, including leading zeros where present. Missing values are marked pending or unavailable rather than estimated.</p>
@@ -69,7 +69,7 @@ HTML,
                 'name' => 'WhatsApp & Contact',
                 'slug' => 'whatsapp',
                 'content' => <<<'HTML'
-<h2>Contact Play Online Khaiwal</h2>
+<h2>Contact gali satta kings</h2>
 
 <p>For website questions or corrections to a displayed record, use the public contact details configured by the site administrator.</p>
 
@@ -81,9 +81,9 @@ HTML,
                 'name' => 'How to Play',
                 'slug' => 'how-to-play',
                 'content' => <<<'HTML'
-<h2>How to Use Play Online Khaiwal</h2>
+<h2>How to Use gali satta kings</h2>
 
-<p>Play Online Khaiwal provides access to available historical Satta King and Satta Matka market result records and monthly charts.</p>
+<p>gali satta kings provides access to available historical Satta King and Satta Matka market result records and monthly charts.</p>
 
 <h3>Browse Market Results</h3>
 <p>Visit the relevant market section to view available result records. Check the market name and date carefully before reviewing an entry.</p>
@@ -106,7 +106,7 @@ HTML,
                 'content' => <<<'HTML'
 <h2>Game Rates</h2>
 
-<p>This page provides general information about game rates associated with the markets listed on Play Online Khaiwal.</p>
+<p>This page provides general information about game rates associated with the markets listed on gali satta kings.</p>
 
 <h3>Market Information</h3>
 <p>Available market information and any published rates should be checked against the relevant official source. Rates and rules may differ between markets and operators.</p>
@@ -115,7 +115,7 @@ HTML,
 <p>Information may change or become outdated. Please verify current details independently before relying on them.</p>
 
 <h3>Disclaimer</h3>
-<p>Play Online Khaiwal does not guarantee the accuracy of third-party rate information or any outcome. Visitors are responsible for complying with applicable laws.</p>
+<p>gali satta kings does not guarantee the accuracy of third-party rate information or any outcome. Visitors are responsible for complying with applicable laws.</p>
 HTML,
                 'status' => 'active',
             ],
@@ -126,7 +126,7 @@ HTML,
                 'content' => <<<'HTML'
 <h2>Offers and Announcements</h2>
 
-<p>This page is reserved for official website announcements and offers published by the Play Online Khaiwal administrator.</p>
+<p>This page is reserved for official website announcements and offers published by the gali satta kings administrator.</p>
 
 <h3>Current Offers</h3>
 <p>No offer is confirmed unless it is explicitly published and verified by the website administrator.</p>
@@ -151,19 +151,19 @@ HTML,
                     'is_editable' => 'yes',
                     'menu_visible' => true,
                     'menu_order' => array_search($page['slug'], array_column($pages, 'slug'), true) + 1,
-                    'meta_title' => $page['name'] . ' | Play Online Khaiwal',
+                    'meta_title' => $page['name'] . ' | gali satta kings',
                     'meta_description' => match ($page['slug']) {
-                        'about-us' => 'Learn how Play Online Khaiwal organizes stored Satta King result records and game-wise monthly charts.',
-                        'privacy-policy' => 'Read the privacy information for Play Online Khaiwal and its public result-reference pages.',
-                        'terms-conditions' => 'Read the terms for using Play Online Khaiwal result records and monthly charts.',
-                        'whatsapp' => 'Contact Play Online Khaiwal about website questions or corrections to displayed records.',
-                        'how-to-play' => 'Learn how to browse market results and historical monthly charts on Play Online Khaiwal.',
-                        'game-rates' => 'Read general information about market rates and published game information on Play Online Khaiwal.',
-                        'offers' => 'View official announcements and verified offers published by Play Online Khaiwal.',
+                        'about-us' => 'Learn how gali satta kings organizes stored Satta King result records and game-wise monthly charts.',
+                        'privacy-policy' => 'Read the privacy information for gali satta kings and its public result-reference pages.',
+                        'terms-conditions' => 'Read the terms for using gali satta kings result records and monthly charts.',
+                        'whatsapp' => 'Contact gali satta kings about website questions or corrections to displayed records.',
+                        'how-to-play' => 'Learn how to browse market results and historical monthly charts on gali satta kings.',
+                        'game-rates' => 'Read general information about market rates and published game information on gali satta kings.',
+                        'offers' => 'View official announcements and verified offers published by gali satta kings.',
 
-                        default => 'Information about Play Online Khaiwal and its monthly result charts.',
+                        default => 'Information about gali satta kings and its monthly result charts.',
                     },
-                    'meta_keywords' => 'Play Online Khaiwal, Satta King result chart, monthly result records',
+                    'meta_keywords' => 'gali satta kings, Satta King result chart, monthly result records',
                     'noindex' => false,
                 ]
             );

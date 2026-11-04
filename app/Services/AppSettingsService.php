@@ -10,7 +10,7 @@ class AppSettingsService
 {
     private function cacheKey(): string
     {
-        return 'app_settings:' . (string) config('sites.current_key', config('sites.default', 'play-online-khaiwal'));
+        return 'app_settings:' . (string) config('sites.current_key', config('sites.default', 'gali-satta-kings'));
     }
 
     public function all(): array

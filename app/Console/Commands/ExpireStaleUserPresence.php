@@ -64,7 +64,7 @@ class ExpireStaleUserPresence extends Command
                 });
         }
 
-        config(['sites.current_key' => $originalSiteKey ?? config('sites.default', 'play-online-khaiwal')]);
+        config(['sites.current_key' => $originalSiteKey ?? config('sites.default', 'gali-satta-kings')]);
 
         $this->info("Marked {$count} user(s) inactive.");
         return self::SUCCESS;

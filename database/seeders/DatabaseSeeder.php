@@ -29,11 +29,11 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->call([
-            PlayOnlineKhaiwalSettingsSeeder::class,
+            GaliSattakingsSettingsSeeder::class,
             GameSeeder::class,
             PageSeeder::class,
             UserSeeder::class,
-            PlayOnlineKhaiwalFaqSeeder::class,
+            GaliSattakingsFaqSeeder::class,
         ]);
     }
 }

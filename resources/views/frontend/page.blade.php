@@ -1,10 +1,10 @@
 @extends('frontend.include.app')
-@section('title', $title . ' | ' . setting('title', 'Play Online Khaiwal'))
+@section('title', $title . ' | ' . setting('title', 'gali satta kings'))
 @section('meta_description', \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($meta_description))), 160))
 @section('structured_data')
     @php
         $pageCanonical =
-            rtrim((string) setting('canonical_url', 'https://playonlinekhaiwal.com'), '/') . request()->getPathInfo();
+            rtrim((string) setting('canonical_url', 'https://galisattakings.com'), '/') . request()->getPathInfo();
         $pageDescription =
             $page->meta_description ?:
             \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) $page->content))), 160);
@@ -21,7 +21,7 @@
                         '@type' => 'ListItem',
                         'position' => 1,
                         'name' => 'Home',
-                        'item' => rtrim((string) setting('canonical_url', 'https://playonlinekhaiwal.com'), '/') . '/',
+                        'item' => rtrim((string) setting('canonical_url', 'https://galisattakings.com'), '/') . '/',
                     ],
                     ['@type' => 'ListItem', 'position' => 2, 'name' => $page->name, 'item' => $pageCanonical],
                 ],

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Play Online Khaiwal'),
+    'name' => env('APP_NAME', 'gali satta kings'),
 
     /*
     |--------------------------------------------------------------------------
@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://playonlinekhaiwal.com'),
+    'url' => env('APP_URL', 'https://galisattakings.com'),
 
     /*
     |--------------------------------------------------------------------------

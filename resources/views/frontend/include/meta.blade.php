@@ -1,16 +1,16 @@
 @php
-    $canonicalBase = rtrim((string) setting('canonical_url', 'https://playonlinekhaiwal.com'), '/');
+    $canonicalBase = rtrim((string) setting('canonical_url', 'https://galisattakings.com'), '/');
     $defaultTitle = filled(setting('meta_title'))
         ? setting('meta_title')
         : (filled(setting('title'))
             ? setting('title') . ' | Satta King Results & Monthly Charts'
-            : 'Play Online Khaiwal | Satta King Results & Monthly Charts');
+            : 'gali satta kings | Satta King Results & Monthly Charts');
     $defaultDescription = filled(setting('meta_description'))
         ? setting('meta_description')
         : (filled(setting('site_description'))
             ? setting('site_description')
-            : 'Browse Satta King results, Satta Matka market records, and game-wise monthly charts on Play Online Khaiwal.');
-    $siteName = filled(setting('title')) ? setting('title') : 'Play Online Khaiwal';
+            : 'Browse Satta King results, Satta Matka market records, and game-wise monthly charts on gali satta kings.');
+    $siteName = filled(setting('title')) ? setting('title') : 'gali satta kings';
     $sectionTitle = trim(strip_tags($__env->yieldContent('title', $defaultTitle)));
     $sectionDescription = trim(strip_tags($__env->yieldContent('meta_description', $defaultDescription)));
     $useGlobalSocialDefaults = request()->routeIs('index') && !request()->filled('year') && !request()->filled('month');

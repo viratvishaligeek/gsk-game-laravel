@@ -108,7 +108,7 @@
                         </div>
                     </a>
                 </div>
-                <div class="col-6 col-md-6 col-xl-6 mb-4">
+                {{-- <div class="col-6 col-md-6 col-xl-6 mb-4">
                     <a class="text-decoration-none" href="{{ route('admin.bidding-desk.profit_loss_transactions', ['from' => $from, 'to' => $to, 'type' => 'credit', 'source' => 'user']) }}">
                         <div class="card border-start-lg border-start-info h-100">
                             <div class="card-body">
@@ -129,7 +129,7 @@
                             </div>
                         </div>
                     </a>
-                </div>
+                </div> --}}
             </div>
             {{-- Profit Loss Table --}}
             <div class="card mb-4">

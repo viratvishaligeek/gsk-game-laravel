@@ -913,7 +913,7 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
 
         $request = Request::create('/broadcasting/auth', 'POST', [
             'socket_id' => '123.456',
-            'channel_name' => 'private-admin.support-chat.play-online-khaiwal',
+            'channel_name' => 'private-admin.support-chat.gali-satta-kings',
         ]);
         $request->setUserResolver(fn ($guard = null) => Auth::guard($guard)->user());
 
