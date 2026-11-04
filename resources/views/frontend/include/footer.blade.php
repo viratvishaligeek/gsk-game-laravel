@@ -52,5 +52,29 @@
   </div></div>
 </footer>
 @if (filled(setting('social_whatsapp')) && filter_var(setting('social_whatsapp'), FILTER_VALIDATE_URL) && in_array(parse_url(setting('social_whatsapp'), PHP_URL_SCHEME), ['http','https'], true))
-  <a class="gsk-whatsapp-float" href="{{ setting('social_whatsapp') }}" target="_blank" rel="noopener noreferrer" aria-label="Contact us on WhatsApp">💬</a>
+  <button class="gsk-whatsapp-float" type="button" data-bs-toggle="modal" data-bs-target="#whatsappContactModal" aria-label="Open WhatsApp contact">💬</button>
+  <div class="modal fade" id="whatsappContactModal" tabindex="-1" aria-labelledby="whatsappContactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 rounded-4 overflow-hidden">
+        <div class="modal-header bg-success text-white border-0 p-4">
+          <div><h2 class="modal-title fs-5 fw-bold mb-1" id="whatsappContactModalLabel">Game schedule</h2><p class="small mb-0">Chat with us on WhatsApp</p></div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="small text-uppercase fw-bold text-secondary mb-3">Market timing reference</p>
+          <div class="list-group list-group-flush">
+            <div class="list-group-item d-flex justify-content-between gap-3 px-0"><span>Delhi Bazaar</span><strong>03:15 PM</strong></div>
+            <div class="list-group-item d-flex justify-content-between gap-3 px-0"><span>Shree Ganesh</span><strong>04:45 PM</strong></div>
+            <div class="list-group-item d-flex justify-content-between gap-3 px-0"><span>Faridabad</span><strong>06:15 PM</strong></div>
+            <div class="list-group-item d-flex justify-content-between gap-3 px-0"><span>Ghaziabad</span><strong>10:00 PM</strong></div>
+            <div class="list-group-item d-flex justify-content-between gap-3 px-0"><span>Gali</span><strong>11:50 PM</strong></div>
+            <div class="list-group-item d-flex justify-content-between gap-3 px-0"><span>Disawar</span><strong>05:15 AM</strong></div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 p-4 pt-0">
+          <a class="btn btn-success w-100 rounded-pill" href="{{ setting('social_whatsapp') }}" target="_blank" rel="noopener noreferrer">💬 Contact us on WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
 @endif
