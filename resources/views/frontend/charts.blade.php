@@ -5,6 +5,11 @@
 @section('content')
 <section class="gsk-page-hero"><div class="container py-4 py-lg-5"><span class="gsk-kicker">📊 HISTORICAL REGISTER</span><h1 class="mt-3">Monthly result charts</h1><p class="mb-0">Select a market and period to explore saved date-wise results.</p></div></section>
 <section class="container py-4 py-lg-5">
+  <nav class="gsk-market-journey mb-3" aria-label="Results navigation">
+    <a href="{{ route('index') }}#today-results">🏆 Today's results <span>→</span></a>
+    <a href="{{ route('index') }}#markets">🎮 Market directory <span>→</span></a>
+    <a href="{{ route('community.index') }}">👥 Community <span>→</span></a>
+  </nav>
   <form class="gsk-chart-filters mb-4" method="GET" action="{{ route('charts.index') }}" data-chart-filters data-endpoint="{{ route('charts.data') }}" data-current-year="{{ now()->timezone(config('app.timezone'))->year }}" data-current-month="{{ now()->timezone(config('app.timezone'))->month }}">
     <div class="row g-3 align-items-end">
       <div class="col-12 col-md-4"><label class="form-label fw-semibold" for="game_id">🎮 Market</label><select class="form-select" name="game_id" id="game_id"><option value="">All active markets</option>@foreach ($games as $game)<option value="{{ $game->id }}" @selected((string)($selectedGameId ?? '') === (string)$game->id)>{{ $game->name }}</option>@endforeach</select></div>

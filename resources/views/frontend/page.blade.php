@@ -36,7 +36,13 @@
   <span class="gsk-kicker">📘 INFORMATION CENTER</span><h1 class="mt-3">{{ $page->name }}</h1>
   @if (filled($meta_description))<p class="mb-0">{{ $meta_description }}</p>@endif
 </div></section>
-<section class="container py-4 py-lg-5"><article class="gsk-information-card">
+<section class="container py-4 py-lg-5">
+  <nav class="gsk-market-journey mb-3" aria-label="Explore more">
+    <a href="{{ route('index') }}#today-results">🏆 Latest results <span>→</span></a>
+    <a href="{{ route('charts.index') }}">📊 Result charts <span>→</span></a>
+    <a href="{{ route('community.index') }}">👥 Community <span>→</span></a>
+  </nav>
+  <article class="gsk-information-card">
   <div class="gsk-information-copy">{!! $page->content !!}</div>
   <a class="btn btn-outline-primary rounded-pill mt-4" href="{{ route('index') }}">← Back to home</a>
 </article></section>

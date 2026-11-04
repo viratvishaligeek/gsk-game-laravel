@@ -1,5 +1,12 @@
 <footer class="gsk-site-footer">
   <div class="container py-5">
+    <nav class="gsk-footer-journey mb-4" aria-label="Quick links">
+      <div><span>EXPLORE THE BOARD</span><strong>Where would you like to go?</strong></div>
+      <a href="{{ route('index') }}#today-results">🏆 Today's results</a>
+      <a href="{{ route('index') }}#markets">🎮 Markets</a>
+      <a href="{{ route('charts.index') }}">📊 Monthly charts</a>
+      <a href="{{ route('community.index') }}">👥 Community</a>
+    </nav>
     <div class="row g-4">
       <div class="col-lg-5">
         <a class="gsk-footer-brand" href="{{ route('index') }}">

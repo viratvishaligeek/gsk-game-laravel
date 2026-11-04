@@ -109,13 +109,17 @@
 <section class="gsk-content-section gsk-section-white" id="markets">
     <div class="container py-5">
         <div class="gsk-section-heading"><div><span>MARKET DIRECTORY</span><h2>🎮 Explore all markets</h2><p>Choose a market to open its saved results and historical chart.</p></div><span class="gsk-section-date">{{ count($marketResults) }} markets</span></div>
-        <div class="row align-items-center g-2 mb-3">
-            <div class="col-12 col-md-7"><label class="input-group gsk-market-search"><span class="input-group-text">🔎</span><input id="market-search" class="form-control" type="search" placeholder="Search by market name…" aria-label="Search markets"></label></div>
-            <div class="col-md-5 text-md-end"><small class="text-secondary">Select a market to view its full result history.</small></div>
+        <div class="market-explorer-controls mb-3">
+            <label class="input-group gsk-market-search"><span class="input-group-text">🔎</span><input id="market-search" class="form-control" type="search" placeholder="Search by market name…" aria-label="Search markets"></label>
+            <div class="market-filter-tabs" role="group" aria-label="Filter markets by today's result">
+                <button type="button" class="is-active" data-market-filter="all" aria-pressed="true">All markets <span>{{ count($marketResults) }}</span></button>
+                <button type="button" data-market-filter="published" aria-pressed="false">🟢 Published <span>{{ collect($marketResults)->where('today', '!=', '--')->count() }}</span></button>
+                <button type="button" data-market-filter="pending" aria-pressed="false">⌛ Awaiting <span>{{ collect($marketResults)->where('today', '--')->count() }}</span></button>
+            </div>
         </div>
-        <div class="row g-3" id="market-grid">
+        <div class="market-explorer-rail" id="market-grid">
             @forelse ($marketResults as $index => $game)
-                <div class="col-12 col-md-6 col-xl-4 gsk-market-column">
+                <div class="gsk-market-column" data-result-state="@if (($game['today'] ?? '--') === '--') pending @else published @endif">
                     @include('frontend.partial.market-card', ['game' => $game, 'index' => $index])
                 </div>
             @empty
@@ -216,17 +220,30 @@
   const search = document.getElementById('market-search');
   const cards = [...document.querySelectorAll('#market-grid .gsk-market-column')];
   const empty = document.getElementById('no-markets');
+  const filters = [...document.querySelectorAll('[data-market-filter]')];
   if (!search || !cards.length) return;
+  let activeFilter = 'all';
   const filter = () => {
     const query = search.value.trim().toLocaleLowerCase();
     let visible = 0;
     cards.forEach(card => {
-      const matches = !query || card.textContent.toLocaleLowerCase().includes(query);
+      const matchesSearch = !query || card.textContent.toLocaleLowerCase().includes(query);
+      const matchesState = activeFilter === 'all' || card.dataset.resultState === activeFilter;
+      const matches = matchesSearch && matchesState;
       card.hidden = !matches;
       if (matches) visible++;
     });
     if (empty) empty.hidden = visible !== 0;
   };
+  filters.forEach(button => button.addEventListener('click', () => {
+    activeFilter = button.dataset.marketFilter || 'all';
+    filters.forEach(item => {
+      const selected = item === button;
+      item.classList.toggle('is-active', selected);
+      item.setAttribute('aria-pressed', selected ? 'true' : 'false');
+    });
+    filter();
+  }));
   search.addEventListener('input', filter, { passive: true });
 })();
 </script>

@@ -9,6 +9,11 @@
   <span class="gsk-kicker">📊 MARKET ARCHIVE</span><h1 class="mt-3">{{ $game->name }}</h1><p class="mb-0" data-month-label>{{ $monthLabel }}</p><p class="mb-0">Saved daily results for {{ $monthLabel }}. Missing values are shown as a dash.</p>
 </div></section>
 <section class="container py-4 py-lg-5">
+  <nav class="gsk-market-journey mb-3" aria-label="Market actions">
+    <a href="{{ route('charts.index', ['game_id' => $game->id]) }}">📊 Compare in monthly charts <span>→</span></a>
+    <a href="{{ route('index') }}#markets">🎮 Browse other markets <span>→</span></a>
+    <a href="{{ route('community.index') }}">👥 Community <span>→</span></a>
+  </nav>
   <div class="gsk-filter-panel mb-3">
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3"><div><span class="gsk-filter-kicker">🗓️ SELECT PERIOD</span><h2 class="h5 mb-0">Monthly result history</h2></div><span class="badge text-bg-light">Date-wise records</span></div>
     <form method="GET" action="{{ route('frontend.market', ['slug' => $game->slug]) }}" class="row g-3 align-items-end" data-result-filter data-endpoint="{{ route('frontend.chart') }}">
@@ -20,7 +25,7 @@
   </div>
   <p class="small text-secondary" data-result-status role="status" aria-live="polite" hidden></p>
   <div class="gsk-empty-state mb-3" data-result-empty {{ $results->contains(fn(array $row) => $row['status'] === 'published') ? 'hidden' : '' }}><span>🗓️</span><strong>No published results for this month.</strong><p>Choose another month or year to review saved records.</p></div>
-  <div class="gsk-table-card"><div class="gsk-table-heading"><strong>📋 {{ $game->name }} · {{ $monthLabel }}</strong><span>{{ count($results) }} dates</span></div>
+  <div class="gsk-table-card"><div class="gsk-table-heading"><strong>📋 {{ $game->name }} · <span data-table-month-label>{{ $monthLabel }}</span></strong><span>{{ count($results) }} dates</span></div>
     <div class="table-responsive"><table class="table table-hover align-middle mb-0 gsk-month-table"><thead><tr><th>Date</th><th>{{ $game->name }} result</th></tr></thead><tbody data-result-body>
       @foreach ($results as $entry)<tr data-result-row="{{ $entry['date']->day }}"><th scope="row">{{ $entry['date']->format('d') }}</th><td data-result-cell>{{ $entry['number'] ?? '—' }}</td></tr>@endforeach
     </tbody></table></div>
@@ -77,7 +82,7 @@
                     let payload = {};
                     try {
                         payload = await response.json();
-                        console.log(payload);
+
                     } catch (parseError) {
                         payload = {};
                     }
@@ -103,7 +108,7 @@
                         row.append(dateCell, resultCell);
                         tbody.appendChild(row);
                     });
-                    // monthLabel.textContent = payload.month_label;
+                    if (payload.month_label) {\n                        if (monthLabel) monthLabel.textContent = payload.month_label;\n                        const tableMonthLabel = document.querySelector('[data-table-month-label]');\n                        if (tableMonthLabel) tableMonthLabel.textContent = payload.month_label;\n                    }
                     empty.hidden = hasPublished;
                     setStatus(hasPublished ? 'Results updated.' : 'No published results for this month.', false);
                 } catch (error) {

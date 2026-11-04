@@ -15,6 +15,7 @@
         <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
           <li class="nav-item"><a class="nav-link" href="{{ route('index') }}">🏠 Home</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ route('index') }}#today-results">🏆 Results</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('index') }}#markets">🎮 Markets</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ route('index') }}#market-charts">📊 Charts</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ route('community.index') }}">👥 Community</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ route('index') }}#records">📚 Records</a></li>
