@@ -40,15 +40,6 @@ Route::get('/firebase-config.json', function () {
     ])->header('Cache-Control', 'no-store, max-age=0');
 });
 
-Route::get('/optimize-clear', function () {
-    Artisan::call('optimize:clear');
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Application cache cleared successfully.',
-    ]);
-});
-
 // Route::get('/storage-link', function () {
 //     Artisan::call('storage:link');
 
