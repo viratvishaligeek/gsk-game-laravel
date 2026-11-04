@@ -12,7 +12,7 @@
         <span class="gsk-v3-kicker"><span class="gsk-v3-live-dot"></span> MARKET RECORD ROOM</span>
         <h1 class="mt-3">{{ $game->name }}</h1>
         <p>Explore the saved day-by-day results for this market. Choose a month and year to move through the archive.</p>
-        <div class="gsk-v3-archive-hero-actions"><a href="{{ route('index') }}#markets">🎮 All markets</a><a href="{{ route('index') . '#monthly-records' }}">📊 Compare charts</a><a href="{{ route('community.index') }}">👥 Community</a></div>
+        <div class="gsk-v3-archive-hero-actions"><a href="{{ route('index') }}#markets">🎮 All markets</a><a href="{{ route('charts.index', ['game_id' => $game->id]) }}">📊 Compare charts</a><a href="{{ route('community.index') }}">👥 Community</a></div>
       </div>
       <div class="col-lg-4"><div class="gsk-v3-archive-summary"><small>SELECTED PERIOD</small><strong data-month-label>{{ $monthLabel }}</strong><span>{{ count($results) }} calendar dates</span></div></div>
     </div>
@@ -37,7 +37,7 @@
       @foreach ($results as $entry)<tr data-result-row="{{ $entry['date']->day }}"><th scope="row">{{ $entry['date']->format('d') }}</th><td data-result-cell>{{ $entry['number'] ?? '—' }}</td></tr>@endforeach
     </tbody></table></div>
   </div>
-  <div class="gsk-v3-archive-back"><a href="{{ route('index') }}#markets">← Back to market directory</a><a href="{{ route('index') . '#monthly-records' }}">Open all monthly charts →</a></div>
+  <div class="gsk-v3-archive-back"><a href="{{ route('index') }}#markets">← Back to market directory</a><a href="{{ route('charts.index') }}">Open all monthly charts →</a></div>
 </section>
 @endsection
 
