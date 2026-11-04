@@ -45,8 +45,8 @@ Draft PR: https://github.com/viratvishaligeek/gsk-game-laravel/pull/4
 - [x] Removed invalid `charts.index` navigation calls and redirected them to the registered homepage monthly-record anchor / market archives.
 - [x] Restored the existing `gsk-home-hero` selector required by the homepage regression test while retaining the v3 visual styling.
 - [ ] Rerun focused frontend regression tests after restoring the base homepage managed-section order.
-- [ ] Run focused public-route and market-archive AJAX tests.
-- [ ] Run the full Laravel test suite after the route-link correction and compare failures against the exact v3 base commit.
+- [ ] Rerun focused public-route and monthly chart tests after registering the read-only chart routes.
+- [ ] Run the full Laravel test suite after chart-route wiring and compare unrelated failures against the exact v3 base commit.
 - [ ] Browser-check homepage, market archive, charts, information/CMS and community pages at mobile/tablet/desktop widths.
 - [ ] Verify market and chart AJAX filters after the markup changes.
 - [ ] Confirm cPanel document root, deployed branch/commit, rewrite rules, asset paths, cache and Laravel logs.
