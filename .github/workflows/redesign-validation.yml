@@ -45,7 +45,10 @@ jobs:
             printf 'APP_NAME=GSK\nAPP_ENV=testing\nAPP_KEY=\nAPP_DEBUG=true\nAPP_URL=http://localhost\nDB_CONNECTION=sqlite\nDB_DATABASE=:memory:\nCACHE_STORE=array\nSESSION_DRIVER=array\nQUEUE_CONNECTION=sync\n' > .env
           fi
           php artisan key:generate
-      - name: Compile Blade views
-        run: php artisan view:cache
+      - name: Compile and syntax-check Blade views
+        run: |
+          php artisan view:clear
+          php artisan view:cache
+          find storage/framework/views -type f -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Run Laravel tests
         run: php artisan test
