@@ -19,4 +19,4 @@
   </form>
   <p class="small mt-3 mb-0">{{ $mode === 'login' ? 'New to the community?' : 'Already a member?' }} <a class="fw-bold" href="{{ $mode === 'login' ? route('community.register') : route('community.login') }}">{{ $mode === 'login' ? 'Create an account' : 'Sign in' }}</a></p>
 </div></section>
-@endsectionn
+@endsection
