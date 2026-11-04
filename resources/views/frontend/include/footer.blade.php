@@ -50,8 +50,7 @@
     <small>{{ setting('copyright_text', '© ' . date('Y') . ' ' . setting('title')) }}</small><small>Information and historical records only.</small>
   </div></div>
 </footer>
-@if (filled(setting('social_whatsapp')) && filter_var(setting('social_whatsapp'), FILTER_VALIDATE_URL) && in_array(parse_url(setting('social_whatsapp'), PHP_URL_SCHEME), ['http','https'], true))
-  <button class="gsk-whatsapp-float" type="button" data-bs-toggle="modal" data-bs-target="#whatsappContactModal" aria-label="Open WhatsApp contact">💬</button>
+<button class="gsk-whatsapp-float" type="button" data-bs-toggle="modal" data-bs-target="#whatsappContactModal" aria-label="Open WhatsApp contact">💬</button>
   <div class="modal fade" id="whatsappContactModal" tabindex="-1" aria-labelledby="whatsappContactModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content border-0 rounded-4 overflow-hidden">
@@ -71,9 +70,12 @@
           </div>
         </div>
         <div class="modal-footer border-0 p-4 pt-0">
-          <a class="btn btn-success w-100 rounded-pill" href="{{ setting('social_whatsapp') }}" target="_blank" rel="noopener noreferrer">💬 Contact us on WhatsApp</a>
+          @if (filled(setting('social_whatsapp')) && filter_var(setting('social_whatsapp'), FILTER_VALIDATE_URL) && in_array(parse_url(setting('social_whatsapp'), PHP_URL_SCHEME), ['http','https'], true))
+            <a class="btn btn-success w-100 rounded-pill" href="{{ setting('social_whatsapp') }}" target="_blank" rel="noopener noreferrer">💬 Contact us on WhatsApp</a>
+          @else
+            <p class="small text-secondary mb-0">WhatsApp contact details are not configured yet.</p>
+          @endif
         </div>
       </div>
     </div>
   </div>
-@endif
