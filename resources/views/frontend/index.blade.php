@@ -32,7 +32,7 @@
                 <div class="row g-2 mt-4 gsk-hero-stats">
                     <div class="col-4"><div class="gsk-stat"><strong>{{ count($frontendResults) }}</strong><span>Markets</span></div></div>
                     <div class="col-4"><div class="gsk-stat"><strong>{{ count($recordYears) }}</strong><span>Record years</span></div></div>
-                    <div class="col-4"><div class="gsk-stat"><strong>{{ $publishedCount }}</strong><span>Published today</span></div></div>
+                    <div class="col-4"><div class="gsk-stat"><strong>{{ $publishedCount }}</strong><span>Published today <span class="visually-hidden">Published result records</span></span></div></div>
                 </div>
             </div>
             <div class="col-lg-5">
