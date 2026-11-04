@@ -210,6 +210,28 @@
 </section>
 @endsection
 
+@section('script')
+<script>
+(() => {
+  const search = document.getElementById('market-search');
+  const cards = [...document.querySelectorAll('#market-grid .gsk-market-column')];
+  const empty = document.getElementById('no-markets');
+  if (!search || !cards.length) return;
+  const filter = () => {
+    const query = search.value.trim().toLocaleLowerCase();
+    let visible = 0;
+    cards.forEach(card => {
+      const matches = !query || card.textContent.toLocaleLowerCase().includes(query);
+      card.hidden = !matches;
+      if (matches) visible++;
+    });
+    if (empty) empty.hidden = visible !== 0;
+  };
+  search.addEventListener('input', filter, { passive: true });
+})();
+</script>
+@endsection
+
 @section('structured_data')
 <script type="application/ld+json">@json($homeSchema, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)</script>
 @endsection
