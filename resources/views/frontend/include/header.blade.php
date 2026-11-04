@@ -1,43 +1,34 @@
-<header class="site-header">
-    <div class="header-main wrap">
-        <a class="brand" href="{{ route('index') }}" aria-label="{{ setting('title') }} home">
-            @if (filled(setting('site_logo')) && is_file(public_path('logos/' . basename(setting('site_logo')))))
-                <img class="brand-emblem" src="{{ asset('logos/' . basename(setting('site_logo'))) }}"
-                    alt="{{ setting('title') }}" loading="eager">
-            @else
-                <span class="brand-emblem">POK</span>
-            @endif
-            <span class="brand-word">{{ setting('title') }}<small>
-            </span>
-        </a>
-        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav"
-            data-menu-toggle><span></span><span></span><span></span><b class="sr-only">Toggle navigation</b></button>
-        <nav class="primary-nav" id="primary-nav" aria-label="Main navigation">
-            <a href="{{ route('index') }}">Home</a>
-            <a href="{{ route('index') }}#today-results">Results</a>
-            <a href="{{ route('index') }}#market-charts">Monthly charts</a>
-            <a href="{{ route('community.index') }}">Guessing</a>
-            <a href="{{ route('index') }}#records">Records</a>
-            @foreach ($navPages ?? collect() as $navPage)
-                <a href="{{ route('page', ['page' => $navPage->slug]) }}">{{ $navPage->name }}</a>
-            @endforeach
-        </nav>
+<header class="gsk-site-header">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('index') }}" aria-label="{{ setting('title') }} home">
+        @if (filled(setting('site_logo')) && is_file(public_path('logos/' . basename(setting('site_logo')))))
+          <img src="{{ asset('logos/' . basename(setting('site_logo'))) }}" width="42" height="42" alt="{{ setting('title') }}" class="gsk-brand-logo">
+        @else
+          <span class="gsk-brand-fallback">🎯</span>
+        @endif
+        <span class="gsk-brand-copy"><strong>{{ setting('title') }}</strong><small>{{ setting('site_tagline') }}</small></span>
+      </a>
+      <button class="navbar-toggler gsk-nav-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#gskPrimaryNav"
+        aria-controls="gskPrimaryNav" aria-expanded="false" aria-label="Toggle navigation"><span>☰</span></button>
+      <div class="collapse navbar-collapse" id="gskPrimaryNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+          <li class="nav-item"><a class="nav-link" href="{{ route('index') }}">🏠 Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('index') }}#today-results">🏆 Results</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('index') }}#market-charts">📊 Charts</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('community.index') }}">👥 Community</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('index') }}#records">📚 Records</a></li>
+          @foreach ($navPages ?? collect() as $navPage)
+            <li class="nav-item"><a class="nav-link" href="{{ route('page', ['page' => $navPage->slug]) }}">{{ $navPage->name }}</a></li>
+          @endforeach
+          @if (filled(setting('app_download_url')))
+            <li class="nav-item ms-lg-2"><a class="btn btn-primary btn-sm px-3 rounded-pill" href="{{ setting('app_download_url') }}" target="_blank" rel="noopener noreferrer">📲 Get the app</a></li>
+          @endif
+        </ul>
+      </div>
     </div>
+  </nav>
 </header>
-<div class="ticker" aria-label="Quick navigation ticker">
-    <span class="ticker-label">📢</span>
-    <div class="ticker-window">
-        <div class="ticker-track">
-            @if (filled(setting('web_marquee')))
-                @for ($tickerCopy = 0; $tickerCopy < 2; $tickerCopy++)
-                    <span>{{ setting('web_marquee') }}</span>
-                @endfor
-            @else
-                <span>Today's results</span><i>✦</i><span>Previous results</span><i>✦</i><span>Market
-                    schedules</span><i>✦</i><span>Historical charts</span><i>✦</i><span>Year-wise records</span><i>✦</i>
-                <span>Today's results</span><i>✦</i><span>Previous results</span><i>✦</i><span>Market
-                    schedules</span><i>✦</i><span>Historical charts</span><i>✦</i><span>Year-wise records</span>
-            @endif
-        </div>
-    </div>
-</div>
+@if (filled(setting('web_marquee')))
+  <div class="gsk-announcement" role="status"><div class="container d-flex align-items-center gap-2"><span>📢</span><span>{{ setting('web_marquee') }}</span></div></div>
+@endif
