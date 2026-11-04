@@ -1,60 +1,60 @@
-<footer class="gsk-site-footer">
+<footer class="gsk-v3-footer">
+  <section class="gsk-v3-footer-cta">
+    <div class="container"><div><span>📊 KEEP EXPLORING</span><h2>Need a previous result?</h2><p>Open the monthly archive and browse date-wise market records.</p></div>
+      <a href="{{ route('charts.index') }}">Browse monthly charts <b>→</b></a>
+    </div>
+  </section>
   <div class="container py-5">
-    <nav class="gsk-footer-journey mb-4" aria-label="Quick links">
-      <div><span>EXPLORE THE BOARD</span><strong>Where would you like to go?</strong></div>
-      <a href="{{ route('index') }}#today-results">🏆 Today's results</a>
-      <a href="{{ route('index') }}#markets">🎮 Markets</a>
-      <a href="{{ route('charts.index') }}">📊 Monthly charts</a>
-      <a href="{{ route('community.index') }}">👥 Community</a>
-    </nav>
-    <div class="row g-4">
+    <div class="row g-4 g-lg-5">
       <div class="col-lg-5">
-        <a class="gsk-footer-brand" href="{{ route('index') }}">
+        <a class="gsk-v3-footer-brand" href="{{ route('index') }}">
           @if (filled(setting('site_logo')) && is_file(public_path('logos/' . basename(setting('site_logo')))))
-            <img src="{{ asset('logos/' . basename(setting('site_logo'))) }}" width="48" height="48" alt="{{ setting('title') }}">
+            <img src="{{ asset('logos/' . basename(setting('site_logo'))) }}" width="50" height="50" alt="{{ setting('title') }}">
           @else <span>🎯</span> @endif
           <span><strong>{{ setting('title') }}</strong><small>{{ setting('site_tagline') }}</small></span>
         </a>
-        @if (filled(setting('footer_description')))
-          <p class="gsk-footer-description mt-3">{{ setting('footer_description') }}</p>
-        @endif
-        <div class="d-grid gap-2 mt-3">
-          @if (filled(setting('email')))<a class="gsk-footer-contact" href="mailto:{{ setting('email') }}">✉️ {{ setting('email') }}</a>@endif
-          @if (filled(setting('contact_phone')))<a class="gsk-footer-contact" href="tel:{{ preg_replace('/[^0-9+]/', '', setting('contact_phone')) }}">📞 {{ setting('contact_phone') }}</a>@endif
-          @if (filled(setting('contact_address')))<span class="gsk-footer-contact">📍 {{ setting('contact_address') }}</span>@endif
+        <p class="gsk-v3-footer-description mt-3">{{ filled(setting('footer_description')) ? setting('footer_description') : 'A public destination for daily market updates and historical result records.' }}</p>
+        <div class="gsk-v3-footer-contact">
+          @if (filled(setting('email')))<a href="mailto:{{ setting('email') }}">✉️ {{ setting('email') }}</a>@endif
+          @if (filled(setting('contact_phone')))<a href="tel:{{ preg_replace('/[^0-9+]/', '', setting('contact_phone')) }}">📞 {{ setting('contact_phone') }}</a>@endif
+          @if (filled(setting('contact_address')))<span>📍 {{ setting('contact_address') }}</span>@endif
         </div>
       </div>
-      <div class="col-6 col-lg-3">
-        <h2 class="gsk-footer-heading">Explore</h2>
-        <ul class="list-unstyled gsk-footer-links">
-          <li><a href="{{ route('index') }}#today-results">🏆 Today's results</a></li>
-          <li><a href="{{ route('index') }}#markets">🎮 Market directory</a></li>
-          <li><a href="{{ route('index') }}#market-charts">📊 Monthly charts</a></li>
-          <li><a href="{{ route('index') }}#records">📚 Historical records</a></li>
+      <div class="col-6 col-lg-2">
+        <h2>Discover</h2>
+        <ul class="list-unstyled">
+          <li><a href="{{ route('index') }}">🏠 Home</a></li>
+          <li><a href="{{ route('index') }}#today-results">🏆 Live board</a></li>
+          <li><a href="{{ route('index') }}#markets">🎮 Markets</a></li>
+          <li><a href="{{ route('charts.index') }}">📊 Charts</a></li>
           <li><a href="{{ route('community.index') }}">👥 Community</a></li>
           <li><a href="{{ route('sitemap') }}">🗺️ Sitemap</a></li>
         </ul>
       </div>
-      <div class="col-6 col-lg-4">
-        <h2 class="gsk-footer-heading">Information</h2>
-        <ul class="list-unstyled gsk-footer-links">
+      <div class="col-6 col-lg-2">
+        <h2>Information</h2>
+        <ul class="list-unstyled">
           @foreach ($navPages ?? collect() as $navPage)
             <li><a href="{{ route('page', ['page' => $navPage->slug]) }}">{{ $navPage->name }} ↗</a></li>
           @endforeach
         </ul>
-        <h2 class="gsk-footer-heading mt-4">Connect</h2>
-        <div class="d-flex flex-wrap gap-2">
+      </div>
+      <div class="col-lg-3">
+        <h2>Connect with us</h2>
+        <p class="gsk-v3-footer-social-copy">Find updates and community links through our configured channels.</p>
+        <div class="gsk-v3-footer-socials">
           @foreach (['facebook'=>'Facebook','instagram'=>'Instagram','youtube'=>'YouTube','telegram'=>'Telegram','whatsapp'=>'WhatsApp'] as $socialKey=>$socialLabel)
             @if (filled(setting('social_'.$socialKey)) && filter_var(setting('social_'.$socialKey), FILTER_VALIDATE_URL) && in_array(parse_url(setting('social_'.$socialKey), PHP_URL_SCHEME), ['http','https'], true))
-              <a class="gsk-social-link" href="{{ setting('social_'.$socialKey) }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $socialLabel }}">{{ ['facebook'=>'📘','instagram'=>'📸','youtube'=>'▶️','telegram'=>'✈️','whatsapp'=>'💬'][$socialKey] }}</a>
+              <a href="{{ setting('social_'.$socialKey) }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $socialLabel }}">{{ ['facebook'=>'📘','instagram'=>'📸','youtube'=>'▶️','telegram'=>'✈️','whatsapp'=>'💬'][$socialKey] }}</a>
             @endif
           @endforeach
         </div>
       </div>
     </div>
   </div>
-  <div class="gsk-footer-bottom"><div class="container py-3 d-flex flex-column flex-md-row justify-content-between gap-2">
-    <small>{{ setting('copyright_text', '© ' . date('Y') . ' ' . setting('title')) }}</small><small>Information and historical records only.</small>
+  <div class="gsk-v3-footer-bottom"><div class="container d-flex flex-column flex-md-row justify-content-between gap-2 py-3">
+    <small>{{ setting('copyright_text', '© ' . date('Y') . ' ' . setting('title')) }}</small>
+    <small>Information and historical records only · Please follow applicable laws.</small>
   </div></div>
 </footer>
 <button class="gsk-whatsapp-float" type="button" data-bs-toggle="modal" data-bs-target="#whatsappContactModal" aria-label="Open WhatsApp contact">💬</button>
