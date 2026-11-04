@@ -21,7 +21,7 @@ Draft PR: https://github.com/viratvishaligeek/gsk-game-laravel/pull/3
 - [x] Community index and discussion detail remain separate feed/detail journeys; detail now links back to discussions and post creation.
 - [x] Community post creation now explains the Topic → Title → Message authoring flow.
 - [x] Community member login/registration now includes clearer entry guidance.
-- [x] Existing footer has been reviewed; contact/social links and Bootstrap modal interactions remain present.
+- [x] Footer now has a task-oriented quick-navigation rail for Today's results, Markets, Monthly charts and Community; existing contact/social links and Bootstrap modal interactions remain present.
 
 ### Framework and resources
 - [x] Bootstrap 5.3.8 remains the frontend framework.
