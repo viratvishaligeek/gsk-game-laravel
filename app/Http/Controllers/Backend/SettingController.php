@@ -1,0 +1,157 @@
+<?php
+
+namespace App\Http\Controllers\Backend;
+
+use App\Http\Controllers\Controller;
+use App\Models\Setting;
+use App\Services\AppSettingsService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Throwable;
+
+class SettingController extends Controller
+{
+    public function create()
+    {
+        $setting = Setting::query()->get();
+        $pageName = 'Global Settings';
+
+        return view('backend.settings', compact('setting', 'pageName'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => ['nullable', 'string', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'site_description' => ['nullable', 'string', 'max:1000'],
+            'site_tagline' => ['nullable', 'string', 'max:255'],
+            'homepage_heading_line1' => ['nullable', 'string', 'max:120'],
+            'homepage_heading_line2' => ['nullable', 'string', 'max:120'],
+            'homepage_heading_line3' => ['nullable', 'string', 'max:120'],
+            'homepage_intro' => ['nullable', 'string', 'max:2000'],
+            'announcement_text' => ['nullable', 'string', 'max:500'],
+            'add_money_notice' => ['nullable', 'string', 'max:1000'],
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'homepage_meta_title' => ['nullable', 'string', 'max:255'],
+            'homepage_meta_description' => ['nullable', 'string', 'max:1000'],
+            'google_site_verification' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:1000'],
+            'meta_keywords' => ['nullable', 'string', 'max:1000'],
+            'canonical_url' => ['nullable', 'url', 'starts_with:https://', 'max:500'],
+            'og_title' => ['nullable', 'string', 'max:255'],
+            'og_description' => ['nullable', 'string', 'max:1000'],
+            'robots_default' => ['nullable', 'string', Rule::in(['index,follow', 'noindex,follow', 'index,nofollow', 'noindex,nofollow'])],
+            'twitter_card' => ['nullable', 'string', 'in:summary,summary_large_image'],
+            'app_download_url' => ['nullable', 'url', 'starts_with:https://', 'max:1000'],
+            'latest_url' => [
+                'nullable',
+                'url',
+                'starts_with:https://',
+                'max:1000'
+            ],
+            'latest_version' => ['nullable', 'string', 'max:50', 'regex:/^[A-Za-z0-9][A-Za-z0-9._+-]*$/'],
+            'update_date' => ['nullable', 'date_format:Y-m-d'],
+            'copyright_text' => ['nullable', 'string', 'max:255'],
+            'footer_description' => ['nullable', 'string', 'max:1000'],
+            'contact_phone' => ['nullable', 'string', 'max:100'],
+            'contact_address' => ['nullable', 'string', 'max:500'],
+            'social_facebook' => ['nullable', 'url', 'max:500'],
+            'social_whatsapp' => ['nullable', 'url', 'max:500'],
+            'social_instagram' => ['nullable', 'url', 'max:500'],
+            'social_youtube' => ['nullable', 'url', 'max:500'],
+            'social_telegram' => ['nullable', 'url', 'max:500'],
+            'web_marquee' => ['nullable', 'string', 'max:1000'],
+            'disclaimer_content' => ['nullable', 'string', 'max:10000'],
+            'chart_chunk_size' => ['nullable', 'integer', 'min:1', 'max:50'],
+            'community_post_approval' => ['nullable', Rule::in(['manual', 'automatic'])],
+            'referral_percentage' => ['sometimes', 'required', 'numeric', 'min:0', 'max:100'],
+            'referral_min_amount' => ['sometimes', 'required', 'numeric', 'min:0', 'max:1000000'],
+            'site_logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:15360'],
+            'site_favicon' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'og_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:15360'],
+        ]);
+
+        foreach (
+            [
+                'title' => config('app.name', 'Gali Satta Kings'),
+                'canonical_url' => config('app.url', url('/')),
+                'robots_default' => 'index,follow',
+                'twitter_card' => 'summary_large_image',
+            ] as $key => $default
+        ) {
+            if (!isset($validated[$key]) || trim((string) $validated[$key]) === '') {
+                $validated[$key] = $default;
+            }
+        }
+
+        $newFiles = [];
+        $oldFiles = [];
+
+        try {
+            DB::transaction(function () use ($request, $validated, &$newFiles, &$oldFiles) {
+                foreach (['title', 'email', 'site_description', 'site_tagline', 'homepage_heading_line1', 'homepage_heading_line2', 'homepage_heading_line3', 'homepage_intro', 'announcement_text', 'add_money_notice', 'meta_title', 'homepage_meta_title', 'homepage_meta_description', 'google_site_verification', 'meta_description', 'meta_keywords', 'canonical_url', 'og_title', 'og_description', 'robots_default', 'twitter_card', 'app_download_url', 'latest_url', 'latest_version', 'update_date', 'copyright_text', 'footer_description', 'contact_phone', 'contact_address', 'social_facebook', 'social_instagram', 'social_youtube', 'social_telegram', 'social_whatsapp', 'web_marquee', 'disclaimer_content', 'chart_chunk_size', 'community_post_approval', 'referral_percentage', 'referral_min_amount'] as $key) {
+                    if (array_key_exists($key, $validated)) {
+                        Setting::updateOrCreate(
+                            ['option' => $key],
+                            ['value' => $validated[$key]]
+                        );
+                    }
+                }
+
+                foreach (['site_logo', 'site_favicon', 'og_image'] as $key) {
+                    if (!$request->hasFile($key)) {
+                        continue;
+                    }
+
+                    $file = $request->file($key);
+                    $filename = $key . '_' . Str::uuid() . '.' . $file->extension();
+                    $directory = public_path('logos');
+
+                    File::ensureDirectoryExists($directory, 0755, true);
+                    $file->move($directory, $filename);
+                    $newFiles[] = $directory . DIRECTORY_SEPARATOR . $filename;
+
+                    $oldFilename = Setting::query()
+                        ->where('option', $key)
+                        ->value('value');
+
+                    if (is_string($oldFilename) && $oldFilename !== '') {
+                        $oldFiles[] = $directory . DIRECTORY_SEPARATOR . basename($oldFilename);
+                    }
+
+                    Setting::updateOrCreate(
+                        ['option' => $key],
+                        ['value' => $filename]
+                    );
+                }
+            });
+
+            app(AppSettingsService::class)->forgetCache();
+
+            foreach ($oldFiles as $oldFile) {
+                if (File::exists($oldFile)) {
+                    File::delete($oldFile);
+                }
+            }
+
+            return redirect()->back()->with('success', 'Settings updated successfully.');
+        } catch (Throwable $e) {
+            foreach ($newFiles as $newFile) {
+                if (File::exists($newFile)) {
+                    File::delete($newFile);
+                }
+            }
+
+            Log::error('Global settings update failed.', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to update settings. Please try again.');
+        }
+    }
+}

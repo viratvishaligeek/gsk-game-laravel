@@ -1,0 +1,276 @@
+<?php
+
+namespace App\Models;
+
+use App\Models\Concerns\BelongsToSite;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
+
+class Game extends Model
+{
+    use BelongsToSite;
+    use HasFactory, SoftDeletes;
+
+    protected $guarded = ['id'];
+
+    protected $fillable = [
+        'name',
+        'slug',
+        'result_time',
+        'play_start',
+        'play_end',
+        'last_result',
+        'status',
+        'serial',
+        'reward'
+    ];
+
+    protected $casts = [
+        'status' => 'string',
+        'serial' => 'integer',
+    ];
+    protected $appends = [
+        'is_playable',
+    ];
+
+    public function bids()
+    {
+        return $this->hasMany(Bid::class);
+    }
+
+    public function results()
+    {
+        return $this->hasMany(Result::class);
+    }
+
+    public function latestResult()
+    {
+        return $this->hasOne(Result::class)
+            ->latestOfMany();
+    }
+
+    /**
+     * Determine whether this game uses the Disawar business-day boundary.
+     */
+    public function isDisawar(): bool
+    {
+        return Str::slug((string) $this->slug) === 'desawar'
+            || Str::slug((string) $this->name) === 'desawar';
+    }
+
+    /**
+     * Monthly closure is based on the application's local calendar date,
+     * deliberately separate from Disawar's business-date boundary.
+     */
+    public function isMonthlyClosureDate(?Carbon $now = null): bool
+    {
+        $localNow = ($now ?: now())->copy()->timezone(config('app.timezone'));
+
+        return $localNow->isSameDay($localNow->copy()->endOfMonth());
+    }
+
+    public function monthlyClosureMessage(): string
+    {
+        return 'Games are unavailable on the last calendar day of the month. Please try again next month.';
+    }
+
+    /**
+     * Resolve the date used to group bets and results for this game.
+     *
+     * Disawar's business day starts at its configured result_time. All other
+     * games continue to use the application's ordinary calendar date.
+     */
+    public function businessDate(?Carbon $now = null): string
+    {
+        $now = ($now ?: now())->copy()->timezone(config('app.timezone'));
+
+        if (!$this->isDisawar() || !$this->result_time) {
+            return $now->toDateString();
+        }
+
+        $resultTime = (string) $this->result_time;
+
+        if (strlen($resultTime) === 5) {
+            $resultTime .= ':00';
+        }
+
+        try {
+            $boundary = Carbon::createFromFormat(
+                'H:i:s',
+                $resultTime,
+                config('app.timezone')
+            );
+        } catch (\Throwable $exception) {
+            return $now->toDateString();
+        }
+
+        if (!$boundary) {
+            return $now->toDateString();
+        }
+
+        $boundary = $now->copy()->setTime(
+            $boundary->hour,
+            $boundary->minute,
+            $boundary->second
+        );
+
+        return $now->lessThan($boundary)
+            ? $now->copy()->subDay()->toDateString()
+            : $now->toDateString();
+    }
+
+    public function getIsPlayableAttribute(): bool
+    {
+        if ($this->status !== 'active') {
+            return false;
+        }
+        if (!$this->play_start || !$this->play_end) {
+            return false;
+        }
+        $now = now();
+        $startTime = Carbon::createFromFormat(
+            'H:i:s',
+            $this->play_start
+        );
+        $endTime = Carbon::createFromFormat(
+            'H:i:s',
+            $this->play_end
+        );
+
+        if ($endTime->greaterThan($startTime)) {
+            $start = $now->copy()->setTime($startTime->hour, $startTime->minute, $startTime->second);
+            $end = $now->copy()->setTime($endTime->hour, $endTime->minute, $endTime->second);
+
+            return $now->greaterThanOrEqualTo($start)
+                && $now->lessThan($end);
+        }
+
+        $startToday = $now->copy()->setTime($startTime->hour, $startTime->minute, $startTime->second);
+
+        $endToday = $now->copy()->setTime($endTime->hour, $endTime->minute, $endTime->second);
+
+        if ($now->greaterThanOrEqualTo($startToday)) {
+            return true;
+        }
+        return $now->lessThan($endToday);
+    }
+
+
+    /**
+     * Resolve today's/current play window using application timezone.
+     *
+     * Handles normal windows:
+     * 10:00 -> 20:00
+     *
+     * And overnight windows:
+     * 20:00 -> 02:00
+     */
+    public function getPlayWindow(?Carbon $now = null): ?array
+    {
+        $now = ($now ?: now())->copy()->timezone(config('app.timezone'));
+
+        if (!$this->play_start || !$this->play_end) {
+            return null;
+        }
+
+        try {
+            $startTime = Carbon::createFromFormat(
+                'H:i:s',
+                strlen($this->play_start) === 5
+                    ? $this->play_start . ':00'
+                    : $this->play_start,
+                config('app.timezone')
+            );
+
+            $endTime = Carbon::createFromFormat(
+                'H:i:s',
+                strlen($this->play_end) === 5
+                    ? $this->play_end . ':00'
+                    : $this->play_end,
+                config('app.timezone')
+            );
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        $start = $now->copy()->setTime(
+            $startTime->hour,
+            $startTime->minute,
+            $startTime->second
+        );
+
+        $end = $now->copy()->setTime(
+            $endTime->hour,
+            $endTime->minute,
+            $endTime->second
+        );
+
+        /*
+         * Same time / overnight market.
+         *
+         * Example:
+         * 20:00 -> 02:00
+         */
+        if ($end->lessThanOrEqualTo($start)) {
+            if ($now->greaterThanOrEqualTo($start)) {
+                // Today's 20:00 -> tomorrow 02:00
+                $end->addDay();
+            } else {
+                // We are between 00:00 and 02:00,
+                // so the window started yesterday.
+                $start->subDay();
+            }
+        }
+
+        return [
+            'start' => $start,
+            'end' => $end,
+        ];
+    }
+
+    public function isPlayableAt(?Carbon $now = null): bool
+    {
+        if ($this->isMonthlyClosureDate($now)) {
+            return false;
+        }
+
+        if ($this->status !== 'active') {
+            return false;
+        }
+
+        $window = $this->getPlayWindow($now);
+
+        if (!$window) {
+            return false;
+        }
+
+        $now = ($now ?: now())->copy()->timezone(config('app.timezone'));
+
+        return $now->greaterThanOrEqualTo($window['start'])
+            && $now->lessThan($window['end']);
+    }
+
+    public function remainingSeconds(?Carbon $now = null): int
+    {
+        if (!$this->isPlayableAt($now)) {
+            return 0;
+        }
+
+        $window = $this->getPlayWindow($now);
+
+        if (!$window) {
+            return 0;
+        }
+
+        $now = ($now ?: now())->copy()->timezone(config('app.timezone'));
+
+        return max(
+            0,
+            $now->diffInSeconds($window['end'], false)
+        );
+    }
+}

@@ -1,0 +1,267 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Notification;
+use App\Models\PushSubscription;
+use App\Models\User;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Throwable;
+
+class PushNotificationService
+{
+    public function register(string $token, string $platform, ?User $user = null): PushSubscription
+    {
+        $subscription = PushSubscription::query()->firstOrNew([
+            'token_hash' => hash('sha256', $token),
+        ]);
+        $subscription->token = $token;
+        $subscription->platform = $platform;
+        $subscription->public_enabled = true;
+        // Public subscription must not silently detach a token from its user.
+        // Logout uses the dedicated authenticated unregister-user endpoint.
+        if ($user !== null) {
+            $subscription->user_id = $user->id;
+        }
+        $subscription->save();
+
+        Log::info('Push token registered.', [
+            'subscription_id' => $subscription->id,
+            'platform' => $platform,
+            'user_id' => $subscription->user_id,
+            'token_hash_prefix' => substr($subscription->token_hash, 0, 12),
+        ]);
+
+        return $subscription;
+    }
+
+    public function registerAdmin(string $token, \App\Models\Admin $admin): PushSubscription
+    {
+        $subscription = PushSubscription::query()->firstOrNew([
+            'token_hash' => hash('sha256', $token),
+        ]);
+        $isNew = !$subscription->exists;
+        $subscription->token = $token;
+        $subscription->platform = 'web';
+        $subscription->admin_id = $admin->id;
+        if ($isNew) {
+            $subscription->public_enabled = false;
+        }
+        $subscription->save();
+
+        return $subscription;
+    }
+
+    public function unregisterAdmin(string $token, \App\Models\Admin $admin): void
+    {
+        $subscription = PushSubscription::query()
+            ->where('token_hash', hash('sha256', $token))
+            ->where('admin_id', $admin->id)
+            ->first();
+
+        if (!$subscription) {
+            return;
+        }
+
+        $subscription->admin_id = null;
+        if ($subscription->user_id === null && !$subscription->public_enabled) {
+            $subscription->delete();
+        } else {
+            $subscription->save();
+        }
+    }
+
+    public function sendToAdmins(string $title, string $body): int
+    {
+        return $this->sendToSubscriptions(
+            PushSubscription::query()->whereNotNull('admin_id')->where('platform', 'web')->get(),
+            $title,
+            $body,
+            'admin',
+            null
+        );
+    }
+
+    public function sendToUser(User $user, string $title, string $body, ?int $notificationId = null): int
+    {
+        return $this->sendToSubscriptions(
+            PushSubscription::query()->where('user_id', $user->id)->get(),
+            $title,
+            $body,
+            'individual',
+            $notificationId
+        );
+    }
+
+    public function broadcast(string $title, string $body): int
+    {
+        $notification = Notification::query()->create([
+            'user_id' => null,
+            'subject' => $title,
+            'message' => $body,
+        ]);
+
+        return $this->sendPublicPush($title, $body, $notification->id);
+    }
+
+    public function sendPublicPush(string $title, string $body, ?int $notificationId = null): int
+    {
+        return $this->sendToSubscriptions(
+            PushSubscription::query()->where('public_enabled', true)->get(),
+            $title,
+            $body,
+            'public',
+            $notificationId
+        );
+    }
+
+    private function sendToSubscriptions($subscriptions, string $title, string $body, string $notificationType, ?int $notificationId): int
+    {
+        $sent = 0;
+
+        foreach ($subscriptions as $subscription) {
+            // Account-level opt-out applies to individual and public push delivery.
+            if ($subscription->user_id !== null && User::query()
+                ->whereKey($subscription->user_id)
+                ->where('notifications_enabled', false)
+                ->exists()) {
+                continue;
+            }
+
+            try {
+                if ($this->send($subscription->token, $title, $body, $subscription, $notificationType, $notificationId)) {
+                    $sent++;
+                }
+            } catch (Throwable $exception) {
+                // Push delivery must never break the underlying game/wallet action.
+                Log::warning('Push notification delivery failed.', [
+                    'subscription_id' => $subscription->id,
+                    'notification_type' => $notificationType,
+                    'notification_id' => $notificationId,
+                    'error_class' => get_class($exception),
+                    'error' => $exception->getMessage(),
+                ]);
+            }
+        }
+
+        return $sent;
+    }
+
+    private function send(string $token, string $title, string $body, PushSubscription $subscription, string $notificationType, ?int $notificationId): bool
+    {
+        $projectId = config('services.fcm.project_id');
+        $serviceAccountJson = config('services.fcm.service_account_json');
+
+        if (!$projectId || !$serviceAccountJson) {
+            Log::notice('FCM is not configured; push delivery skipped.');
+            return false;
+        }
+
+        $accessToken = $this->accessToken($serviceAccountJson);
+        $response = Http::timeout(15)->withToken($accessToken)
+            ->acceptJson()
+            ->post("https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send", [
+                'message' => [
+                    'token' => $token,
+                    'notification' => ['title' => $title, 'body' => $body],
+                    'data' => ['url' => $subscription->platform === 'web' ? rtrim((string) config('sites.current.url', config('app.url')), '/') . '/' : '/notifications'],
+                    'android' => [
+                        'priority' => 'HIGH',
+                        'notification' => [
+                            'channel_id' => 'game-alerts-v2',
+                            'sound' => 'notification_tune',
+                        ],
+                    ],
+                    'apns' => [
+                        'payload' => ['aps' => ['sound' => 'default']],
+                    ],
+                    'webpush' => [
+                        'notification' => [
+                            'icon' => '/icons/icon-192.webp',
+                            'badge' => '/favicon.ico',
+                            'requireInteraction' => false,
+                        ],
+                        'fcm_options' => ['link' => rtrim((string) config('sites.current.url', config('app.url')), '/') . '/'],
+                    ],
+                ],
+            ]);
+
+        if ($response->successful()) {
+            Log::info('FCM accepted push message.', [
+                'notification_type' => $notificationType,
+                'notification_id' => $notificationId,
+                'subscription_id' => $subscription->id,
+                'platform' => $subscription->platform,
+                'user_id' => $notificationType === 'individual' ? $subscription->user_id : null,
+                'fcm_message_id' => $response->json('name'),
+            ]);
+            return true;
+        }
+
+        $errorDetails = $response->json('error.details', []);
+        $errorCode = is_array($errorDetails)
+            ? collect($errorDetails)->pluck('errorCode')->filter()->first()
+            : null;
+        if ($errorCode === 'UNREGISTERED' || $response->json('error.status') === 'UNREGISTERED') {
+            PushSubscription::query()->where('token_hash', hash('sha256', $token))->delete();
+        }
+
+        Log::warning('FCM rejected a push message.', [
+            'notification_type' => $notificationType,
+            'notification_id' => $notificationId,
+            'subscription_id' => $subscription->id,
+            'platform' => $subscription->platform,
+            'http_status' => $response->status(),
+            'fcm_error_status' => $response->json('error.status'),
+            'fcm_error_code' => $errorCode,
+            'fcm_error_message' => $response->json('error.message'),
+        ]);
+
+        return false;
+    }
+
+    private function accessToken(string $serviceAccountJson): string
+    {
+        $account = json_decode($serviceAccountJson, true, flags: JSON_THROW_ON_ERROR);
+
+        $configuredProjectId = (string) config('services.fcm.project_id');
+        if (!empty($account['project_id']) && $account['project_id'] !== $configuredProjectId) {
+            throw new \RuntimeException('FCM_PROJECT_ID does not match the service-account project_id.');
+        }
+        if (empty($account['client_email']) || empty($account['private_key'])) {
+            throw new \RuntimeException('FCM service-account JSON is missing client_email or private_key.');
+        }
+
+        $cacheKey = 'fcm.oauth_access_token.' . hash('sha256', $serviceAccountJson);
+        return Cache::remember($cacheKey, now()->addMinutes(50), function () use ($account) {
+            $now = time();
+            $encode = static fn(string $value): string => rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+            $header = $encode(json_encode(['alg' => 'RS256', 'typ' => 'JWT'], JSON_THROW_ON_ERROR));
+            $claims = $encode(json_encode([
+                'iss' => $account['client_email'],
+                'scope' => 'https://www.googleapis.com/auth/firebase.messaging',
+                'aud' => $account['token_uri'] ?? 'https://oauth2.googleapis.com/token',
+                'iat' => $now,
+                'exp' => $now + 3600,
+            ], JSON_THROW_ON_ERROR));
+            $unsigned = $header . '.' . $claims;
+
+            if (!openssl_sign($unsigned, $signature, $account['private_key'], OPENSSL_ALGO_SHA256)) {
+                throw new \RuntimeException('Unable to sign FCM service-account assertion.');
+            }
+
+            $assertion = $unsigned . '.' . $encode($signature);
+            $response = Http::timeout(15)->asForm()->post(
+                $account['token_uri'] ?? 'https://oauth2.googleapis.com/token',
+                [
+                    'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                    'assertion' => $assertion,
+                ]
+            )->throw();
+
+            return (string) $response->json('access_token');
+        });
+    }
+}
