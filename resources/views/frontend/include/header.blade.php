@@ -19,7 +19,7 @@
           <li class="nav-item"><a class="nav-link" href="{{ route('index') }}">🏠 Home</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ route('index') }}#today-results">🏆 Live board</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ route('index') }}#markets">🎮 Markets</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ route('charts.index') }}">📊 Charts</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('index') . '#monthly-records' }}">📊 Charts</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ route('community.index') }}">👥 Community</a></li>
           @foreach ($navPages ?? collect() as $navPage)
             <li class="nav-item"><a class="nav-link" href="{{ route('page', ['page' => $navPage->slug]) }}">{{ $navPage->name }}</a></li>
@@ -37,5 +37,5 @@
     <span>{{ filled(setting('web_marquee')) ? setting('web_marquee') : 'Today’s published results · Market schedules · Previous records · Monthly charts' }}</span>
     <span aria-hidden="true">{{ filled(setting('web_marquee')) ? setting('web_marquee') : 'Today’s published results · Market schedules · Previous records · Monthly charts' }}</span>
   </div></div>
-  <a href="{{ route('charts.index') }}">Explore archive →</a>
+  <a href="{{ route('index') . '#monthly-records' }}">Explore archive →</a>
 </div></div>
