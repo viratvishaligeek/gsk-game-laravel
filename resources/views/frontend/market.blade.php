@@ -6,7 +6,7 @@
 @section('content')
 <section class="gsk-page-hero"><div class="container py-4 py-lg-5">
   <nav aria-label="Breadcrumb"><ol class="breadcrumb mb-3"><li class="breadcrumb-item"><a href="{{ route('index') }}">Home</a></li><li class="breadcrumb-item"><a href="{{ route('index') }}#markets">Markets</a></li><li class="breadcrumb-item active" aria-current="page">{{ $game->name }}</li></ol></nav>
-  <span class="gsk-kicker">📊 MARKET ARCHIVE</span><h1 class="mt-3">{{ $game->name }}</h1><p class="mb-0">Saved daily results for {{ $monthLabel }}. Missing values are shown as a dash.</p>
+  <span class="gsk-kicker">📊 MARKET ARCHIVE</span><h1 class="mt-3">{{ $game->name }}</h1><p class="mb-0" data-month-label>{{ $monthLabel }}</p><p class="mb-0">Saved daily results for {{ $monthLabel }}. Missing values are shown as a dash.</p>
 </div></section>
 <section class="container py-4 py-lg-5">
   <div class="gsk-filter-panel mb-3">
