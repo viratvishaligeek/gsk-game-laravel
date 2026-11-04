@@ -1,7 +1,7 @@
 <footer class="gsk-v3-footer">
   <section class="gsk-v3-footer-cta">
     <div class="container"><div><span>📊 KEEP EXPLORING</span><h2>Need a previous result?</h2><p>Open the monthly archive and browse date-wise market records.</p></div>
-      <a href="{{ route('charts.index') }}">Browse monthly charts <b>→</b></a>
+      <a href="{{ route('index') . '#monthly-records' }}">Browse monthly charts <b>→</b></a>
     </div>
   </section>
   <div class="container py-5">
@@ -26,7 +26,7 @@
           <li><a href="{{ route('index') }}">🏠 Home</a></li>
           <li><a href="{{ route('index') }}#today-results">🏆 Live board</a></li>
           <li><a href="{{ route('index') }}#markets">🎮 Markets</a></li>
-          <li><a href="{{ route('charts.index') }}">📊 Charts</a></li>
+          <li><a href="{{ route('index') . '#monthly-records' }}">📊 Charts</a></li>
           <li><a href="{{ route('community.index') }}">👥 Community</a></li>
           <li><a href="{{ route('sitemap') }}">🗺️ Sitemap</a></li>
         </ul>
