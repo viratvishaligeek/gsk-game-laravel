@@ -94,6 +94,10 @@
     @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'second_place')])
 @endif
 
+@if ($managedSections->where('location', 'second_place_another')->isNotEmpty())
+    @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'second_place_another')])
+@endif
+
 <section class="gsk-v3-section gsk-v3-market-section" id="markets">
     <div class="container py-5">
         <div class="gsk-v3-section-head">
@@ -120,10 +124,6 @@
         <p class="gsk-v3-no-results" id="no-markets" hidden>No market matches that search.</p>
     </div>
 </section>
-
-@if ($managedSections->where('location', 'second_place_another')->isNotEmpty())
-    @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'second_place_another')])
-@endif
 
 <section class="gsk-v3-archive-band" id="monthly-records"><span id="market-charts" class="gsk-v3-anchor-target" aria-hidden="true"></span>
     <div class="container py-5">
