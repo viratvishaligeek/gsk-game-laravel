@@ -1,9 +1,6 @@
 name: GSK Laravel frontend validation
 
 on:
-  push:
-    branches:
-      - redesign/modern-customer-frontend
   pull_request:
     branches:
       - main
