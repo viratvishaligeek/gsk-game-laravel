@@ -11,7 +11,7 @@
     $managedSections = $homepageSections ?? collect();
 @endphp
 
-<section class="gsk-v3-hero">
+<section class="gsk-home-hero">
     <div class="container py-5 py-xl-6">
         <div class="row align-items-center g-4 g-xl-5">
             <div class="col-lg-7">
