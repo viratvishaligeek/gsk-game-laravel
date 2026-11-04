@@ -8,19 +8,30 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\Services\Admin\UserBidActivityService;
 use App\Services\WalletService;
 
 class UserController extends Controller
 {
     public function __construct(
-        protected WalletService $walletService
+        protected WalletService $walletService,
+        protected UserBidActivityService $userBidActivityService
     ) {}
 
-    public function index()
+    public function index(Request $request)
     {
+        $validated = $request->validate([
+            'live_status' => ['nullable', 'in:active,inactive'],
+        ]);
+
         $pageName = 'Users List';
-        $users = User::latest()->get();
-        return view('backend.users.index', compact('pageName', 'users'));
+        $liveStatus = $validated['live_status'] ?? null;
+        $users = User::query()
+            ->when($liveStatus, fn ($query) => $query->where('live_status', $liveStatus))
+            ->latest()
+            ->get();
+
+        return view('backend.users.index', compact('pageName', 'users', 'liveStatus'));
     }
 
     public function create()
@@ -75,7 +86,8 @@ class UserController extends Controller
                 $this->walletService->credit(
                     $user,
                     $initialBalance,
-                    'Initial wallet balance assigned by admin'
+                    'Initial wallet balance assigned by admin',
+                    ['admin_id' => auth('admin')->id()]
                 );
             }
         });
@@ -87,53 +99,7 @@ class UserController extends Controller
     {
         $transactions = $user->transactions()->latest('id')->paginate(15, ['*'], 'transactions_page');
 
-        // Paginate play slips, not individual numbers, so one order is never
-        // split across pages. Bids without an order number remain individual slips.
-        $bids = $user->bids()
-            ->selectRaw("COALESCE(NULLIF(order_no, ''), CONCAT('bid-', id)) as group_key, MAX(id) as latest_id, COUNT(*) as item_count, SUM(amount) as total_amount")
-            ->groupBy('group_key')
-            ->orderByDesc('latest_id')
-            ->paginate(15, null, 'bids_page');
-
-        $groupKeys = $bids->getCollection()->pluck('group_key');
-        $orderNumbers = $groupKeys
-            ->filter(fn ($key) => !str_starts_with((string) $key, 'bid-'))
-            ->values();
-        $singleBidIds = $groupKeys
-            ->filter(fn ($key) => str_starts_with((string) $key, 'bid-'))
-            ->map(fn ($key) => (int) substr((string) $key, 4))
-            ->values();
-
-        $groupedBidRows = $groupKeys->isEmpty()
-            ? collect()
-            : $user->bids()
-                ->with('game:id,name')
-                ->where(function ($query) use ($orderNumbers, $singleBidIds) {
-                    if ($orderNumbers->isNotEmpty()) {
-                        $query->whereIn('order_no', $orderNumbers);
-                    }
-                    if ($singleBidIds->isNotEmpty()) {
-                        if ($orderNumbers->isNotEmpty()) {
-                            $query->orWhereIn('id', $singleBidIds);
-                        } else {
-                            $query->whereIn('id', $singleBidIds);
-                        }
-                    }
-                })
-                ->orderByDesc('id')
-                ->get()
-                ->groupBy(fn ($bid) => filled($bid->order_no) ? (string) $bid->order_no : 'bid-' . $bid->id);
-
-        $bids->setCollection($bids->getCollection()->map(function ($group) use ($groupedBidRows) {
-            $key = (string) $group->group_key;
-            return (object) [
-                'group_key' => $key,
-                'latest_id' => $group->latest_id,
-                'item_count' => (int) $group->item_count,
-                'total_amount' => (float) $group->total_amount,
-                'bids' => $groupedBidRows->get($key, collect())->sortByDesc('id')->values(),
-            ];
-        }));
+        $gameBidStats = app(UserBidActivityService::class)->forUser($user);
 
         $walletStats = $user->completedTransactions()
             ->selectRaw("
@@ -147,16 +113,76 @@ class UserController extends Controller
             COALESCE(SUM(CAST(amount AS DECIMAL(15,2))), 0) as total_amount
         ")->first();
 
+        $bidTypeStats = $user->bids()
+            ->selectRaw("
+                COALESCE(SUM(CASE WHEN type = 'jodi' THEN 1 ELSE 0 END), 0) as jodi_count,
+                COALESCE(SUM(CASE WHEN type = 'haruf' THEN 1 ELSE 0 END), 0) as haruf_count,
+                COALESCE(SUM(CASE WHEN type = 'cross' THEN 1 ELSE 0 END), 0) as crossing_count,
+                COALESCE(SUM(CASE WHEN type = 'jodi' THEN amount ELSE 0 END), 0) as jodi_amount,
+                COALESCE(SUM(CASE WHEN type = 'haruf' THEN amount ELSE 0 END), 0) as haruf_amount,
+                COALESCE(SUM(CASE WHEN type = 'cross' THEN amount ELSE 0 END), 0) as crossing_amount
+            ")->first();
+
         return view('backend.users.show', [
             'pageName'     => 'User Details',
             'user'         => $user,
             'transactions' => $transactions,
-            'bids'         => $bids,
+            'gameBidStats' => $gameBidStats,
             'walletStats'  => $walletStats,
             'gameStats'    => $gameStats,
+            'bidTypeStats' => $bidTypeStats,
         ]);
     }
 
+
+    public function bids(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'order_no' => ['nullable', 'required_without:game_id', 'string', 'max:100'],
+            'game_id' => ['nullable', 'required_without:order_no', 'integer', 'exists:games,id'],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:200'],
+        ]);
+
+        // Scope by the route-bound user first; an order number from another
+        // account must never disclose its bids. Keep the previous game_id
+        // filter available for any existing Admin integrations.
+        $bidQuery = $user->bids()->with('game:id,name');
+        if (!empty($validated['order_no'])) {
+            $bidQuery->where('order_no', $validated['order_no']);
+        } else {
+            $bidQuery->where('game_id', $validated['game_id']);
+        }
+
+        $bids = $bidQuery
+            ->orderBy('id')
+            ->paginate($validated['per_page'] ?? 100)
+            ->withQueryString();
+
+        return response()->json([
+            'data' => $bids->getCollection()->map(fn ($bid) => [
+                'id' => $bid->id,
+                'order_no' => $bid->order_no,
+                'game_name' => $bid->game?->name ?? 'Game Deleted',
+                'game_date' => $bid->game_date ? \Illuminate\Support\Carbon::parse($bid->game_date)->format('d M Y') : '-',
+                'type' => $bid->type,
+                'number' => $bid->number,
+                'amount' => round((float) $bid->amount, 2),
+                'status' => $bid->status,
+                'winning_amount' => round((float) $bid->winning_amount, 2),
+                'created_at' => $bid->created_at?->timezone(config('app.timezone'))->format('d M Y, h:i A'),
+            ])->values(),
+            'pagination' => [
+                'current_page' => $bids->currentPage(),
+                'last_page' => $bids->lastPage(),
+                'total' => $bids->total(),
+                'total_amount' => round((float) $user->bids()
+                    ->when(!empty($validated['order_no']), fn ($query) => $query->where('order_no', $validated['order_no']))
+                    ->when(empty($validated['order_no']), fn ($query) => $query->where('game_id', $validated['game_id']))
+                    ->sum('amount'), 2),
+            ],
+        ]);
+    }
 
     public function edit(string $id)
     {

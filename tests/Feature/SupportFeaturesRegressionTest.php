@@ -69,7 +69,7 @@ class SupportFeaturesRegressionTest extends TestCase
             'question' => 'Khatauli-only test FAQ',
             'answer' => 'This must not leak across domains.',
             'platform' => 'both',
-            'site_key' => 'galisattakings',
+            'site_key' => 'play-online-khaiwal',
         ]);
 
         config(['sites.current_key' => 'galidisawar']);
@@ -81,7 +81,7 @@ class SupportFeaturesRegressionTest extends TestCase
     public function test_admin_site_cookie_is_resolved_before_route_binding(): void
     {
         $request = \Illuminate\Http\Request::create(
-            'https://galisattakings.com.com/admin/dashboard',
+            'https://playonlinekhaiwal.com/admin/dashboard',
             'GET',
             [],
             ['admin_site' => 'galidisawar']

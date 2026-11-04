@@ -1,32 +1,17 @@
-@extends('frontend.include.layout')
-
-@section('meta_title', ($mode === 'register' ? 'Create Community Account' : 'Community Sign In') . ' | ' . app(\App\Services\AppSettingsService::class)->value('title', config('app.name')))
-@section('meta_robots', 'noindex,follow')
-
+@extends('frontend.include.app')
+@section('title', ($mode === 'login' ? 'Member Login' : 'Create Member Account') . ' | ' . setting('title', 'Play Online Khaiwal'))
+@section('robots_content', 'noindex,follow')
 @section('content')
-<section class="section"><div class="" style="max-width:520px">
-    <div class="card shadow-sm"><div class="card-body p-4">
-        <h1 class="h3">{{ $mode === 'register' ? 'Create your account' : 'Sign in to the community' }}</h1>
-        <p class="text-body-secondary">Participate in moderated community discussions.</p>
-        <form method="POST" action="{{ $mode === 'register' ? route('community.register.submit') : route('community.login.submit') }}">
-            @csrf
-            @if ($mode === 'register')
-                <div class="mb-3"><label class="form-label" for="name">Name</label><input class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" minlength="2" maxlength="200" autocomplete="name" required>@error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-            @endif
-            <div class="mb-3"><label class="form-label" for="phone">Phone</label><input class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" inputmode="tel" autocomplete="tel" maxlength="15" required>@error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-            <div class="mb-3"><label class="form-label" for="password">Password</label><input class="form-control @error('password') is-invalid @enderror" id="password" name="password" type="password" autocomplete="{{ $mode === 'register' ? 'new-password' : 'current-password' }}" minlength="{{ $mode === 'register' ? 8 : 1 }}" maxlength="200" required>@error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-            @if ($mode === 'register')
-                <div class="mb-3"><label class="form-label" for="password_confirmation">Confirm password</label><input class="form-control" id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" minlength="8" maxlength="200" required></div>
-            @else
-                <div class="form-check mb-3"><input class="form-check-input" id="remember" name="remember" type="checkbox" value="1"><label class="form-check-label" for="remember">Remember me</label></div>
-            @endif
-            <button class="btn btn-primary w-100" type="submit">{{ $mode === 'register' ? 'Create account' : 'Sign in' }}</button>
-        </form>
-        <p class="mt-3 mb-0 small">@if ($mode === 'register')
-                Already have an account? <a href="{{ route('community.login') }}">Sign in</a>
-            @else
-                New here? <a href="{{ route('community.register') }}">Create an account</a>
-            @endif</p>
-    </div></div>
+<section class="page-banner page-banner--blue"><div class="wrap"><p class="eyebrow">MEMBER ACCESS</p><h1>{{ $mode === 'login' ? 'Sign in to the' : 'Join the' }} <span>community</span></h1><p>Use your existing member account. These credentials use the site's existing registered users.</p></div></section>
+<section class="section-block section-light"><div class="wrap community-form-wrap">
+<form class="community-form" method="POST" action="{{ $mode === 'login' ? route('community.login.submit') : route('community.register.submit') }}">@csrf
+@if ($mode === 'register')<label for="name">Display name</label><input id="name" name="name" type="text" maxlength="200" minlength="2" value="{{ old('name') }}" required>@error('name')<small class="community-error">{{ $message }}</small>@enderror @endif
+<label for="phone">Registered phone number</label><input id="phone" name="phone" type="tel" autocomplete="tel" value="{{ old('phone') }}" required>@error('phone')<small class="community-error">{{ $message }}</small>@enderror
+<label for="password">Password</label><input id="password" name="password" type="password" autocomplete="{{ $mode === 'login' ? 'current-password' : 'new-password' }}" minlength="{{ $mode === 'register' ? 8 : 1 }}" required>@error('password')<small class="community-error">{{ $message }}</small>@enderror
+@if ($mode === 'register')<label for="password_confirmation">Confirm password</label><input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" minlength="8" required>@endif
+@if ($mode === 'login')<label class="community-checkbox"><input type="checkbox" name="remember" value="1"> Remember me</label>@endif
+<button class="button button-gold" type="submit">{{ $mode === 'login' ? 'Sign in' : 'Create account' }} ↗</button>
+<p>{{ $mode === 'login' ? 'Need an account?' : 'Already registered?' }} <a href="{{ route($mode === 'login' ? 'community.register' : 'community.login') }}">{{ $mode === 'login' ? 'Register' : 'Sign in' }}</a></p>
+</form>
 </div></section>
 @endsection

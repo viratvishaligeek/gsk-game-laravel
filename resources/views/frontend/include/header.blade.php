@@ -1,60 +1,43 @@
 <header class="site-header">
-    <div class="ticker">
-        <div class="wrap ticker-inner">
-            <div class="ticker-track"><div class="ticker-move" data-ticker>
-                @if ($frontendResults->isNotEmpty())
-                    @foreach ([1, 2] as $tickerCopy)
-                        @foreach ($frontendResults as $gameResult)
-                            <span class="ticker-item" data-slug="{{ $gameResult['slug'] }}">
-                                <span class="ticker-name">{{ \Illuminate\Support\Str::upper($gameResult['name']) }}</span>
-                                <span class="muted">→</span>
-                                @if (($gameResult['today'] ?? '--') !== '--')
-                                    <span class="ticker-num">{{ $gameResult['today'] }}</span>
-                                @else
-                                    <span class="ticker-wait">{{ $gameResult['time'] ?? '—' }}</span>
-                                @endif
-                                <span class="muted">|</span>
-                            </span>
-                        @endforeach
-                    @endforeach
-                @else
-                    <span class="ticker-item">No active games configured</span>
-                @endif
-            </div></div>
-            <span class="ticker-date" data-ticker-date>{{ now()->timezone(config('app.timezone'))->format('l, d M Y') }}</span>
-        </div>
-    </div>
-    <div class="wrap header-row">
-        <a href="{{ route('index') }}" class="logo" aria-label="{{ $siteName }} Home">
-            <img src="{{ $siteLogo }}" alt="{{ $siteName }}" class="logo-img">  {{$siteName}}
-        </a>
-        <nav class="nav-desktop" aria-label="Main navigation">
-            <a href="{{ route('index') }}" class="{{ request()->routeIs('index') ? 'active' : '' }}">Home</a>
-            <a href="{{ route('charts.index') }}" class="{{ request()->routeIs('charts.*') ? 'active' : '' }}">Charts</a>
-            <a href="{{ route('information', ['page' => 'about']) }}" class="{{ request()->is('about') ? 'active' : '' }}">About</a>
-            <a href="{{ route('community.index') }}" class="{{ request()->routeIs('community.*') ? 'active' : '' }}">Community</a>
-            @if ($frontendResults->isNotEmpty())
-                <div class="drop">
-                    <button type="button" class="drop-btn">Games ▾</button>
-                    <div class="drop-menu">
-                        @foreach ($frontendResults as $gameResult)
-                            <a href="{{ route('frontend.market', ['slug' => $gameResult['slug']]) }}"><span>{{ $gameResult['name'] }}</span><span class="muted">{{ $gameResult['time'] }}</span></a>
-                        @endforeach
-                    </div>
-                </div>
+    <div class="header-main wrap">
+        <a class="brand" href="{{ route('index') }}" aria-label="{{ setting('title') }} home">
+            @if (filled(setting('site_logo')) && is_file(public_path('logos/' . basename(setting('site_logo')))))
+                <img class="brand-emblem" src="{{ asset('logos/' . basename(setting('site_logo'))) }}"
+                    alt="{{ setting('title') }}" loading="eager">
+            @else
+                <span class="brand-emblem">POK</span>
             @endif
-            @foreach ($navPages as $navPage)
-                <a href="{{ url('/pages/' . $navPage->slug) }}">{{ $navPage->name }}</a>
+            <span class="brand-word">{{ setting('title') }}<small>
+            </span>
+        </a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav"
+            data-menu-toggle><span></span><span></span><span></span><b class="sr-only">Toggle navigation</b></button>
+        <nav class="primary-nav" id="primary-nav" aria-label="Main navigation">
+            <a href="{{ route('index') }}">Home</a>
+            <a href="{{ route('index') }}#today-results">Results</a>
+            <a href="{{ route('index') }}#market-charts">Monthly charts</a>
+            <a href="{{ route('community.index') }}">Guessing</a>
+            <a href="{{ route('index') }}#records">Records</a>
+            @foreach ($navPages ?? collect() as $navPage)
+                <a href="{{ route('page', ['page' => $navPage->slug]) }}">{{ $navPage->name }}</a>
             @endforeach
         </nav>
     </div>
-    <nav class="nav-mobile" aria-label="Mobile navigation">
-        <a href="{{ route('index') }}" class="{{ request()->routeIs('index') ? 'active' : '' }}">Home</a>
-        <a href="{{ route('charts.index') }}" class="{{ request()->routeIs('charts.*') ? 'active' : '' }}">Charts</a>
-        <a href="{{ route('community.index') }}" class="{{ request()->routeIs('community.*') ? 'active' : '' }}">Community</a>
-        @if ($frontendResults->isNotEmpty())
-            <a href="{{ route('frontend.market', ['slug' => $frontendResults->first()['slug']]) }}">Results</a>
-        @endif
-        <a href="{{ route('information', ['page' => 'about']) }}">About</a>
-    </nav>
 </header>
+<div class="ticker" aria-label="Quick navigation ticker">
+    <span class="ticker-label">📢</span>
+    <div class="ticker-window">
+        <div class="ticker-track">
+            @if (filled(setting('web_marquee')))
+                @for ($tickerCopy = 0; $tickerCopy < 2; $tickerCopy++)
+                    <span>{{ setting('web_marquee') }}</span>
+                @endfor
+            @else
+                <span>Today's results</span><i>✦</i><span>Previous results</span><i>✦</i><span>Market
+                    schedules</span><i>✦</i><span>Historical charts</span><i>✦</i><span>Year-wise records</span><i>✦</i>
+                <span>Today's results</span><i>✦</i><span>Previous results</span><i>✦</i><span>Market
+                    schedules</span><i>✦</i><span>Historical charts</span><i>✦</i><span>Year-wise records</span>
+            @endif
+        </div>
+    </div>
+</div>

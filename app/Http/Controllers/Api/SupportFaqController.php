@@ -17,13 +17,11 @@ class SupportFaqController extends Controller
         ]);
         $platform = $validated['platform'] ?? 'web';
 
-        $siteKey = (string) config('sites.current_key', config('sites.default', 'galisattakings'));
+        $siteKey = (string) config('sites.current_key', config('sites.default', 'play-online-khaiwal'));
         $faqs = Cache::remember("support-faqs:{$siteKey}:{$platform}", now()->addMinutes(5), function () use ($platform) {
             return Faq::query()
-                ->where('is_active', true)
-                ->whereNull('page_slug')->whereNull('game_id')
                 ->whereIn('platform', [$platform, 'both'])
-                ->orderBy('sort_order')->orderBy('id')
+                ->orderBy('id')
                 ->get(['id', 'question', 'answer', 'platform'])
                 ->map(fn (Faq $faq) => [
                     'id' => $faq->id,

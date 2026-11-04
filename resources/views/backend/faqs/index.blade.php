@@ -34,14 +34,19 @@
                             <th>Question</th>
                             <th>Answer</th>
                             <th>Platform</th>
-                            <th>Visibility</th>
-                            <th>Scope</th>
-                            <th>Order</th>
                             <th>Created At</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tfoot><tr><th>Serial</th><th>Question</th><th>Answer</th><th>Platform</th><th>Visibility</th><th>Scope</th><th>Order</th><th>Created At</th><th>Actions</th></tr></tfoot>
+                    <tfoot>
+                        <tr>
+                            <th>Serial</th>
+                            <th>Question</th>
+                            <th>Answer</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </tfoot>
                     <tbody>
                         @foreach ($faqs as $faq)
                             <tr>
@@ -53,9 +58,6 @@
                                     <div class="small">{{ Str::limit($faq->answer, 80) }}</div>
                                 </td>
                                 <td><span class="badge bg-secondary">{{ strtoupper($faq->platform ?? 'both') }}</span></td>
-                                <td><span class="badge {{ $faq->is_active ? 'bg-success' : 'bg-secondary' }}">{{ $faq->is_active ? 'Active' : 'Inactive' }}</span></td>
-                                <td>{{ $faq->page_slug ?: ($faq->game_id ? ($faq->game?->name ?? 'Game') : 'Global') }}</td>
-                                <td>{{ $faq->sort_order ?? 0 }}</td>
                                 <td>{{ $faq->created_at ? $faq->created_at->format('d M Y') : 'N/A' }}</td>
                                 <td>
                                     <a class="btn btn-datatable btn-icon btn-transparent-dark me-1"
@@ -89,49 +91,5 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            document.addEventListener('click', function(event) {
-                const button = event.target.closest('.delete-faq-btn');
-
-                if (!button) {
-                    return;
-                }
-
-                event.preventDefault();
-
-                const faqId = button.dataset.id;
-                const deleteForm = document.getElementById('delete-form-' + faqId);
-
-                if (!deleteForm) {
-                    console.error('Delete form not found for FAQ:', faqId);
-                    return;
-                }
-
-                if (typeof Swal === 'undefined') {
-                    alert('SweetAlert2 failed to load. Please refresh the page.');
-                    return;
-                }
-
-                Swal.fire({
-                    title: 'Delete FAQ?',
-                    text: 'Are you sure you want to delete this FAQ?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#e74a3b',
-                    cancelButtonColor: '#858796',
-                    confirmButtonText: 'Yes, Delete!',
-                    cancelButtonText: 'Cancel',
-                    reverseButtons: true,
-                    focusCancel: true
-                }).then(function(result) {
-                    if (result.isConfirmed) {
-                        deleteForm.submit();
-                    }
-                });
-            });
-
-        });
-    </script>
+    
 @endsection

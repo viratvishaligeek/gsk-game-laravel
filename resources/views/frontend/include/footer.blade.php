@@ -1,96 +1,363 @@
-<footer class="site-footer">
-    <div class="text-center footer-games bg-light">
-        <p class="text-success fw-bold">Published Game Results</p>
-        <div class="footer-game-row">
-            @forelse ($frontendResults as $gameResult)
-                <a class="btn btn-outline-success btn-sm"
-                    href="{{ route('frontend.market', ['slug' => $gameResult['slug']]) }}"><span class="gold">▸</span>
-                    {{ $gameResult['name'] }} <span class="muted">({{ $gameResult['time'] }})</span></a>
-            @empty
-                <span class="muted">No active games are configured.</span>
-            @endforelse
-        </div>
-    </div>
-
-    <div class=" footer-main">
-        <div>
-            <a href="{{ route('index') }}" class="logo footer-logo"><img src="{{ $siteLogo }}"
-                    alt="{{ $siteName }}" class="logo-img"></a>
-            <p class="muted">{{ $siteDescription }}</p>
-            @if ($contactPhone !== '')
-                <p class="muted small">Contact: <a
-                        href="tel:{{ preg_replace('/[^0-9+]/', '', $contactPhone) }}">{{ $contactPhone }}</a></p>
-            @endif
-            @if ($contactEmail !== '')
-                <p class="muted small">Email: <a href="mailto:{{ $contactEmail }}">{{ $contactEmail }}</a></p>
-            @endif
-            <div class="d-flex flex-wrap gap-2">
-                @foreach (['Facebook' => $socialFacebook, 'WhatsApp' => $socialWhatsApp, 'Instagram' => $socialInstagram, 'YouTube' => $socialYouTube, 'Telegram' => $socialTelegram] as $socialName => $socialUrl)
-                    @if ($socialUrl !== '')
-                        <a href="{{ $socialUrl }}" target="_blank"
-                            rel="noopener noreferrer">{{ $socialName }}</a>
+@if (request()->routeIs('index'))
+    @include('frontend.partial.homepage-sections', [
+        'sections' => ($homepageSections ?? collect())->where('location', 'after_footer'),
+    ])
+@endif
+<footer class="site-footer bg-dark text-center text-light pt-5">
+    <div class="container">
+        <div class="row g-4 g-lg-5 pb-4">
+            <div class="col-lg-5 col-md-6">
+                <a class="d-inline-flex align-items-center gap-3 text-decoration-none text-white mb-3"
+                    href="{{ route('index') }}">
+                    @if (filled(setting('site_logo')) && is_file(public_path('logos/' . basename(setting('site_logo')))))
+                        <img src="{{ asset('logos/' . basename(setting('site_logo'))) }}" alt="{{ setting('title') }}"
+                            width="55" height="55" class="rounded-3 object-fit-contain" loading="lazy">
                     @endif
+                    <span class="fs-4 fw-bold">
+                        {{ setting('title') }}
+                        <small class="d-block text-secondary fs-6 fw-normal">
+                            {{ setting('site_tagline') }}
+                        </small>
+                    </span>
+                </a>
+                @if (filled(setting('footer_description')))
+                    <p class="text-white-50 lh-lg mb-4 footer-description">
+                        {{ setting('footer_description') }}
+                    </p>
+                @endif
+                <div class="d-flex flex-column gap-3">
+                    @if (filled(setting('email')))
+                        <a href="mailto:{{ setting('email') }}" class="footer-contact-link">
+                            <span class="footer-icon">✉</span>
+                            <span>{{ setting('email') }}</span>
+                        </a>
+                    @endif
+                    @if (filled(setting('contact_phone')))
+                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', setting('contact_phone')) }}"
+                            class="footer-contact-link">
+                            <span class="footer-icon">☎</span>
+                            <span>{{ setting('contact_phone') }}</span>
+                        </a>
+                    @endif
+                    @if (filled(setting('contact_address')))
+                        <div class="footer-contact-link">
+                            <span class="footer-icon">⌖</span>
+                            <span>{{ setting('contact_address') }}</span>
+                        </div>
+                    @endif
+                </div>
+                <div class="mt-4">
+                    <h6 class="fw-semibold mb-3">Follow Us</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach ([
+        'facebook' => 'Facebook',
+        'instagram' => 'Instagram',
+        'youtube' => 'YouTube',
+        'telegram' => 'Telegram',
+        'whatsapp' => 'WhatsApp',
+    ] as $socialKey => $socialLabel)
+                            @if (filled(setting('social_' . $socialKey)) &&
+                                    filter_var(setting('social_' . $socialKey), FILTER_VALIDATE_URL) &&
+                                    in_array(parse_url(setting('social_' . $socialKey), PHP_URL_SCHEME), ['http', 'https'], true))
+                                <a href="{{ setting('social_' . $socialKey) }}" target="_blank"
+                                    rel="noopener noreferrer" class="footer-social-link"
+                                    aria-label="{{ $socialLabel }}" title="{{ $socialLabel }}">
+                                    <i class="bi bi-{{ $socialKey }} fs-4"></i>
+                                    {{-- {{ $socialLabel }} --}}
+                                </a>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex-row flex-wrap gap-2">
+                <a class="btn btn-outline-light btn-sm" href="{{ route('index') }}#today-results">
+                    Today's Results
+                </a>
+                <a class="btn btn-outline-light btn-sm" href="{{ route('index') }}#markets">
+                    Market Board
+                </a>
+                <a class="btn btn-outline-light btn-sm" href="{{ route('index') }}#records">
+                    Old Records
+                </a>
+                <a class="btn btn-outline-light btn-sm" href="{{ route('index') }}#market-charts">
+                    Monthly Charts
+                </a>
+                @forelse ($navPages ?? collect() as $navPage)
+                    <a class="btn btn-outline-light btn-sm" href="{{ route('page', ['page' => $navPage->slug]) }}">
+                        {{ $navPage->name }}
+                    </a>
                 @endforeach
+                <a class="btn btn-outline-light btn-sm" target="_blank" href="{{ route('sitemap') }}">
+                    Sitemap
+                </a>
             </div>
         </div>
-        <div class="d-flex flex-row flex-wrap gap-2">
-            <a class="btn btn-outline-primary btn-sm" href="{{ route('index') }}">Home</a>
-            <a class="btn btn-outline-primary btn-sm" href="{{ route('charts.index') }}">Monthly charts</a>
-            <a class="btn btn-outline-primary btn-sm" href="{{ route('community.index') }}">Community discussions</a>
-            <a class="btn btn-outline-primary btn-sm" href="{{ route('information', ['page' => 'about']) }}">About</a>
-            <a class="btn btn-outline-primary btn-sm"
-                href="{{ route('information', ['page' => 'contact']) }}">Contact</a>
-            <a class="btn btn-outline-primary btn-sm" href="{{ route('information', ['page' => 'faq']) }}">FAQ</a>
-            <a class="btn btn-outline-primary btn-sm"
-                href="{{ route('information', ['page' => 'privacy-policy']) }}">Privacy policy</a>
-            <a class="btn btn-outline-primary btn-sm"
-                href="{{ route('information', ['page' => 'terms-and-conditions']) }}">Terms and conditions</a>
-            @foreach ($frontendResults as $gameResult)
-                <a class="btn btn-outline-primary btn-sm"
-                    href="{{ route('frontend.market', ['slug' => $gameResult['slug']]) }}"><span
-                        class="gold">▸</span>
-                    {{ $gameResult['name'] }} <span class="muted">{{ $gameResult['time'] }}</span></a>
-            @endforeach
-            <a class="btn btn-outline-primary btn-sm" target="_blank" href="{{ route('sitemap') }}">
-                Sitemap
-            </a>
-        </div>
-
     </div>
 
-    <div class="footer-bottom">
-        <div class="">
-            <p class="disclaimer"><strong>Disclaimer:</strong>
-                {{ app(\App\Services\AppSettingsService::class)->value('disclaimer_content', 'This website is for informational purposes only. Historical results are records, not predictions. Please follow applicable local laws.') }}
-            </p>
-            <p class="copy">&copy; {{ now()->year }}
-                {{ $copyrightText !== '' ? $copyrightText : $siteName . ' — All rights reserved.' }}</p>
+    {{-- Copyright --}}
+    <div class="footer-bottom border-top border-secondary">
+        <div class="container py-3">
+            <div class="row align-items-center g-2">
+                <div class="col-md-8 text-center text-md-start">
+                    <small class="text-white-50">
+                        {{ setting('copyright_text', '© ' . date('Y') . ' ' . setting('title')) }}
+                    </small>
+                </div>
+            </div>
         </div>
     </div>
 </footer>
-<button type="button" class="wa-float" data-wa-open aria-label="Open WhatsApp contact">
-    <span class="wa-pulse" aria-hidden="true"></span>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="32" height="32" fill="currentColor"
-        aria-hidden="true">
-        <path
-            d="M24 4C12.95 4 4 12.95 4 24c0 3.55.93 6.9 2.56 9.8L4 44l10.44-2.53A19.87 19.87 0 0 0 24 44c11.05 0 20-8.95 20-20S35.05 4 24 4zm0 36c-3.18 0-6.17-.87-8.73-2.38l-.62-.37-6.2 1.5 1.55-5.98-.4-.65A15.93 15.93 0 0 1 8 24c0-8.82 7.18-16 16-16s16 7.18 16 16-7.18 16-16 16zm8.73-11.9c-.48-.24-2.83-1.4-3.27-1.56-.44-.16-.76-.24-1.08.24-.32.48-1.24 1.56-1.52 1.88-.28.32-.56.36-1.04.12-.48-.24-2.02-.74-3.85-2.36-1.42-1.27-2.38-2.83-2.66-3.31-.28-.48-.03-.74.21-.98.22-.22.48-.56.72-.84.24-.28.32-.56.48-.8.16-.32.08-.6-.04-.84-.12-.24-1.08-2.6-1.48-3.56-.39-.93-.78-.8-1.08-.82-.28-.01-.6-.01-.92-.01-.32 0-.84.12-1.28.6-.44.48-1.68 1.64-1.68 4s1.72 4.64 1.96 4.96c.24.32 3.38 5.16 8.2 7.24 1.15.5 2.04.8 2.74 1.02 1.15.36 2.2.31 3.02.19.92-.14 2.83-1.16 3.23-2.28.4-1.12.4-2.08.28-2.28-.12-.2-.44-.32-.92-.56z" />
-    </svg>
+<button type="button" class="wa-float" data-bs-toggle="modal" data-bs-target="#whatsappContactModal"
+    aria-label="Open WhatsApp contact" aria-controls="whatsappContactModal">
+    <i class="bi bi-whatsapp fs-3" aria-hidden="true"></i>
 </button>
-<span class="wa-label" aria-hidden="true">WhatsApp</span>
-<div class="wa-modal" id="wa-modal">
-    <div class="wa-modal-card">
-        <div class="wa-modal-head"><strong>{{ $siteName }}</strong><button type="button" data-wa-close
-                aria-label="Close">×</button></div>
-        <div class="wa-modal-body">
-            @if ($socialWhatsApp !== '')
-                <a class="btn" href="{{ $socialWhatsApp }}" target="_blank" rel="noopener noreferrer">Contact on
-                    WhatsApp</a>
-            @elseif ($contactPhone !== '')
-                <a class="btn" href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $contactPhone) }}"
-                    target="_blank" rel="noopener noreferrer">Contact on WhatsApp</a>
-            @else
-                <p class="muted">The site administrator has not configured a WhatsApp contact yet.</p>
-            @endif
+<div class="modal fade" id="whatsappContactModal" tabindex="-1" aria-labelledby="whatsappContactModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 rounded-4 overflow-hidden shadow-lg">
+            <div class="modal-header bg-success text-white border-0 p-4">
+                <div class="d-flex align-items-center gap-3">
+                    <span
+                        class="d-inline-flex align-items-center justify-content-center rounded-circle bg-white text-success p-3 flex-shrink-0">
+                        <i class="bi bi-whatsapp fs-3" aria-hidden="true"></i>
+                    </span>
+                    <div>
+                        <h2 class="modal-title fs-5 fw-bold mb-1" id="whatsappContactModalLabel">Online Game Timing</h2>
+                        <p class="small mb-0 text-white">Chat with us on WhatsApp</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white ms-3" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="small text-uppercase fw-bold text-secondary mb-3">Game schedule</p>
+                <div class="list-group list-group-flush mb-4">
+                    <div class="list-group-item d-flex justify-content-between gap-3 px-0"><span>Delhi
+                            Bazaar</span><strong>03:15 PM</strong></div>
+                    <div class="list-group-item d-flex justify-content-between gap-3 px-0"><span>Shree
+                            Ganesh</span><strong>04:45 PM</strong></div>
+                    <div class="list-group-item d-flex justify-content-between gap-3 px-0">
+                        <span>Faridabad</span><strong>06:15 PM</strong>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between gap-3 px-0">
+                        <span>Ghaziabad</span><strong>10:00 PM</strong>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between gap-3 px-0">
+                        <span>Gali</span><strong>11:50 PM</strong>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between gap-3 px-0">
+                        <span>Disawar</span><strong>05:15 AM</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 p-4 pt-0">
+                <a class="btn btn-danger btn-md w-100 d-flex align-items-center justify-content-center gap-2"
+                    href="{{ setting('social_whatsapp') }}"
+                    target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-whatsapp" aria-hidden="true"></i>
+                    Game ki jaankaari k liye contact kare
+                </a>
+            </div>
         </div>
     </div>
 </div>
+<style>
+    .wa-float:hover {
+        transform: scale(1.1);
+    }
+
+    .wa-float {
+        position: fixed;
+        bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+        left: 20px;
+        z-index: 1040;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #25d366;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, .35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .wa-float:focus-visible {
+        outline: 3px solid #128c4a;
+        outline-offset: 4px;
+
+    }
+
+    @media (max-width: 575.98px) {
+        .wa-float {
+            left: 14px;
+            bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+            width: 54px;
+            height: 54px;
+
+        }
+    }
+
+    /* ==============================
+   Premium Bootstrap Footer
+================================ */
+
+    .site-footer {
+        background: #101827 !important;
+        color: #f8fafc;
+        overflow: hidden;
+    }
+
+    .site-footer .footer-description {
+        max-width: 450px;
+        font-size: 0.95rem;
+    }
+
+    .site-footer .footer-heading {
+        position: relative;
+        display: inline-block;
+        color: #ffffff;
+        font-size: 1.1rem;
+        font-weight: 700;
+        padding-bottom: 12px;
+    }
+
+    .site-footer .footer-heading::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 42px;
+        height: 3px;
+        border-radius: 10px;
+        background: #22c55e;
+    }
+
+    .site-footer .footer-contact-link {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        color: #cbd5e1;
+        text-decoration: none;
+        overflow-wrap: anywhere;
+        transition: color 0.25s ease;
+    }
+
+    .site-footer .footer-contact-link:hover {
+        color: #22c55e;
+    }
+
+    .site-footer .footer-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 36px;
+        width: 36px;
+        height: 36px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #4ade80;
+        font-size: 18px;
+    }
+
+    .site-footer .footer-nav-link {
+        position: relative;
+        display: inline-block;
+        color: #cbd5e1;
+        text-decoration: none;
+        transition: color 0.25s ease, transform 0.25s ease;
+    }
+
+    .site-footer .footer-nav-link::before {
+        content: "›";
+        margin-right: 10px;
+        color: #22c55e;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .site-footer .footer-nav-link:hover {
+        color: #4ade80;
+        transform: translateX(4px);
+    }
+
+    .site-footer .footer-social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 13px;
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.04);
+        color: #e2e8f0;
+        font-size: 0.82rem;
+        text-decoration: none;
+        transition: all 0.25s ease;
+    }
+
+    .site-footer .footer-social-link:hover {
+        background: #22c55e;
+        border-color: #22c55e;
+        color: #07130b;
+        transform: translateY(-3px);
+    }
+
+    .site-footer .footer-notice {
+        border: 1px solid rgba(250, 204, 21, 0.2);
+        background: rgba(250, 204, 21, 0.055);
+    }
+
+    .site-footer .footer-notice-icon {
+        color: #facc15;
+        font-size: 23px;
+        line-height: 1;
+    }
+
+    .site-footer .footer-bottom {
+        background: rgba(0, 0, 0, 0.18);
+    }
+
+    .site-footer .footer-bottom-link {
+        color: #cbd5e1;
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+
+    .site-footer .footer-bottom-link:hover {
+        color: #4ade80;
+    }
+
+    .site-footer a:focus-visible {
+        outline: 2px solid #4ade80;
+        outline-offset: 4px;
+    }
+
+    @media (max-width: 767.98px) {
+        .site-footer {
+            text-align: left;
+        }
+
+        .site-footer .footer-description {
+            max-width: 100%;
+        }
+
+        .site-footer .footer-social-link {
+            padding: 8px 10px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .site-footer *,
+        .site-footer *::before,
+        .site-footer *::after {
+            transition: none !important;
+            transform: none !important;
+        }
+    }
+</style>

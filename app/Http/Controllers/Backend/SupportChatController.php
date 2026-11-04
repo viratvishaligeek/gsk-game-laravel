@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Events\SupportMessageCreated;
 use App\Http\Controllers\Controller;
 use App\Models\SupportConversation;
+use App\Models\SupportConversationAdminRead;
 use App\Models\SupportMessage;
+use App\Models\User;
 use App\Services\NotificationService;
 use App\Services\ProjectStorage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Illuminate\Validation\ValidationException;
 
 class SupportChatController extends Controller
@@ -20,21 +23,155 @@ class SupportChatController extends Controller
         return view('backend.support-chat.index', compact('chatSoundEnabled'));
     }
 
-    public function conversations()
+    public function searchUsers(Request $request)
     {
+        $validated = $request->validate([
+            'q' => ['nullable', 'string', 'max:80'],
+        ]);
+        $term = trim((string) ($validated['q'] ?? ''));
+
+        if ($term === '') {
+            return response()->json(['data' => []]);
+        }
+
+        $users = User::query()
+            ->where(function ($query) use ($term) {
+                $query->where('phone', 'like', '%' . $term . '%')
+                    ->orWhere('name', 'like', '%' . $term . '%');
+                if (ctype_digit($term)) {
+                    $query->orWhereKey((int) $term);
+                }
+            })
+            ->orderBy('name')
+            ->limit(50)
+            ->get(['id', 'name', 'phone', 'status', 'live_status', 'live_last_seen_at']);
+
+        $adminId = (int) auth('admin')->id();
+        $conversations = SupportConversation::query()
+            ->with(['latestMessage:id,conversation_id,body,sender_type,created_at'])
+            ->whereIn('user_id', $users->pluck('id'))
+            ->withCount(['messages as unread_count' => function ($query) use ($adminId) {
+                $query->where('sender_type', 'user')->whereRaw(
+                    'id > COALESCE((SELECT last_read_message_id FROM support_conversation_admin_reads WHERE support_conversation_admin_reads.conversation_id = support_messages.conversation_id AND support_conversation_admin_reads.admin_id = ?), 0)',
+                    [$adminId]
+                );
+            }])
+            ->get(['id', 'user_id'])
+            ->keyBy('user_id');
+
         return response()->json([
+            'data' => $users->map(function (User $user) use ($conversations) {
+                $conversation = $conversations->get($user->id);
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'phone' => $user->phone,
+                    'status' => $user->status,
+                    'live_status' => $user->live_status ?? 'inactive',
+                    'live_last_seen_at' => $user->live_last_seen_at?->toIso8601String(),
+                    'conversation_id' => $conversation?->id,
+                    'has_conversation' => (bool) $conversation,
+                    'unread_count' => (int) ($conversation?->unread_count ?? 0),
+                    'last_message_preview' => $conversation?->latestMessage?->body
+                        ?: ($conversation?->latestMessage ? 'Attachment' : ''),
+                ];
+            })->values(),
+        ]);
+    }
+
+    public function startConversation(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => ['required', 'integer', 'min:1'],
+        ]);
+        $adminId = (int) auth('admin')->id();
+
+        try {
+            $conversation = DB::transaction(function () use ($validated, $adminId) {
+                // Lock the user row so simultaneous admin starts serialize before
+                // the unique support_conversations.user_id constraint is checked.
+                $user = User::query()->lockForUpdate()->findOrFail($validated['user_id']);
+
+                return SupportConversation::query()->firstOrCreate(
+                    ['user_id' => $user->id],
+                    ['assigned_admin_id' => $adminId]
+                );
+            });
+        } catch (\Illuminate\Database\QueryException $exception) {
+            // A player request can create the same conversation concurrently.
+            // Recover only when the unique row now exists; rethrow every other DB error.
+            if ($exception->getCode() !== '23000') {
+                throw $exception;
+            }
+
+            $conversation = SupportConversation::query()
+                ->where('user_id', $validated['user_id'])
+                ->first();
+
+            if (!$conversation) {
+                throw $exception;
+            }
+        }
+
+        $conversation->load('user:id,name,phone');
+
+        return response()->json([
+            'data' => [
+                'id' => $conversation->id,
+                'user' => $conversation->user?->only(['id', 'name', 'phone']),
+                'created' => $conversation->wasRecentlyCreated,
+            ],
+        ], $conversation->wasRecentlyCreated ? 201 : 200);
+    }
+
+    public function conversations(Request $request)
+    {
+        $adminId = (int) auth('admin')->id();
+        $validated = $request->validate([
+            'phone' => ['sometimes', 'nullable', 'string', 'max:30'],
+        ]);
+        $phone = trim((string) ($validated['phone'] ?? ''));
+
+        // Compute the per-admin unread total across every conversation. The
+        // list below remains bounded for the inbox UI, but the global badge
+        // must not silently omit older conversations beyond that page.
+        $readMarkers = SupportConversationAdminRead::query()
+            ->select(['conversation_id', 'last_read_message_id'])
+            ->where('admin_id', $adminId);
+
+        $totalUnread = SupportMessage::query()
+            ->leftJoinSub($readMarkers, 'admin_reads', function ($join) {
+                $join->on('admin_reads.conversation_id', '=', 'support_messages.conversation_id');
+            })
+            ->where('support_messages.sender_type', 'user')
+            ->whereRaw('support_messages.id > COALESCE(admin_reads.last_read_message_id, 0)')
+            ->count('support_messages.id');
+
+        return response()->json([
+            'meta' => ['total_unread_count' => (int) $totalUnread],
             'data' => SupportConversation::query()
-                ->with(['user:id,name,phone'])
-                ->withCount(['messages as unread_count' => fn ($q) => $q->where('sender_type', 'user')->whereNull('read_at')])
+                ->with(['user:id,name,phone,live_status,live_last_seen_at', 'latestMessage:id,conversation_id,body,sender_type,created_at'])
+                ->when($phone !== '', fn ($query) => $query->whereHas('user', fn ($userQuery) => $userQuery->where('phone', 'like', '%' . $phone . '%')))
+                ->withCount(['messages as unread_count' => function ($query) use ($adminId) {
+                    $query->where('sender_type', 'user')
+                        ->whereRaw(
+                            'id > COALESCE((SELECT last_read_message_id FROM support_conversation_admin_reads WHERE support_conversation_admin_reads.conversation_id = support_messages.conversation_id AND support_conversation_admin_reads.admin_id = ?), 0)',
+                            [$adminId]
+                        );
+                }])
                 ->withMax('messages', 'created_at')
                 ->orderByDesc('updated_at')
                 ->limit(500)
                 ->get()
                 ->map(fn ($conversation) => [
                     'id' => $conversation->id,
-                    'user' => $conversation->user?->only(['id', 'name', 'phone']),
+                    'user' => $conversation->user?->only(['id', 'name', 'phone', 'live_status', 'live_last_seen_at']),
                     'unread_count' => $conversation->unread_count,
                     'last_message_at' => $conversation->messages_max_created_at,
+                    'last_message_id' => $conversation->latestMessage?->id,
+                    'last_message_sender' => $conversation->latestMessage?->sender_type,
+                    'last_message_preview' => $conversation->latestMessage?->body
+                        ?: ($conversation->latestMessage ? 'Attachment' : ''),
                 ]),
         ]);
     }
@@ -42,8 +179,14 @@ class SupportChatController extends Controller
     public function messages(Request $request, SupportConversation $conversation)
     {
         $request->validate(['after_id' => ['sometimes', 'nullable', 'integer', 'min:0']]);
+        $adminId = (int) auth('admin')->id();
         $conversation->messages()->where('sender_type', 'user')->whereNull('read_at')->update(['read_at' => now()]);
-        $conversation->forceFill(['admin_last_read_at' => now(), 'assigned_admin_id' => auth('admin')->id()])->save();
+        $lastReadMessageId = (int) ($conversation->messages()->max('id') ?? 0);
+        SupportConversationAdminRead::query()->updateOrCreate(
+            ['conversation_id' => $conversation->id, 'admin_id' => $adminId],
+            ['last_read_message_id' => $lastReadMessageId, 'last_read_at' => now()]
+        );
+        $conversation->forceFill(['admin_last_read_at' => now(), 'assigned_admin_id' => $adminId])->save();
 
         return response()->json([
             'data' => $conversation->messages()
@@ -90,8 +233,12 @@ class SupportChatController extends Controller
             $data['media_mime'] = $file->getMimeType();
             $data['media_name'] = mb_substr($file->getClientOriginalName(), 0, 255);
         }
-        $message = $conversation->messages()->create($data);
-        $conversation->forceFill(['assigned_admin_id' => auth('admin')->id()])->touch();
+        $message = DB::transaction(function () use ($conversation, $data) {
+            $message = $conversation->messages()->create($data);
+            $conversation->forceFill(['assigned_admin_id' => auth('admin')->id()])->touch();
+            return $message;
+        });
+        SupportMessageCreated::dispatch($message->id);
 
         // Persist the reply in the user's notification history and attempt push delivery.
         if ($conversation->user) {

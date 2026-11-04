@@ -1,44 +1,100 @@
 @php
-    $seoSettings = app(\App\Services\AppSettingsService::class);
-    $siteName = trim((string) $seoSettings->value('title', config('app.name', 'Gali Satta Kings')));
-    $defaultTitle = trim((string) $seoSettings->value('meta_title', $siteName . ' | Results and Monthly Charts'));
-    $defaultDescription = trim((string) $seoSettings->value('meta_description', 'Browse published result records and historical monthly charts.'));
-    $pageTitle = trim((string) $__env->yieldContent('meta_title', request()->routeIs('index') ? $seoSettings->value('homepage_meta_title', $defaultTitle) : $defaultTitle));
-    $pageDescription = trim((string) $__env->yieldContent('meta_description', request()->routeIs('index') ? $seoSettings->value('homepage_meta_description', $defaultDescription) : $defaultDescription));
-    $pageKeywords = trim((string) $__env->yieldContent('meta_keywords', $seoSettings->value('meta_keywords', '')));
-    $configuredCanonicalBase = rtrim((string) $seoSettings->value('canonical_url', config('app.url', url('/'))), '/');
+    $canonicalBase = rtrim((string) setting('canonical_url', 'https://playonlinekhaiwal.com'), '/');
+    $defaultTitle = filled(setting('meta_title'))
+        ? setting('meta_title')
+        : (filled(setting('title'))
+            ? setting('title') . ' | Satta King Results & Monthly Charts'
+            : 'Play Online Khaiwal | Satta King Results & Monthly Charts');
+    $defaultDescription = filled(setting('meta_description'))
+        ? setting('meta_description')
+        : (filled(setting('site_description'))
+            ? setting('site_description')
+            : 'Browse Satta King results, Satta Matka market records, and game-wise monthly charts on Play Online Khaiwal.');
+    $siteName = filled(setting('title')) ? setting('title') : 'Play Online Khaiwal';
+    $sectionTitle = trim(strip_tags($__env->yieldContent('title', $defaultTitle)));
+    $sectionDescription = trim(strip_tags($__env->yieldContent('meta_description', $defaultDescription)));
+    $useGlobalSocialDefaults = request()->routeIs('index') && !request()->filled('year') && !request()->filled('month');
+    $ogTitle =
+        $useGlobalSocialDefaults && filled(setting('og_title'))
+            ? trim(strip_tags((string) setting('og_title')))
+            : $sectionTitle;
+    $ogDescription =
+        $useGlobalSocialDefaults && filled(setting('og_description'))
+            ? trim(strip_tags((string) setting('og_description')))
+            : $sectionDescription;
+    $metaImage = setting('og_image', setting('site_logo'));
     $canonicalPath = request()->getPathInfo();
-    $canonicalUrl = $configuredCanonicalBase . ($canonicalPath === '/' ? '/' : '/' . ltrim($canonicalPath, '/'));
-    $robotsDirective = trim((string) $__env->yieldContent('meta_robots', request()->query->count() ? 'noindex,follow' : $seoSettings->value('robots_default', 'index,follow')));
-    $ogImageName = trim((string) $seoSettings->value('og_image', ''));
-    $socialImage = $ogImageName !== '' ? asset('logos/' . basename($ogImageName)) : asset('frontend/images/og-image.png');
-    $ogTitle = request()->routeIs('index') && trim((string) $seoSettings->value('og_title', '')) !== '' ? trim((string) $seoSettings->value('og_title')) : ($pageTitle !== '' ? $pageTitle : $defaultTitle);
-    $ogDescription = request()->routeIs('index') && trim((string) $seoSettings->value('og_description', '')) !== '' ? trim((string) $seoSettings->value('og_description')) : ($pageDescription !== '' ? $pageDescription : $defaultDescription);
-    $ogType = trim((string) $__env->yieldContent('og_type', 'website'));
-    $twitterCard = in_array($seoSettings->value('twitter_card', 'summary_large_image'), ['summary', 'summary_large_image'], true) ? $seoSettings->value('twitter_card', 'summary_large_image') : 'summary_large_image';
-    $faviconName = trim((string) $seoSettings->value('site_favicon', ''));
-    $faviconUrl = $faviconName !== '' ? asset('logos/' . basename($faviconName)) : asset('frontend/images/favicon.png');
+    $canonicalUrl = $canonicalBase . ($canonicalPath === '/' ? '/' : $canonicalPath);
+    if (request()->routeIs('index')) {
+    } elseif ((int) request()->query('page', 1) > 1) {
+        $canonicalUrl .= '?' . http_build_query(['page' => (int) request()->query('page')]);
+    }
+    $safeSocialLinks = collect([
+        setting('social_facebook'),
+        setting('social_instagram'),
+        setting('social_youtube'),
+        setting('social_telegram'),
+        setting('social_whatsapp'),
+    ])
+        ->filter(
+            fn($url) => is_string($url) &&
+                filter_var($url, FILTER_VALIDATE_URL) &&
+                in_array(parse_url($url, PHP_URL_SCHEME), ['http', 'https'], true),
+        )
+        ->values()
+        ->all();
+    $organizationSchema = [
+        '@type' => 'Organization',
+        'name' => $siteName,
+        'url' => $canonicalBase . '/',
+        'description' => setting('site_description', $defaultDescription),
+        'sameAs' => $safeSocialLinks,
+    ];
+    $siteLogo = setting('site_logo');
+    if ($siteLogo && is_file(public_path('logos/' . basename($siteLogo)))) {
+        $organizationSchema['logo'] = $canonicalBase . '/logos/' . basename($siteLogo);
+    }
+    $siteSchema = [
+        '@context' => 'https://schema.org',
+        '@graph' => [
+            $organizationSchema,
+            [
+                '@type' => 'WebSite',
+                'name' => $siteName,
+                'url' => $canonicalBase . '/',
+                'inLanguage' => 'en',
+            ],
+        ],
+    ];
 @endphp
-@if (trim((string) $seoSettings->value('google_site_verification', '')) !== '')
-<meta name="google-site-verification" content="{{ trim((string) $seoSettings->value('google_site_verification')) }}">
-@endif
-<title>{{ $pageTitle !== '' ? $pageTitle : $defaultTitle }}</title>
-<meta name="description" content="{{ $pageDescription !== '' ? $pageDescription : $defaultDescription }}">
-@if ($pageKeywords !== '')
-<meta name="keywords" content="{{ $pageKeywords }}">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ $sectionTitle }}</title>
+<meta name="description" content="{{ $sectionDescription }}">
+@if (filled(setting('meta_keywords')) || filled(trim($__env->yieldContent('meta_keywords'))))
+    <meta name="keywords"
+        content="{{ trim(strip_tags($__env->yieldContent('meta_keywords', setting('meta_keywords', '')))) }}">
 @endif
 <link rel="canonical" href="{{ $canonicalUrl }}">
-<meta name="robots" content="{{ $robotsDirective }}">
+@if (filled(setting('site_favicon')) && is_file(public_path('logos/' . basename(setting('site_favicon')))))
+    <link rel="icon" href="{{ $canonicalBase . '/logos/' . basename(setting('site_favicon')) }}">
+@endif
+<meta name="theme-color" content="#071329">
+<meta property="og:type" content="website">
 <meta property="og:site_name" content="{{ $siteName }}">
 <meta property="og:title" content="{{ $ogTitle }}">
 <meta property="og:description" content="{{ $ogDescription }}">
 <meta property="og:url" content="{{ $canonicalUrl }}">
-<meta property="og:type" content="{{ $ogType }}">
-<meta property="og:image" content="{{ $socialImage }}">
-<meta name="twitter:card" content="{{ $twitterCard }}">
+@if ($metaImage && is_file(public_path('logos/' . basename($metaImage))))
+    <meta property="og:image" content="{{ $canonicalBase . '/logos/' . basename($metaImage) }}">
+@endif
+<meta name="twitter:card" content="{{ setting('twitter_card', 'summary_large_image') }}">
 <meta name="twitter:title" content="{{ $ogTitle }}">
 <meta name="twitter:description" content="{{ $ogDescription }}">
-<meta name="twitter:image" content="{{ $socialImage }}">
-<link rel="icon" type="image/png" href="{{ $faviconUrl }}">
-<link rel="shortcut icon" href="{{ $faviconUrl }}">
-<link rel="apple-touch-icon" href="{{ $faviconUrl }}">
+@if ($metaImage && is_file(public_path('logos/' . basename($metaImage))))
+    <meta name="twitter:image" content="{{ $canonicalBase . '/logos/' . basename($metaImage) }}">
+@endif
+<meta name="robots"
+    content="{{ trim(strip_tags($__env->yieldContent('robots_content', setting('robots_default', 'index,follow')))) }}">
+<script type="application/ld+json">@json($siteSchema, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)</script>
+@yield('structured_data')

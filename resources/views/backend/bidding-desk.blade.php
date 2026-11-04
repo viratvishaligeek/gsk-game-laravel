@@ -44,25 +44,44 @@
         <div id="emptyBox" class="alert alert-info border-0 shadow-sm rounded-4 d-none">
             Please select a game.
         </div>
-        <div id="jodiCrossingSection" class="card border-0 shadow-sm rounded-4 mb-4 d-none">
-            <div class="card-header bg-info text-white border-0 rounded-top-4 p-3">
+        <div id="betSummary" class="row g-2 mb-3 d-none">
+            <div class="col-12 col-md-4"><div class="summary-card h-100"><small>Jodi · <span id="summary-jodi-count">0</span> bets</small><strong id="summary-jodi-amount">₹0</strong><span class="small text-muted">Empty: <span id="summary-jodi-empty">0</span> numbers · ₹<span id="summary-jodi-empty-amount">0</span></span></div></div>
+            <div class="col-12 col-md-4"><div class="summary-card h-100"><small>Haruf · <span id="summary-haruf-count">0</span> bets</small><strong id="summary-haruf-amount">₹0</strong><span class="small text-muted">Empty: <span id="summary-haruf-empty">0</span> numbers · ₹<span id="summary-haruf-empty-amount">0</span></span></div></div>
+            <div class="col-12 col-md-4"><div class="summary-card h-100"><small>Crossing · <span id="summary-crossing-count">0</span> bets</small><strong id="summary-crossing-amount">₹0</strong><span class="small text-muted">Empty: <span id="summary-crossing-empty">0</span> numbers · ₹<span id="summary-crossing-empty-amount">0</span></span></div></div>
+        </div>
+        <div class="d-flex flex-wrap gap-3 small text-muted mb-3" aria-label="Investment legend">
+            <span><i class="d-inline-block rounded border me-1" style="width:10px;height:10px;background:#f8f9fa"></i>Unplayed</span>
+            <span><i class="d-inline-block rounded border me-1" style="width:10px;height:10px;background:#f8fbff;border-color:#b6d4fe!important"></i>Lower investment</span>
+            <span><i class="d-inline-block rounded border me-1" style="width:10px;height:10px;background:#fff5f5;border-color:#dc3545!important"></i>Higher investment</span>
+        </div>
+        <div id="jodiSection" class="card border-0 shadow-sm rounded-4 mb-4 d-none">
+            <div class="card-header bg-success text-white border-0 rounded-top-4 p-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h4 class="text-dark mb-0 fw-bold">
-                            🎯 Jodi + 🔀 Crossing
-                        </h4>
-                        <small class="text-dark">
-                            Jodi and Crossing combined
+                        <h2 class="text-light mb-0 fw-bold fs-2">
+                            🎯 Jodi
+                        </h2>
+                        <small class="text-light">
+                            Jodi · 00–99
                         </small>
                     </div>
-                    <span id="jodiCrossingTotal" class="badge bg-warning text-dark fs-6">
+                    <span id="jodiTotal" class="badge bg-warning text-light fs-4">
                         ₹0
                     </span>
                 </div>
             </div>
             <div class="card-body p-2">
-                <div id="jodiCrossingGrid" class="number-grid"></div>
+                <div id="jodiGrid" class="number-grid"></div>
             </div>
+        </div>
+        <div id="crossingSection" class="card border-0 shadow-sm rounded-4 mb-4 d-none">
+            <div class="card-header bg-info text-white border-0 rounded-top-4 p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div><h4 class="text-dark mb-0 fw-bold">🔀 Crossing</h4><small class="text-dark">Crossing · 00–99</small></div>
+                    <span id="crossingTotal" class="badge bg-warning text-dark fs-6">₹0</span>
+                </div>
+            </div>
+            <div class="card-body p-2"><div id="crossingGrid" class="number-grid"></div></div>
         </div>
         <div id="harufSection" class="card border-0 shadow-sm rounded-4 d-none">
             <div class="card-header bg-info text-white border-0 rounded-top-4 p-3">
@@ -101,13 +120,13 @@
             <div class="modal-content border-0 rounded-4 shadow-lg">
                 <div class="modal-header bg-dark text-white">
                     <div>
-                        <h5 class="modal-title fw-bold">
+                        <h5 class="modal-title text-white fw-bold">
                             Number:
                             <span id="modalNumber" class="text-warning">
                                 --
                             </span>
                         </h5>
-                        <small class="text-white-50">
+                        <small class="text-white">
                             Bidding details
                         </small>
                     </div>
@@ -146,12 +165,13 @@
                             </div>
                         </div>
                     </div>
+                    <div id="modalUserBreakdown" class="d-grid gap-3 mb-3"></div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-dark">
                                 <tr>
                                     <th>
-                                        #
+                                        Bid / Txn ID
                                     </th>
                                     <th>
                                         User
@@ -172,9 +192,6 @@
                                         Status
                                     </th>
                                     <th>
-                                        Order
-                                    </th>
-                                    <th>
                                         Time
                                     </th>
                                 </tr>
@@ -182,6 +199,9 @@
                             <tbody id="modalBidTable">
                             </tbody>
                         </table>
+                    </div>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="button" id="modalLoadMore" class="btn btn-outline-primary btn-sm d-none">Load more users</button>
                     </div>
                     <div id="modalEmpty" class="text-center text-muted py-4 d-none">
                         No bidding found.
@@ -225,6 +245,20 @@
             background: linear-gradient(135deg,
                     #fffdf2,
                     #fff8d9);
+        }
+        .number-card.empty-number {
+            border-style: dashed;
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+        .number-card.low-investment {
+            border-color: #b6d4fe;
+            background: #f8fbff;
+        }
+        .number-card.high-investment {
+            border-color: #dc3545;
+            background: #fff5f5;
+            box-shadow: inset 0 0 0 1px rgba(220, 53, 69, .08);
         }
 
         .number-value {
@@ -341,485 +375,581 @@
                 font-size: 9px;
             }
         }
+        .user-detail-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 6px;
+    border-bottom: 1px solid #dee2e6;
+    scrollbar-width: thin;
+}
+
+.user-detail-tabs .nav-link {
+    white-space: nowrap;
+    font-weight: 700;
+    font-size: 13px;
+    color: #495057;
+    border-radius: 10px 10px 0 0;
+    padding: 10px 16px;
+}
+
+.user-detail-tabs .nav-link.active {
+    background: #212529;
+    color: #fff;
+    border-color: #212529;
+}
+
+.user-detail-tabs .nav-link .badge {
+    margin-left: 5px;
+}
+
+.user-detail-content {
+    padding-top: 15px;
+}
+
+.user-detail-panel {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 15px;
+    background: #fff;
+}
+
     </style>
 @endsection
 
 @section('script')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const gameSelect =
-                document.getElementById('gameSelect');
-            const dateSelect =
-                document.getElementById('dateSelect');
-            const loadingBox =
-                document.getElementById('loadingBox');
-            const emptyBox =
-                document.getElementById('emptyBox');
-            const jodiCrossingSection =
-                document.getElementById(
-                    'jodiCrossingSection'
-                );
-            const harufSection =
-                document.getElementById(
-                    'harufSection'
-                );
-            const jodiCrossingGrid =
-                document.getElementById(
-                    'jodiCrossingGrid'
-                );
-            const anderGrid =
-                document.getElementById(
-                    'anderGrid'
-                );
-            const baharGrid =
-                document.getElementById(
-                    'baharGrid'
-                );
-            const modalElement =
-                document.getElementById(
-                    'bidDetailsModal'
-                );
-            const bidModal =
-                new bootstrap.Modal(
-                    modalElement
-                );
+        $(function () {
+            const $gameSelect = $('#gameSelect');
+            const $dateSelect = $('#dateSelect');
+            const $loadingBox = $('#loadingBox');
+            const $emptyBox = $('#emptyBox');
+            const $jodiSection = $('#jodiSection');
+            const $crossingSection = $('#crossingSection');
+            const $betSummary = $('#betSummary');
+            const $harufSection = $('#harufSection');
+            const $jodiGrid = $('#jodiGrid');
+            const $crossingGrid = $('#crossingGrid');
+            const $anderGrid = $('#anderGrid');
+            const $baharGrid = $('#baharGrid');
+            const $modalBidTable = $('#modalBidTable');
+            const $modalUserBreakdown = $('#modalUserBreakdown');
+            const $modalLoadMore = $('#modalLoadMore');
+            const bidModalElement = $('#bidDetailsModal').get(0);
+            if (!bidModalElement || !window.bootstrap) return;
+
+            const bidModal = bootstrap.Modal.getOrCreateInstance(bidModalElement);
+            const dataEndpoint = @json(route('admin.bidding-desk.data'));
+            const detailsEndpoint = @json(route('admin.bidding-desk.details'));
+            let activeDetails = null;
+            let dataRequest = null;
+            let detailsRequest = null;
+
+            const money = value => Number(value || 0).toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            const setVisible = ($element, visible) => $element.toggleClass('d-none', !visible);
+            const getJson = (url, data) => $.ajax({
+                url,
+                method: 'GET',
+                data,
+                dataType: 'json',
+                headers: {
+                    Accept: 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
             async function loadBiddingData() {
-                const gameId =
-                    gameSelect.value;
-                const date =
-                    dateSelect.value;
+                const gameId = $gameSelect.val();
+                const date = $dateSelect.val();
+
+                if (dataRequest) dataRequest.abort();
                 if (!gameId) {
-                    jodiCrossingSection
-                        .classList
-                        .add('d-none');
-                    harufSection
-                        .classList
-                        .add('d-none');
-                    emptyBox
-                        .classList
-                        .remove('d-none');
+                    setVisible($jodiSection, false);
+                    setVisible($crossingSection, false);
+                    setVisible($betSummary, false);
+                    setVisible($harufSection, false);
+                    setVisible($emptyBox, true);
                     return;
                 }
-                emptyBox
-                    .classList
-                    .add('d-none');
-                loadingBox
-                    .classList
-                    .remove('d-none');
-                jodiCrossingSection
-                    .classList
-                    .add('d-none');
-                harufSection
-                    .classList
-                    .add('d-none');
+
+                setVisible($emptyBox, false);
+                setVisible($loadingBox, true);
+                setVisible($jodiSection, false);
+                setVisible($crossingSection, false);
+                setVisible($betSummary, false);
+                setVisible($harufSection, false);
+
+                const request = getJson(dataEndpoint, { game_id: gameId, date });
+                dataRequest = request;
                 try {
-                    const params =
-                        new URLSearchParams({
-                            game_id: gameId,
-                            date: date,
-                        });
-                    const response =
-                        await fetch(
-                            `{{ route('admin.bidding-desk.data') }}?${params.toString()}`, {
-                                headers: {
-                                    'Accept': 'application/json',
-                                    'X-Requested-With': 'XMLHttpRequest',
-                                }
-                            }
-                        );
-                    const result =
-                        await response.json();
-                    if (!response.ok) {
-                        throw new Error(
-                            result.message ||
-                            'Unable to load data.'
-                        );
+                    const result = await request;
+                    if (!result?.success && !result?.status) {
+                        throw new Error(result?.message || 'Unable to load data.');
                     }
-                    renderJodiCrossing(
-                        result.data.jodi_crossing
-                    );
-                    renderHaruf(
-                        result.data.haruf
-                    );
-                    jodiCrossingSection
-                        .classList
-                        .remove('d-none');
-                    harufSection
-                        .classList
-                        .remove('d-none');
+                    const payload = result.data || {};
+                    renderNumberGrid($jodiGrid, payload.jodi, 'jodi', 'jodiTotal');
+                    renderNumberGrid($crossingGrid, payload.crossing, 'cross', 'crossingTotal');
+                    renderHaruf(payload.haruf || { ander: [], bahar: [] });
+                    renderBetSummary(payload.summary || {});
+                    setVisible($betSummary, true);
+                    setVisible($jodiSection, true);
+                    setVisible($crossingSection, true);
+                    setVisible($harufSection, true);
                 } catch (error) {
+                    if (error.statusText === 'abort') return;
                     console.error(error);
-                    alert(
-                        error.message ||
-                        'Unable to load bidding data.'
-                    );
+                    window.alert(error.responseJSON?.message || error.message || 'Unable to load bidding data.');
                 } finally {
-                    loadingBox
-                        .classList
-                        .add('d-none');
+                    if (dataRequest === request) {
+                        dataRequest = null;
+                        setVisible($loadingBox, false);
+                    }
                 }
             }
 
-            function renderJodiCrossing(numbers) {
-                jodiCrossingGrid.innerHTML = '';
-                let grandTotal = 0;
-                numbers.forEach(item => {
-                    grandTotal +=
-                        Number(
-                            item.total_amount || 0
-                        );
-                    const card =
-                        document.createElement('div');
-                    card.className =
-                        'number-card' +
-                        (
-                            item.total_bids > 0 ?
-                            ' has-bet' :
-                            ''
-                        );
-                    card.innerHTML = `
-                    <div class="number-value">
-                    ${escapeHtml(item.number)}
-                </div>
-                <div class="number-amount">
-                    ₹${formatMoney(item.total_amount)}
-                </div>
-                <div class="number-meta">
-                    ${item.total_users} users
-                    ·
-                    ${item.total_bids} bets
-                </div>
-                `;
-                    card.addEventListener(
-                        'click',
-                        () => openDetails(
-                            item.number
-                        )
-                    );
-                    jodiCrossingGrid
-                        .appendChild(card);
+            function renderNumberGrid($container, numbers, type, totalId) {
+                $container.empty();
+                const items = Array.isArray(numbers) ? numbers : [];
+                const grandTotal = items.reduce((sum, item) => sum + Number(item.total_amount || 0), 0);
+                const invested = items.map(item => Number(item.total_amount || 0))
+                    .filter(amount => amount > 0)
+                    .sort((a, b) => a - b);
+                const highThreshold = invested.length
+                    ? invested[Math.max(0, Math.ceil(invested.length * 0.75) - 1)]
+                    : 0;
+
+                items.forEach(item => {
+                    const amount = Number(item.total_amount || 0);
+                    const investmentClass = amount <= 0
+                        ? ' empty-number'
+                        : amount >= highThreshold && highThreshold > 0
+                            ? ' high-investment'
+                            : ' low-investment';
+                    const $card = $('<button>', {
+                        type: 'button',
+                        class: 'number-card text-start' + (Number(item.total_bids) > 0 ? ' has-bet' : '') + investmentClass,
+                        'aria-label': type + ' ' + item.number + ', ' + item.total_bids + ' bets'
+                    });
+                    $card.append($('<div>', { class: 'number-value' }).text(item.number));
+                    $card.append($('<div>', { class: 'number-amount' }).text('₹' + money(item.total_amount)));
+                    $card.append($('<div>', { class: 'number-meta' }).text(
+                        Number(item.total_users || 0) + ' users · ' + Number(item.total_bids || 0) + ' bets'
+                    ));
+                    $card.on('click', () => openDetails(item.number, type));
+                    $container.append($card);
                 });
-                document.getElementById(
-                        'jodiCrossingTotal'
-                    ).textContent =
-                    '₹' + formatMoney(grandTotal);
+
+                $('#' + totalId).text('₹' + money(grandTotal));
+            }
+
+            function renderBetSummary(summary) {
+                ['jodi', 'haruf', 'crossing'].forEach(type => {
+                    const item = summary[type] || {};
+                    $('#summary-' + type + '-count').text(Number(item.total_bets || 0).toLocaleString('en-IN'));
+                    $('#summary-' + type + '-amount').text('₹' + money(item.total_amount));
+                    $('#summary-' + type + '-empty').text(Number(item.unplayed_numbers || 0));
+                    $('#summary-' + type + '-empty-amount').text(money(item.unplayed_amount || 0));
+                });
             }
 
             function renderHaruf(haruf) {
-                renderHarufGrid(
-                    anderGrid,
-                    haruf.ander,
-                    'ander'
-                );
-                renderHarufGrid(
-                    baharGrid,
-                    haruf.bahar,
-                    'bahar'
-                );
-                const anderTotal =
-                    haruf.ander.reduce(
-                        (sum, item) =>
-                        sum +
-                        Number(
-                            item.total_amount || 0
-                        ),
-                        0
-                    );
-                const baharTotal =
-                    haruf.bahar.reduce(
-                        (sum, item) =>
-                        sum +
-                        Number(
-                            item.total_amount || 0
-                        ),
-                        0
-                    );
-                document.getElementById(
-                        'anderTotal'
-                    ).textContent =
-                    '₹' + formatMoney(anderTotal);
-                document.getElementById(
-                        'baharTotal'
-                    ).textContent =
-                    '₹' + formatMoney(baharTotal);
+                renderHarufGrid($anderGrid, haruf.ander || [], 'ander');
+                renderHarufGrid($baharGrid, haruf.bahar || [], 'bahar');
+                const anderTotal = (haruf.ander || []).reduce((sum, item) => sum + Number(item.total_amount || 0), 0);
+                const baharTotal = (haruf.bahar || []).reduce((sum, item) => sum + Number(item.total_amount || 0), 0);
+                $('#anderTotal').text('₹' + money(anderTotal));
+                $('#baharTotal').text('₹' + money(baharTotal));
             }
 
-            function renderHarufGrid(
-                container,
-                numbers,
-                side
-            ) {
-                container.innerHTML = '';
+            function renderHarufGrid($container, numbers, side) {
+                $container.empty();
                 numbers.forEach(item => {
-                    const fullNumber =
-                        side + '-' + item.number;
-                    const card =
-                        document.createElement('div');
-                    card.className =
-                        'number-card' +
-                        (
-                            item.total_bids > 0 ?
-                            ' has-bet' :
-                            ''
-                        );
-                    card.innerHTML = `
-                    <div class="number-value">
-                    ${escapeHtml(item.number)}
-                </div>
-                <div class="number-amount">
-                    ₹${formatMoney(item.total_amount)}
-                </div>
-                <div class="number-meta">
-                    ${item.total_users} users
-                    ·
-                    ${item.total_bids} bets
-                </div>
-                `;
-                    card.addEventListener(
-                        'click',
-                        () => openDetails(
-                            fullNumber
-                        )
-                    );
-                    container.appendChild(card);
+                    const fullNumber = side + '-' + item.number;
+                    const $card = $('<button>', {
+                        type: 'button',
+                        class: 'number-card text-start' + (Number(item.total_bids) > 0 ? ' has-bet' : ''),
+                        'aria-label': side + ' ' + item.number + ', ' + item.total_bids + ' bets'
+                    });
+                    $card.append($('<div>', { class: 'number-value' }).text(item.number));
+                    $card.append($('<div>', { class: 'number-amount' }).text('₹' + money(item.total_amount)));
+                    $card.append($('<div>', { class: 'number-meta' }).text(
+                        Number(item.total_users || 0) + ' users · ' + Number(item.total_bids || 0) + ' bets'
+                    ));
+                    $card.on('click', () => openDetails(fullNumber, 'haruf'));
+                    $container.append($card);
                 });
             }
 
-            async function openDetails(number) {
-                const gameId =
-                    gameSelect.value;
-                const date =
-                    dateSelect.value;
-                if (!gameId) {
-                    return;
-                }
-                document.getElementById(
-                    'modalNumber'
-                ).textContent = number;
-                document.getElementById(
-                    'modalBidTable'
-                ).innerHTML = `
-                <tr>
-            <td
-                    colspan="9"
-                    class="text-center py-5"
-                >
-                    <div class="spinner-border text-warning"></div>
-                        <div class="mt-2 text-muted">
-                        Loading...
-                    </div>
-                    </td>
-                    </tr>
-                        `;
-                document.getElementById(
-                    'modalEmpty'
-                ).classList.add('d-none');
+            async function openDetails(number, type = 'jodi') {
+                if (!$gameSelect.val()) return;
+                if (detailsRequest) detailsRequest.abort();
+                activeDetails = { number, type, page: 1, lastPage: 1 };
+                $('#modalNumber').text(number);
+                $modalBidTable.empty();
+                $modalUserBreakdown.empty();
+                setVisible($('#modalEmpty'), false);
+                setVisible($modalLoadMore, false);
                 bidModal.show();
+                await loadDetailsPage(1, false);
+            }
+
+            async function loadDetailsPage(page, append) {
+                if (!activeDetails) return;
+                if (detailsRequest) detailsRequest.abort();
+                $modalLoadMore.prop('disabled', true);
+
+                if (!append) {
+                    $modalBidTable.html('<tr><td colspan="9" class="text-center py-5"><div class="spinner-border text-warning"></div><div class="mt-2 text-muted">Loading...</div></td></tr>');
+                }
+
+                const request = getJson(detailsEndpoint, {
+                    game_id: $gameSelect.val(),
+                    date: $dateSelect.val(),
+                    number: activeDetails.number,
+                    type: activeDetails.type,
+                    page,
+                    per_page: 50
+                });
+                detailsRequest = request;
+
                 try {
-                    const params =
-                        new URLSearchParams({
-                            game_id: gameId,
-                            date: date,
-                            number: number,
-                        });
-                    const response =
-                        await fetch(
-                            `{{ route('admin.bidding-desk.details') }}?${params.toString()}`, {
-                                headers: {
-                                    'Accept': 'application/json',
-                                    'X-Requested-With': 'XMLHttpRequest',
-                                }
-                            }
-                        );
-                    const result =
-                        await response.json();
-                    if (!response.ok) {
-                        throw new Error(
-                            result.message ||
-                            'Unable to load details.'
-                        );
+                    const result = await request;
+                    if (!result?.success && !result?.status) {
+                        throw new Error(result?.message || 'Unable to load details.');
                     }
-                    renderModalDetails(
-                        result.data
-                    );
+                    const payload = result.data || {};
+                    activeDetails.page = Number(payload.pagination?.current_page || page);
+                    activeDetails.lastPage = Number(payload.pagination?.last_page || 1);
+                    renderModalDetails(payload, append);
+                    setVisible($modalLoadMore, activeDetails.page < activeDetails.lastPage);
                 } catch (error) {
-                    console.error(error);
-                    document.getElementById(
-                        'modalBidTable'
-                    ).innerHTML = `
-                    <tr>
-                    <td
-                        colspan="9"
-                        class="text-center text-danger py-4"
-                    >
-                        ${escapeHtml(
-                            error.message ||
-                            'Unable to load details.'
-                        )}
-                    </td>
-                    </tr>
-                    `;
+                    if (error.statusText === 'abort') return;
+                    if (!append) $modalBidTable.empty();
+                    const $row = $('<tr>');
+                    $row.append($('<td>', { colspan: 9, class: 'text-center text-danger py-4' })
+                        .text(error.responseJSON?.message || error.message || 'Unable to load details.'));
+                    $modalBidTable.append($row);
+                } finally {
+                    if (detailsRequest === request) detailsRequest = null;
+                    $modalLoadMore.prop('disabled', false);
                 }
             }
 
-            function renderModalDetails(data) {
-                document.getElementById(
-                        'modalTotalBids'
-                    ).textContent =
-                    data.summary.total_bids;
-                document.getElementById(
-                        'modalTotalUsers'
-                    ).textContent =
-                    data.summary.total_users;
-                document.getElementById(
-                        'modalTotalAmount'
-                    ).textContent =
-                    '₹' +
-                    formatMoney(
-                        data.summary.total_amount
-                    );
-                const tbody =
-                    document.getElementById(
-                        'modalBidTable'
-                    );
-                tbody.innerHTML = '';
-                if (!data.bids.length) {
-                    document.getElementById(
-                        'modalEmpty'
-                    ).classList.remove('d-none');
-                    return;
-                }
-                data.bids.forEach(
-                    (bid, index) => {
-                        const tr =
-                            document.createElement('tr');
-                        const typeBadge =
-                            bid.type === 'jodi' ?
-                            `<span class="badge bg-warning text-dark type-badge">Jodi</span>` :
-                            bid.type === 'cross' ?
-                            `<span class="badge bg-dark type-badge">Crossing</span>` :
-                            `<span class="badge bg-primary type-badge">Haruf</span>`;
-                        tr.innerHTML = `
-    <td>
-                        ${index + 1}
-                    </td>
-                        <td>
-                    <div class="fw-bold">
-                            ${escapeHtml(
-                                bid.user_name
-                            )}
-                        </div>
-                        <small class="text-muted">
-                            ID: ${bid.user_id}
-                        </small>
-                            </td>
-                        <td>
-                        ${escapeHtml(
-                            bid.user_phone
-                        )}
-                    </td>
-                        <td>
-                        ${typeBadge}
-                    </td>
-                        <td class="fw-bold">
-                        ${escapeHtml(
-                            bid.number
-                        )}
-                    </td>
-                        <td class="fw-bold text-success">
-                        ₹${formatMoney(
-                            bid.amount
-                        )}
-                    </td>
-                        <td>
-                        ${statusBadge(
-                            bid.status
-                        )}
-                    </td>
-                        <td>
-                        <small class="fw-semibold">
-                            ${escapeHtml(
-                                bid.order_no
-                            )}
-                        </small>
-                    </td>
-                        <td>
-                        <small class="text-muted">
-                            ${escapeHtml(
-                                bid.created_at || '-'
-                            )}
-                        </small>
-                    </td>
-                    `;
-                        tbody.appendChild(tr);
-                    }
-                );
-            }
 
-            function formatMoney(amount) {
-                return Number(
-                    amount || 0
-                ).toLocaleString(
-                    'en-IN', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                    }
-                );
-            }
+function renderModalDetails(data, append = false) {
+    const summary = data.summary || {};
 
-            function statusBadge(status) {
-                const value =
-                    String(
-                        status || 'pending'
-                    ).toLowerCase();
-                let color = 'secondary';
-                if (value === 'pending') {
-                    color = 'warning text-dark';
-                }
-                if (value === 'won') {
-                    color = 'success';
-                }
-                if (value === 'lost') {
-                    color = 'danger';
-                }
-                if (value === 'cancelled') {
-                    color = 'dark';
-                }
-                return `
-            <span class="badge bg-${color} type-badge">
-                ${escapeHtml(status || '-')}
-            </span>
-        `;
-            }
+    $('#modalTotalBids').text(summary.total_bids || 0);
+    $('#modalTotalUsers').text(summary.total_users || 0);
+    $('#modalTotalAmount').text('₹' + money(summary.total_amount));
 
-            function escapeHtml(value) {
-                return String(
-                        value ?? ''
-                    )
-                    .replaceAll('&', '&amp;')
-                    .replaceAll('<', '&lt;')
-                    .replaceAll('>', '&gt;')
-                    .replaceAll('"', '&quot;')
-                    .replaceAll("'", '&#039;');
-            }
+    // User tabs and content containers
+    if (!append) {
+        $modalUserBreakdown.empty();
 
-            gameSelect.addEventListener(
-                'change',
-                loadBiddingData
+        $modalUserBreakdown.append(
+            $('<ul>', {
+                class: 'nav nav-tabs user-detail-tabs',
+                id: 'userDetailTabs',
+                role: 'tablist'
+            })
+        );
+
+        $modalUserBreakdown.append(
+            $('<div>', {
+                class: 'tab-content user-detail-content',
+                id: 'userDetailTabContent'
+            })
+        );
+    }
+
+    const $tabs = $('#userDetailTabs');
+    const $tabContent = $('#userDetailTabContent');
+
+    (data.users || []).forEach((user, index) => {
+
+        const userId = String(user.user_id);
+        const tabId = 'user-tab-' + userId;
+        const paneId = 'user-pane-' + userId;
+
+        // Avoid duplicate tabs while loading more pages
+        if ($('#' + tabId).length) return;
+
+        const isActive = $tabs.children().length === 0;
+
+        // User tab
+        const $tabItem = $('<li>', {
+            class: 'nav-item',
+            role: 'presentation'
+        });
+
+        const $tabButton = $('<button>', {
+            type: 'button',
+            class: 'nav-link' + (isActive ? ' active' : ''),
+            id: tabId,
+            'data-bs-toggle': 'tab',
+            'data-bs-target': '#' + paneId,
+            role: 'tab',
+            'aria-controls': paneId,
+            'aria-selected': isActive ? 'true' : 'false'
+        });
+
+        $tabButton.append(
+            $('<span>').text(user.user_name || ('User #' + user.user_id))
+        );
+
+        $tabButton.append(
+            $('<span>', {
+                class: 'badge bg-warning text-dark'
+            }).text((user.matching_bids || []).length)
+        );
+
+        $tabItem.append($tabButton);
+        $tabs.append($tabItem);
+
+        // User tab content
+        const $pane = $('<div>', {
+            class: 'tab-pane fade' + (isActive ? ' show active' : ''),
+            id: paneId,
+            role: 'tabpanel',
+            'aria-labelledby': tabId,
+            tabindex: '0'
+        });
+
+        const $card = $('<div>', {
+            class: 'user-detail-panel'
+        });
+
+        // User identity
+        const $heading = $('<div>', {
+            class: 'd-flex flex-wrap justify-content-between gap-2 mb-3'
+        });
+
+        const $identity = $('<div>');
+
+        $identity.append(
+            $('<h6>', {
+                class: 'fw-bold mb-1'
+            }).text(user.user_name || ('User #' + user.user_id))
+        );
+
+        $identity.append(
+            $('<div>', {
+                class: 'small text-muted'
+            }).text(
+                'User #' + user.user_id +
+                ' · ' + (user.user_phone || '-')
+            )
+        );
+
+        $heading.append($identity);
+
+        $heading.append(
+            $('<span>', {
+                class: 'badge bg-warning text-dark align-self-start p-2'
+            }).text(
+                (user.matching_bids || []).length + ' Matching Bids'
+            )
+        );
+
+        $card.append($heading);
+
+        // User numbers
+        $card.append(
+            $('<div>', {
+                class: 'fw-bold small mb-2'
+            }).text('User Numbers')
+        );
+
+        const $numbers = $('<div>', {
+            class: 'd-flex flex-wrap gap-2 mb-3'
+        });
+
+        (user.numbers || []).forEach(number => {
+
+            const selected =
+                String(number.number) === String(data.number);
+
+            $numbers.append(
+                $('<span>', {
+                    class: 'badge ' +
+                        (selected
+                            ? 'bg-warning text-dark'
+                            : 'bg-light text-dark border') +
+                        ' p-2'
+                }).text(
+                    number.number +
+                    ' · ' + number.total_bids +
+                    ' × ₹' + money(number.total_amount)
+                )
             );
-            dateSelect.addEventListener(
-                'change',
-                loadBiddingData
+        });
+
+        $card.append($numbers);
+
+        // Matching bids
+        const $bidHeading = $('<div>', {
+            class: 'fw-bold small mb-2'
+        }).text('Matching Bid Details');
+
+        $card.append($bidHeading);
+
+        const $bidList = $('<div>', {
+            class: 'd-grid gap-2'
+        });
+
+        (user.matching_bids || []).forEach(bid => {
+
+            const $bidRow = $('<div>', {
+                class: 'd-flex flex-wrap justify-content-between align-items-center gap-2 border rounded-3 p-2'
+            });
+
+            const transactionText = bid.transaction_ids?.length
+                ? ' · Txn #' + bid.transaction_ids.join(', #')
+                : '';
+
+            const $bidInfo = $('<div>');
+
+            $bidInfo.append(
+                $('<div>', {
+                    class: 'fw-semibold small'
+                }).text('Bid #' + bid.id + transactionText)
             );
 
-            // Default game select first game
-            if (gameSelect.options.length > 1) {
-                gameSelect.selectedIndex = 1;
-                loadBiddingData();
+            $bidInfo.append(
+                $('<div>', {
+                    class: 'small text-muted'
+                }).text(bid.created_at || '-')
+            );
+
+            $bidRow.append($bidInfo);
+
+            $bidRow.append(
+                $('<strong>', {
+                    class: 'text-success'
+                }).text('₹' + money(bid.amount))
+            );
+
+            $bidList.append($bidRow);
+        });
+
+        $card.append($bidList);
+
+        $pane.append($card);
+        $tabContent.append($pane);
+    });
+
+    // Existing bids table remains unchanged
+    if (!append) $modalBidTable.empty();
+
+    if (!Number(summary.total_bids || 0)) {
+        setVisible($('#modalEmpty'), true);
+        return;
+    }
+
+    setVisible($('#modalEmpty'), false);
+
+    (data.bids || []).forEach(bid => {
+
+        const $row = $('<tr>');
+
+        const bidLabel = 'Bid #' + bid.id +
+            (bid.transaction_id ? ' · Txn #' + bid.transaction_id : '');
+
+        const $type = $('<span>', {
+            class: 'badge type-badge ' +
+                (bid.type === 'jodi'
+                    ? 'bg-warning text-dark'
+                    : bid.type === 'cross'
+                        ? 'bg-dark'
+                        : 'bg-primary')
+        }).text(
+            bid.type === 'jodi'
+                ? 'Jodi'
+                : bid.type === 'cross'
+                    ? 'Crossing'
+                    : 'Haruf'
+        );
+
+        const status = String(bid.status || 'pending').toLowerCase();
+
+        const statusClass = status === 'pending'
+            ? 'bg-warning text-dark'
+            : status === 'won'
+                ? 'bg-success'
+                : status === 'lost'
+                    ? 'bg-danger'
+                    : status === 'cancelled'
+                        ? 'bg-dark'
+                        : 'bg-secondary';
+
+        const $status = $('<span>', {
+            class: 'badge ' + statusClass + ' type-badge'
+        }).text(bid.status || '-');
+
+        $row.append($('<td>').text(bidLabel));
+
+        const $userCell = $('<td>');
+
+        $userCell.append(
+            $('<div>', {
+                class: 'fw-bold'
+            }).text(bid.user_name || '')
+        );
+
+        $userCell.append(
+            $('<small>', {
+                class: 'text-muted'
+            }).text('ID: ' + bid.user_id)
+        );
+
+        $row.append($userCell);
+        $row.append($('<td>').text(bid.user_phone || ''));
+        $row.append($('<td>').append($type));
+
+        $row.append(
+            $('<td>', {
+                class: 'fw-bold'
+            }).text(bid.number || '')
+        );
+
+        $row.append(
+            $('<td>', {
+                class: 'fw-bold text-success'
+            }).text('₹' + money(bid.amount))
+        );
+
+        $row.append($('<td>').append($status));
+
+        $row.append(
+            $('<td>').append(
+                $('<small>', {
+                    class: 'text-muted'
+                }).text(bid.created_at || '-')
+            )
+        );
+
+        $modalBidTable.append($row);
+    });
+}
+
+
+            $modalLoadMore.on('click', function () {
+                if (activeDetails && activeDetails.page < activeDetails.lastPage) {
+                    void loadDetailsPage(activeDetails.page + 1, true);
+                }
+            });
+            $gameSelect.add($dateSelect).on('change', loadBiddingData);
+
+            if ($gameSelect.find('option').length > 1) {
+                $gameSelect.prop('selectedIndex', 1);
+                void loadBiddingData();
             } else {
-                emptyBox
-                    .classList
-                    .remove('d-none');
+                setVisible($emptyBox, true);
             }
         });
     </script>

@@ -75,7 +75,7 @@ class GameController extends Controller
         });
 
         $resultDates = $gameDates
-            ->flatMap(fn(array $dates) => array_values($dates))
+            ->flatMap(fn (array $dates) => array_values($dates))
             ->unique()
             ->values();
 
@@ -289,8 +289,6 @@ class GameController extends Controller
                 'id',
                 'name',
                 'image',
-                'destinationUrl',
-                'app_screen'
             ])
             ->map(function ($banner) {
                 return [
@@ -299,9 +297,6 @@ class GameController extends Controller
                     'title' => $banner->name,
                     'image' => $banner->image,
                     'image_url' => $banner->image_url ?? $banner->image,
-                    'destinationUrl' => $banner->destinationUrl,
-                    'app_screen' => $banner->app_screen
-
                 ];
             })
             ->values();

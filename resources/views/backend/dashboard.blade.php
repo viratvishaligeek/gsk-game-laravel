@@ -18,7 +18,23 @@
                 </div>
             </div>
         </a>
-        {{-- Games --}}
+        {{-- Games
+        <a href="{{ route('admin.games.index') }}" class="col-lg-3 col-sm-6 col-6 col-xl-3 mb-2">
+            <div class="card bg-white text-black h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="me-3">
+                            <div class="text-dark small fw-bold">Games</div>
+                            <div class="text-lg fw-bold">
+                                {{ number_format($totalGames) }}
+                            </div>
+                        </div>
+                        <i class="feather-xl text-danger" data-feather="play-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </a> --}}
+        {{-- Result --}}
         <a href="{{ route('admin.results.index') }}" class="col-lg-3 col-sm-6 col-6 col-xl-3 mb-2">
             <div class="card bg-white text-black h-100">
                 <div class="card-body">
@@ -170,26 +186,26 @@
                     </tfoot>
                     <tbody>
                         @foreach ($totalUserTable as $tableUser)
-                        <tr>
-                            <td>
-                                {{ $tableUser['user_name'] }}
-                            </td>
-                            <td>
-                                {{ $tableUser['total_added'] }}
-                            </td>
-                            <td>
-                                {{ $tableUser['total_bet'] }}
-                            </td>
-                            <td>
-                                {{ $tableUser['total_win'] }}
-                            </td>
-                            <td>
-                                {{ $tableUser['total_withdrawal'] }}
-                            </td>
-                            <td>
-                                {{ $tableUser['playing_period'] }}
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>
+                                    {{ $tableUser['user_name'] }}
+                                </td>
+                                <td>
+                                    {{ $tableUser['total_added'] }}
+                                </td>
+                                <td>
+                                    {{ $tableUser['total_bet'] }}
+                                </td>
+                                <td>
+                                    {{ $tableUser['total_win'] }}
+                                </td>
+                                <td>
+                                    {{ $tableUser['total_withdrawal'] }}
+                                </td>
+                                <td>
+                                    {{ $tableUser['playing_period'] }}
+                                </td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
@@ -281,14 +297,12 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr>
-                                <td colspan="7" class="text-center text-muted py-4">
-                                    No winners found for today.
-                                </td>
-                            </tr>
                         @endforelse
                     </tbody>
                 </table>
+                @if ($todayWinners->isEmpty())
+                    <div class="text-center text-muted py-4" role="status">No winners found for today.</div>
+                @endif
             </div>
         </div>
     </div>
@@ -299,25 +313,60 @@
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
         crossorigin="anonymous"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const userTable =
-                document.getElementById('totalUserTable');
-            if (userTable && typeof simpleDatatables !== 'undefined') {
-                new simpleDatatables.DataTable(userTable, {
-                    searchable: true,
-                    perPage: 10,
-                    perPageSelect: [10, 25, 50]
+        $(function() {
+            const initializeTable = function($table) {
+                if (
+                    !$table.length ||
+                    typeof simpleDatatables === 'undefined' ||
+                    $table.data('simpleDatatablesInitialized')
+                ) {
+                    return;
+                }
+
+                const headerCount = $table.find('thead tr:first-child th').length;
+
+                if (!headerCount) {
+                    console.warn('Dashboard table has no header:', $table.attr('id'));
+                    return;
+                }
+
+                const invalidRow = $table.find('tbody tr').toArray().some(function(row) {
+                    const $cells = $(row).children('th, td');
+
+                    return (
+                        $cells.length !== headerCount ||
+                        $cells.is('[colspan], [rowspan]')
+                    );
                 });
-            }
-            const table =
-                document.getElementById('datatablesSimple');
-            if (table && typeof simpleDatatables !== 'undefined') {
-                new simpleDatatables.DataTable(table, {
-                    searchable: true,
-                    perPage: 10,
-                    perPageSelect: [10, 25, 50]
-                });
-            }
+
+                if (invalidRow) {
+                    console.error(
+                        'Dashboard table has inconsistent columns:',
+                        $table.attr('id')
+                    );
+                    return;
+                }
+
+                try {
+                    new simpleDatatables.DataTable($table.get(0), {
+                        searchable: true,
+                        perPage: 10,
+                        perPageSelect: [10, 25, 50]
+                    });
+
+                    $table.data('simpleDatatablesInitialized', true);
+
+                } catch (error) {
+                    console.error(
+                        'Table initialization failed:',
+                        $table.attr('id'),
+                        error
+                    );
+                }
+            };
+
+            initializeTable($('#totalUserTable'));
+            initializeTable($('#datatablesSimple'));
         });
     </script>
 @endsection

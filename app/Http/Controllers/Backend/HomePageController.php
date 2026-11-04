@@ -71,7 +71,7 @@ class HomePageController extends Controller
         $homePage = HomePage::findOrFail($id);
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'content' => ['required', 'string',],
+            'content' => ['nullable', 'string',],
             'status' => ['required', 'in:active,inactive',],
             'location' => ['required', 'string', 'max:255',],
             'whatsapp' => ['nullable', 'string', 'max:255',],

@@ -1,69 +1,188 @@
-@extends('frontend.include.layout')
-
-@section('meta_title', $game->name . ' Result & Monthly Chart | ' . app(\App\Services\AppSettingsService::class)->value('title', config('app.name')))
-@section('meta_description', 'Browse stored result records and monthly chart for ' . $game->name . '.')
-@section('meta_robots', request()->query->count() ? 'noindex,follow' : 'index,follow')
-
+@extends('frontend.include.app')
+@section('title',
+    $game->name .
+    ' ' .
+    $monthLabel .
+    ' Satta King Result Chart | ' .
+    setting(
+    'title',
+    'Play Online
+    Khaiwal',
+    ))
+@section('meta_description',
+    'Browse saved date-wise Satta King results for ' .
+    $game->name .
+    ' in ' .
+    $monthLabel .
+    '.
+    Choose a month and year to load that market\'s records.')
+@section('meta_keywords', $game->name . ', Satta King result, monthly result chart')
+@section('robots_content', request()->query->count() > 0 ? 'noindex,follow' : setting('robots_default', 'index,follow'))
 @section('content')
-<section class="section">
-    <div class="">
-        <div class="center mb-4">
-            <h1>{{ $game->name }} Result & Monthly Chart</h1>
-            <p class="muted">Historical records shown here come from the site's published results.</p>
-        </div>
-        <form class="card mb-4" method="GET" action="{{ route('frontend.market', ['slug' => $game->slug]) }}">
-            <div class="card-body"><div class="row g-3 align-items-end">
-                <div class="col-6 col-md-4"><label class="form-label" for="year">Year</label><select class="form-select" id="year" name="year">@foreach ($availableYears as $availableYear)<option value="{{ $availableYear }}" @selected($year === $availableYear)>{{ $availableYear }}</option>@endforeach</select></div>
-                <div class="col-6 col-md-4"><label class="form-label" for="month">Month</label><select class="form-select" id="month" name="month">@foreach (range(1,12) as $monthNumber)@if ($year < $currentYear || $monthNumber <= $currentMonth)<option value="{{ $monthNumber }}" @selected($month === $monthNumber)>{{ \Carbon\Carbon::create()->month($monthNumber)->format('F') }}</option>@endif @endforeach</select></div>
-                <div class="col-12 col-md-4 d-grid"><button class="btn btn-primary" type="submit">Show month</button></div>
-            </div></div>
-        </form>
-        <h2 class="h4 mb-3">{{ $monthLabel }}</h2>
-        <div class="table-scroll"><table class="chart-table">
-            <thead><tr><th class="wk-h">Date</th><th>Result</th><th>Status</th></tr></thead>
-            <tbody>
-                @forelse ($results as $row)
-                    <tr><td class="wk">{{ $row['date']->format('d M Y') }}</td><td>{{ $row['number'] ?? '—' }}</td><td>{{ $row['status'] === 'published' ? 'Published' : ($row['status'] === 'upcoming' ? 'Upcoming' : 'Not published') }}</td></tr>
-                @empty
-                    <tr><td colspan="3">No dates are available for this month.</td></tr>
-                @endforelse
-            </tbody>
-        </table></div>
-        <p class="muted small mt-3">A dash means no result is published for that date.</p>
-        <p class="mt-4"><a class="btn" href="{{ route('charts.index', ['game_id' => $game->id, 'year' => $year, 'month' => $month]) }}">Open interactive charts</a></p>
-        @if ($faqs->isNotEmpty())
-            <section class="faq mt-5"><h2 class="h4">{{ $game->name }} FAQs</h2>
-                @foreach ($faqs as $faq)<details><summary>{{ $faq->question }}</summary><p class="muted">{{ $faq->answer }}</p></details>@endforeach
-            </section>
-        @endif
-    </div>
-</section>
-@endsection
 
-@push('schema')
-    @php
-        $homeCanonical = rtrim((string) app(\App\Services\AppSettingsService::class)->value('canonical_url', config('app.url', url('/'))), '/') . '/';
-        $marketCanonical = rtrim($homeCanonical, '/') . '/result/' . $game->slug;
-        $marketSchema = [
-            '@context' => 'https://schema.org',
-            '@graph' => [
-                ['@type' => 'WebPage', 'name' => $game->name . ' Result & Monthly Chart', 'url' => $marketCanonical, 'description' => 'Historical result records and monthly chart for ' . $game->name . '.'],
-                ['@type' => 'BreadcrumbList', 'itemListElement' => [
-                    ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => $homeCanonical],
-                    ['@type' => 'ListItem', 'position' => 2, 'name' => $game->name, 'item' => $marketCanonical],
-                ]],
-            ],
-        ];
-        if ($faqs->isNotEmpty()) {
-            $marketSchema['@graph'][] = [
-                '@type' => 'FAQPage',
-                'mainEntity' => $faqs->map(fn ($faq) => [
-                    '@type' => 'Question',
-                    'name' => strip_tags((string) $faq->question),
-                    'acceptedAnswer' => ['@type' => 'Answer', 'text' => strip_tags((string) $faq->answer)],
-                ])->values()->all(),
-            ];
-        }
-    @endphp
-    <script type="application/ld+json">{!! json_encode($marketSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
-@endpush
+    <section class="page-banner page-banner--blue">
+        <div class="wrap">
+            <div class="breadcrumbs"><a href="{{ route('index') }}">Home</a><span>/</span><a
+                    href="{{ route('index') }}#markets">Markets</a><span>/</span><b>{{ $game->name }}</b></div>
+            <p class="eyebrow">GAME RESULT</p>
+            <h1>{{ $game->name }} <br> <span>{{ $monthLabel }}</span></h1>
+            <p>Monthly results are loaded from saved records. Missing values are shown as a dash.</p>
+        </div>
+    </section>
+    <section class="section-block section-light">
+        <div class="wrap">
+            <div class="page-toolbar result-month-toolbar">
+                <form method="GET" action="{{ route('frontend.market', ['slug' => $game->slug]) }}"
+                    class="monthly-chart-filter result-month-filter" data-result-filter
+                    data-endpoint="{{ route('frontend.chart') }}">
+                    <input type="hidden" data-csrf-token value="{{ csrf_token() }}">
+                    <label for="result-year">Year</label>
+                    <select class="form-select" id="result-year" name="year" data-result-year>
+                        @foreach ($availableYears as $yearOption)
+                            <option value="{{ $yearOption }}" {{ (int) $yearOption === (int) $year ? 'selected' : '' }}>
+                                {{ $yearOption }}</option>
+                        @endforeach
+                    </select>
+                    <label for="result-month">Month</label>
+                    <select class="form-select" id="result-month" name="month" data-result-month>
+                        @for ($monthOption = 1; $monthOption <= 12; $monthOption++)
+                            <option value="{{ $monthOption }}" {{ $monthOption === (int) $month ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::createFromDate($year, $monthOption, 1, config('app.timezone'))->translatedFormat('F') }}
+                            </option>
+                        @endfor
+                    </select>
+                </form>
+            </div>
+            <p class="result-fetch-status" data-result-status role="status" aria-live="polite" hidden></p>
+            <div class="empty-state" data-result-empty
+                {{ $results->contains(fn(array $row) => $row['status'] === 'published') ? 'hidden' : '' }}>
+                <b>No published results for this month.</b>
+                <p>Choose another month or year to review saved records.</p>
+            </div>
+            <div class="table-shell light-table result-table-compact">
+                <table class="quick-record-table monthly-result-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">{{ $game->name }}</th>
+                        </tr>
+                    </thead>
+
+                    <tbody data-result-body>
+                        @foreach ($results as $entry)
+                            <tr data-result-row="{{ $entry['date']->day }}">
+                                <th scope="row" style="text-align: center; font-weight:bold">
+                                    {{ $entry['date']->format('d') }}
+                                </th>
+                                <td data-result-cell>
+                                    {{ $entry['number'] ?? '—' }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </section>
+@endsection
+@section('script')
+    <script>
+        (function() {
+            const form = document.querySelector('[data-result-filter]');
+            if (!form) return;
+            const yearSelect = form.querySelector('[data-result-year]');
+            const monthSelect = form.querySelector('[data-result-month]');
+            const csrf = form.querySelector('[data-csrf-token]').value;
+            const status = document.querySelector('[data-result-status]');
+            const empty = document.querySelector('[data-result-empty]');
+            const tbody = document.querySelector('[data-result-body]');
+            const monthLabel = document.querySelector('[data-month-label]');
+            let activeController = null;
+            let requestNumber = 0;
+
+            function setStatus(message, isError) {
+                status.hidden = !message;
+                status.textContent = message || '';
+                status.classList.toggle('is-error', Boolean(isError));
+            }
+
+            async function loadResults() {
+                const thisRequest = ++requestNumber;
+                if (activeController) activeController.abort();
+                activeController = new AbortController();
+                setStatus('Loading results…', false);
+                form.setAttribute('aria-busy', 'true');
+
+                try {
+                    const response = await fetch(form.dataset.endpoint, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        signal: activeController.signal,
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrf,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({
+                            slug: @json($game->slug),
+                            year: yearSelect.value,
+                            month: monthSelect.value
+                        })
+                    });
+                    let payload = {};
+                    try {
+                        payload = await response.json();
+                        console.log(payload);
+                    } catch (parseError) {
+                        payload = {};
+                    }
+                    if (thisRequest !== requestNumber) return;
+                    if (!response.ok) throw new Error(payload.message ||
+                        'Unable to load results. Please choose a valid month and year.');
+
+                    tbody.replaceChildren();
+                    let hasPublished = false;
+                    payload.days.forEach(function(day) {
+                        const row = document.createElement('tr');
+                        row.dataset.resultRow = String(day.day);
+                        const dateCell = document.createElement('th');
+                        dateCell.scope = 'row';
+                        dateCell.style = 'text-align:center';
+                        dateCell.textContent = String(day.day).padStart(2, '0');
+                        const resultCell = document.createElement('td');
+                        resultCell.dataset.resultCell = '';
+                        resultCell.style = 'font-weight:bold';
+
+                        resultCell.textContent = day.result === null ? '—' : String(day.result);
+                        if (day.result !== null) hasPublished = true;
+                        row.append(dateCell, resultCell);
+                        tbody.appendChild(row);
+                    });
+                    // monthLabel.textContent = payload.month_label;
+                    empty.hidden = hasPublished;
+                    setStatus(hasPublished ? 'Results updated.' : 'No published results for this month.', false);
+                } catch (error) {
+                    if (error.name === 'AbortError' || thisRequest !== requestNumber) return;
+                    setStatus(error.message || 'A network error occurred. Please try again.', true);
+                } finally {
+                    if (thisRequest === requestNumber) form.removeAttribute('aria-busy');
+                }
+            }
+
+            yearSelect.addEventListener('change', function() {
+                const currentYear = @json($currentYear);
+                const currentMonth = @json($currentMonth);
+                if (Number(yearSelect.value) === currentYear && Number(monthSelect.value) > currentMonth) {
+                    monthSelect.value = String(currentMonth);
+                }
+                loadResults();
+            });
+            monthSelect.addEventListener('change', loadResults);
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                loadResults();
+            });
+        })();
+    </script>
+@endsection

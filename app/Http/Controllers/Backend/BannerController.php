@@ -32,8 +32,6 @@ class BannerController extends Controller
             'name'   => ['required', 'string', 'max:255'],
             'image'  => ['required', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:15360'],
             'status' => ['required', 'in:active,inactive'],
-            'destinationUrl' => ['nullable'],
-            'app_screen' => ['in:top,bottom'],
         ]);
 
         if ($request->hasFile('image')) {
@@ -58,8 +56,6 @@ class BannerController extends Controller
             'name'   => ['required', 'string', 'max:255'],
             'image'  => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:4096'],
             'status' => ['required', 'in:active,inactive'],
-            'destinationUrl' => ['nullable'],
-            'app_screen' => ['in:top,bottom'],
         ]);
 
         $oldImage = $banner->image;

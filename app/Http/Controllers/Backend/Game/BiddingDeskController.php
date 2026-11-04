@@ -7,9 +7,13 @@ use App\Models\Bid;
 use App\Models\Game;
 use App\Models\WalletRequest;
 use App\Models\Winner;
+use App\Services\Admin\BiddingDeskProfitLossReportService;
+use App\Models\Transaction;
+use App\Services\BidAnalyticsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class BiddingDeskController extends Controller
 {
@@ -21,111 +25,23 @@ class BiddingDeskController extends Controller
         return view('backend.bidding-desk', compact('games'));
     }
 
+    public function __construct(private readonly BidAnalyticsService $bidAnalytics)
+    {
+    }
+
     public function data(Request $request)
     {
         $validated = $request->validate([
             'game_id' => ['required', 'integer', 'exists:games,id'],
-            'date' => ['nullable', 'date'],
+            'date' => ['nullable', 'date_format:Y-m-d'],
         ]);
-        $gameId = $validated['game_id'];
-        $game = Game::query()->findOrFail($gameId);
 
-        $date = $validated['date']
-            ?? $game->businessDate();
+        $game = Game::query()->findOrFail($validated['game_id']);
+        $date = $validated['date'] ?? $game->businessDate();
 
-        $jodiCrossing = Bid::query()
-            ->where('game_id', $gameId)
-            ->where('game_date', $date)
-            ->whereIn('type', ['jodi', 'cross'])
-            ->select([
-                'number',
-                DB::raw('COUNT(*) as total_bids'),
-                DB::raw('COUNT(DISTINCT user_id) as total_users'),
-                DB::raw('SUM(amount) as total_amount'),
-            ])
-            ->groupBy('number')
-            ->get()
-            ->keyBy('number');
-        $jodiCrossingNumbers = [];
-        for ($i = 0; $i <= 99; $i++) {
-            $number = str_pad(
-                (string) $i,
-                2,
-                '0',
-                STR_PAD_LEFT
-            );
-            $row = $jodiCrossing->get($number);
-            $jodiCrossingNumbers[] = [
-                'number' => $number,
-                'total_bids' => $row
-                    ? (int) $row->total_bids
-                    : 0,
-                'total_users' => $row
-                    ? (int) $row->total_users
-                    : 0,
-                'total_amount' => $row
-                    ? round((float) $row->total_amount, 2)
-                    : 0,
-            ];
-        }
-        $haruf = Bid::query()
-            ->where('game_id', $gameId)
-            ->where('game_date', $date)
-            ->where('type', 'haruf')
-            ->select([
-                'number',
-                DB::raw('COUNT(*) as total_bids'),
-                DB::raw('COUNT(DISTINCT user_id) as total_users'),
-                DB::raw('SUM(amount) as total_amount'),
-            ])
-            ->groupBy('number')
-            ->get()
-            ->keyBy('number');
-        $ander = [];
-        for ($i = 0; $i <= 9; $i++) {
-            $number = 'ander-' . $i;
-            $row = $haruf->get($number);
-            $ander[] = [
-                'number' => (string) $i,
-                'total_bids' => $row
-                    ? (int) $row->total_bids
-                    : 0,
-                'total_users' => $row
-                    ? (int) $row->total_users
-                    : 0,
-                'total_amount' => $row
-                    ? round((float) $row->total_amount, 2)
-                    : 0,
-            ];
-        }
-        $bahar = [];
-        for ($i = 0; $i <= 9; $i++) {
-            $number = 'bahar-' . $i;
-            $row = $haruf->get($number);
-            $bahar[] = [
-                'number' => (string) $i,
-                'total_bids' => $row
-                    ? (int) $row->total_bids
-                    : 0,
-                'total_users' => $row
-                    ? (int) $row->total_users
-                    : 0,
-                'total_amount' => $row
-                    ? round((float) $row->total_amount, 2)
-                    : 0,
-            ];
-        }
         return response()->json([
             'success' => true,
-            'data' => [
-                'game_id' => $gameId,
-                'date' => $date,
-                'jodi_crossing' => $jodiCrossingNumbers,
-                'haruf' => [
-                    'ander' => $ander,
-                    'bahar' => $bahar,
-                ],
-            ],
+            'data' => $this->bidAnalytics->distribution($game, $date),
         ]);
     }
 
@@ -133,174 +49,70 @@ class BiddingDeskController extends Controller
     {
         $validated = $request->validate([
             'game_id' => ['required', 'integer', 'exists:games,id'],
-            'date' => ['required', 'date'],
+            'date' => ['required', 'date_format:Y-m-d'],
             'number' => ['required', 'string', 'max:30'],
+            'type' => ['nullable', 'in:jodi,haruf,cross'],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ]);
-        $bids = Bid::query()
-            ->with([
-                'user:id,name,phone',
-            ])
-            ->where('game_id', $validated['game_id'])
-            ->where('game_date', $validated['date'])
-            ->where('number', $validated['number'])
-            ->when(
-                str_starts_with(
-                    $validated['number'],
-                    'ander-'
-                ) ||
-                    str_starts_with(
-                        $validated['number'],
-                        'bahar-'
-                    ),
-                function ($query) {
-                    $query->where('type', 'haruf');
-                },
-                function ($query) {
-                    $query->whereIn(
-                        'type',
-                        ['jodi', 'cross']
-                    );
-                }
-            )
-            ->orderByDesc('id')
-            ->get([
-                'id',
-                'order_no',
-                'user_id',
-                'type',
-                'number',
-                'amount',
-                'status',
-                'winning_amount',
-                'created_at',
-            ]);
-        $summary = [
-            'total_bids' => $bids->count(),
-            'total_users' => $bids
-                ->pluck('user_id')
-                ->unique()
-                ->count(),
-            'total_amount' => round(
-                (float) $bids->sum('amount'),
-                2
-            ),
-        ];
+
+        $type = $validated['type'] ?? (
+            str_starts_with($validated['number'], 'ander-')
+            || str_starts_with($validated['number'], 'bahar-')
+                ? 'haruf'
+                : 'jodi'
+        );
+
         return response()->json([
             'success' => true,
-            'data' => [
-                'number' => $validated['number'],
-                'summary' => $summary,
-                'bids' => $bids->map(function ($bid) {
-                    return [
-                        'id' => $bid->id,
-                        'order_no' => $bid->order_no,
-                        'user_id' => $bid->user_id,
-                        'user_name' =>
-                        $bid->user?->name ?? 'Unknown',
-                        'user_phone' =>
-                        $bid->user?->phone
-                            ?? $bid->phone
-                            ?? '-',
-                        'type' => $bid->type,
-                        'number' => $bid->number,
-                        'amount' =>
-                        round((float) $bid->amount, 2),
-                        'status' => $bid->status,
-                        'winning_amount' =>
-                        round(
-                            (float) $bid->winning_amount,
-                            2
-                        ),
-                        'created_at' =>
-                        optional(
-                            $bid->created_at
-                        )->format(
-                            'd M Y, h:i A'
-                        ),
-                    ];
-                }),
-            ],
+            'data' => $this->bidAnalytics->numberDetails($validated, $type),
         ]);
     }
 
     // profitLoss
-    public function profitLoss(Request $request)
+    public function profitLoss(Request $request, BiddingDeskProfitLossReportService $reportService)
     {
-        $from = $request->get('from', Carbon::today()->toDateString());
-        $to = $request->get('to', Carbon::today()->toDateString());
-        $startDate = Carbon::parse($from)->toDateString();
-        $endDate = Carbon::parse($to)->toDateString();
-        $startDateTime = $startDate . ' 00:00:00';
-        $endDateTime   = $endDate . ' 23:59:59';
-        $totalUser = WalletRequest::where('request_type', 'credit')
-            ->where('status', 'approved')
-            ->whereBetween('created_at', [
-                $startDateTime,
-                $endDateTime
-            ])
-            ->sum('amount');
-        $totalMatch = WalletRequest::where('request_type', 'debit')
-            ->whereBetween('created_at', [
-                $startDateTime,
-                $endDateTime
-            ])
-            ->sum('amount');
+        $today = Carbon::today()->toDateString();
+        $from = $request->get('from', $today);
+        $to = $request->get('to', $today);
 
-        $totalTrans = WalletRequest::where('request_type', 'debit')
-            ->where('status', 'approved')
-            ->whereBetween('created_at', [
-                $startDateTime,
-                $endDateTime
-            ])
-            ->sum('amount');
-        $games = Game::where('status', 'active')
-            ->orderBy('serial', 'asc')
-            ->get();
-
-        $bidTotals = Bid::query()
-            ->select(
-                'game_id',
-                DB::raw('SUM(amount) as total_bid')
-            )
-            ->whereBetween('game_date', [$startDate, $endDate])
-            ->groupBy('game_id')
-            ->pluck('total_bid', 'game_id');
-        $winTotals = Winner::query()
-            ->select(
-                'game_id',
-                DB::raw('SUM(winning_amount) as total_win')
-            )
-            ->whereBetween('game_date', [$startDate, $endDate])
-            ->groupBy('game_id')
-            ->pluck('total_win', 'game_id');
-        $gameStats = $games->map(function ($game) use ($bidTotals, $winTotals) {
-            $totalBid = (float) ($bidTotals->get($game->id) ?? 0);
-            $totalWin = (float) ($winTotals->get($game->id) ?? 0);
-            $profitLoss = $totalBid - $totalWin;
-            return [
-                'id'          => $game->id,
-                'name'        => $game->name,
-                'total_bid'   => $totalBid,
-                'total_win'   => $totalWin,
-                'profit_loss' => $profitLoss,
-            ];
-        });
-
-        $grandTotalBid = $gameStats->sum('total_bid');
-        $grandTotalWin = $gameStats->sum('total_win');
-        $grandProfitLoss = $grandTotalBid - $grandTotalWin;
-        return view('backend.profit_loss_history', compact(
-            'gameStats',
-            'totalUser',
-            'totalMatch',
-            'totalTrans',
-            'grandTotalBid',
-            'grandTotalWin',
-            'grandProfitLoss',
-            'from',
-            'to',
-            'startDate',
-            'endDate'
-        ));
+        return view('backend.profit_loss_history', $reportService->build($from, $to));
     }
+
+    public function profitLossTransactions(Request $request)
+    {
+        $validated = $request->validate([
+            'from' => ['nullable', 'date'],
+            'to' => ['nullable', 'date', 'after_or_equal:from'],
+            'type' => ['required', 'in:credit,debit'],
+            'source' => ['required', 'in:admin,user'],
+        ]);
+
+        $from = Carbon::parse($validated['from'] ?? Carbon::today()->toDateString())->toDateString();
+        $to = Carbon::parse($validated['to'] ?? Carbon::today()->toDateString())->toDateString();
+
+        $transactions = Transaction::query()
+            ->with(['user:id,name,phone', 'admin:id,name'])
+            ->when(
+                $validated['source'] === 'admin',
+                fn ($query) => $query->whereNotNull('admin_id'),
+                fn ($query) => $query->whereNull('admin_id')
+            )
+            ->where('type', $validated['type'])
+            ->whereIn('status', ['completed', 'success', 'successful'])
+            ->whereBetween('created_at', [$from . ' 00:00:00', $to . ' 23:59:59'])
+            ->latest('id')
+            ->paginate(50)
+            ->withQueryString();
+
+        return view('backend.profit_loss_transactions', [
+            'pageName' => ucfirst($validated['source']) . ' Wallet ' . ucfirst($validated['type']) . 's',
+            'transactions' => $transactions,
+            'type' => $validated['type'],
+            'source' => $validated['source'],
+            'from' => $from,
+            'to' => $to,
+        ]);
+    }
+
 }

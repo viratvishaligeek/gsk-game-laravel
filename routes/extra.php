@@ -1,10 +1,12 @@
 <?php
 
-use App\Models\Game;
 use App\Models\CommunityPost;
+use App\Models\Game;
 use App\Models\Page;
 use App\Models\Result;
 use App\Services\AppSettingsService;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/firebase-config.js', function () {
@@ -25,7 +27,18 @@ Route::get('/firebase-config.js', function () {
         'Cache-Control' => 'no-store, max-age=0',
     ]);
 });
+Route::get('/firebase-config.json', function () {
+    $web = config('services.fcm_web');
 
+    return response()->json([
+        'apiKey' => $web['api_key'] ?? '',
+        'authDomain' => $web['auth_domain'] ?? '',
+        'projectId' => $web['project_id'] ?? '',
+        'messagingSenderId' => $web['messaging_sender_id'] ?? '',
+        'appId' => $web['app_id'] ?? '',
+        'vapidKey' => $web['vapid_key'] ?? '',
+    ])->header('Cache-Control', 'no-store, max-age=0');
+});
 
 Route::get('/optimize-clear', function () {
     Artisan::call('optimize:clear');
@@ -55,30 +68,9 @@ Route::get('/optimize-clear', function () {
 //     ]);
 // });
 
-
-Route::get('/firebase-config.json', function () {
-    $web = config('services.fcm_web');
-
-    return response()->json([
-        'apiKey' => $web['api_key'] ?? '',
-        'authDomain' => $web['auth_domain'] ?? '',
-        'projectId' => $web['project_id'] ?? '',
-        'messagingSenderId' => $web['messaging_sender_id'] ?? '',
-        'appId' => $web['app_id'] ?? '',
-        'vapidKey' => $web['vapid_key'] ?? '',
-    ])->header('Cache-Control', 'no-store, max-age=0');
-});
-
 $buildPublicSitemapEntries = function (): array {
-    $base = rtrim((string) app(AppSettingsService::class)->value('canonical_url', config('app.url', '')), '/');
-    if ($base === '') {
-        $base = rtrim((string) url('/'), '/');
-    }
-
-    $entries = [$base . '/' => null, $base . '/charts' => null];
-    foreach (['about', 'contact', 'faq', 'privacy-policy', 'terms-and-conditions', 'disclaimer'] as $informationSlug) {
-        $entries[$base . '/' . $informationSlug] = null;
-    }
+    $base = rtrim((string) app(AppSettingsService::class)->value('canonical_url', config('app.url', 'https://playonlinekhaiwal.com')), '/');
+    $entries = [$base . '/' => null];
 
     $latestResultUpdates = Result::query()
         ->where('type', 'jodi')
@@ -113,7 +105,7 @@ $buildPublicSitemapEntries = function (): array {
         ->orderBy('id')
         ->get(['slug', 'updated_at'])
         ->each(function (Page $page) use (&$entries, $base) {
-            $entries[$base . '/pages/' . rawurlencode($page->slug)] = $page->updated_at;
+            $entries[$base . '/' . rawurlencode($page->slug)] = $page->updated_at;
         });
 
     return $entries;
@@ -124,7 +116,7 @@ $renderSitemapUrlSet = function (array $entries) {
     foreach ($entries as $loc => $lastmod) {
         $xml .= '<url><loc>' . htmlspecialchars($loc, ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</loc>';
         if ($lastmod) {
-            $xml .= '<lastmod>' . htmlspecialchars((is_string($lastmod) ? \Carbon\Carbon::parse($lastmod) : $lastmod)->copy()->utc()->toAtomString(), ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</lastmod>';
+            $xml .= '<lastmod>' . htmlspecialchars((is_string($lastmod) ? Carbon::parse($lastmod) : $lastmod)->copy()->utc()->toAtomString(), ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</lastmod>';
         }
         $xml .= '</url>';
     }
@@ -132,31 +124,6 @@ $renderSitemapUrlSet = function (array $entries) {
 
     return response($xml, 200)->header('Content-Type', 'application/xml; charset=UTF-8');
 };
-
-Route::get('/robots.txt', function () {
-    $base = rtrim((string) app(AppSettingsService::class)->value('canonical_url', config('app.url', '')), '/');
-    if ($base === '') {
-        $base = rtrim((string) url('/'), '/');
-    }
-
-    $content = implode("\n", [
-        'User-agent: *',
-        'Allow: /',
-        'Disallow: /admin/',
-        'Disallow: /login',
-        'Disallow: /firebase-config.js',
-        'Disallow: /firebase-config.json',
-        'Disallow: /community/login',
-        'Disallow: /community/register',
-        'Disallow: /community/guessing/create',
-        'Disallow: /charts/data',
-        'Disallow: /get_result',
-        'Sitemap: ' . $base . '/sitemap.xml',
-        '',
-    ]);
-
-    return response($content, 200)->header('Content-Type', 'text/plain; charset=UTF-8');
-})->name('robots');
 
 Route::get('/sitemap-{part}.xml', function (string $part) use ($buildPublicSitemapEntries, $renderSitemapUrlSet) {
     abort_unless(ctype_digit($part) && (int) $part >= 1, 404);
@@ -169,16 +136,12 @@ Route::get('/sitemap-{part}.xml', function (string $part) use ($buildPublicSitem
 
 Route::get('/sitemap.xml', function () use ($buildPublicSitemapEntries, $renderSitemapUrlSet) {
     $entries = $buildPublicSitemapEntries();
-    $chunks = array_chunk($entries, 50000, true);
+    $chunks = array_chunk($entries, 5000, true);
     if (count($chunks) <= 1) {
         return $renderSitemapUrlSet($entries);
     }
 
-    $base = rtrim((string) app(AppSettingsService::class)->value('canonical_url', config('app.url', '')), '/');
-    if ($base === '') {
-        $base = rtrim((string) url('/'), '/');
-    }
-
+    $base = rtrim((string) app(AppSettingsService::class)->value('canonical_url', config('app.url', 'https://playonlinekhaiwal.com')), '/');
     $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" . '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
     foreach (array_keys($chunks) as $index) {
         $xml .= '<sitemap><loc>' . htmlspecialchars($base . '/sitemap-' . ($index + 1) . '.xml', ENT_XML1 | ENT_QUOTES, 'UTF-8') . '</loc></sitemap>';

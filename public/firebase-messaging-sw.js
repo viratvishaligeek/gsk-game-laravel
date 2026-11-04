@@ -28,7 +28,7 @@ if (self.FIREBASE_CONFIG && self.FIREBASE_CONFIG.apiKey && self.FIREBASE_CONFIG.
     // a notification here for data-only messages to avoid duplicate alerts.
     if (payload.notification) return
 
-    const title = payload.data?.title || 'Gali Satta Kings'
+    const title = payload.data?.title || 'Play Online Khaiwal'
     const body = payload.data?.body || ''
     self.registration.showNotification(title, {
       body,

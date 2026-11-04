@@ -10,7 +10,7 @@ trait BelongsToSite
     protected static function bootBelongsToSite(): void
     {
         static::addGlobalScope('site', function (Builder $builder): void {
-            $siteKey = (string) config('sites.current_key', config('sites.default', 'galisattakings'));
+            $siteKey = (string) config('sites.current_key', config('sites.default', 'play-online-khaiwal'));
             $builder->where($builder->getModel()->qualifyColumn('site_key'), $siteKey);
         });
 
@@ -18,7 +18,7 @@ trait BelongsToSite
             if (blank($model->getAttribute('site_key'))) {
                 $model->setAttribute(
                     'site_key',
-                    (string) config('sites.current_key', config('sites.default', 'galisattakings'))
+                    (string) config('sites.current_key', config('sites.default', 'play-online-khaiwal'))
                 );
             }
         });

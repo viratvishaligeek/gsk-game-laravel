@@ -88,7 +88,7 @@ class MonthlyChartService
             ->whereIn('game_id', $games->pluck('id'))
             ->where('type', 'jodi')
             ->whereBetween('game_date', [$start->toDateString(), $end->toDateString()])
-            ->orderBy('game_date')->orderBy('id')
+            ->orderBy('game_date')
             ->get(['game_id', 'game_date', 'number'])
             ->keyBy(fn (Result $result) => $result->game_id . '|' . $result->game_date);
 
@@ -124,7 +124,7 @@ class MonthlyChartService
             ->where('game_id', $game->id)
             ->where('type', 'jodi')
             ->whereBetween('game_date', [$start->toDateString(), $end->toDateString()])
-            ->orderBy('game_date')->orderBy('id')
+            ->orderBy('game_date')
             ->get(['game_date', 'number'])
             ->keyBy(fn (Result $result) => Carbon::parse($result->game_date, config('app.timezone'))->toDateString());
 
@@ -164,7 +164,6 @@ class MonthlyChartService
             ->whereBetween('game_date', [$start->toDateString(), $end->toDateString()])
             ->whereNotNull('number')
             ->where('number', '<>', '')
-            ->orderBy('id')
             ->get(['game_id', 'game_date', 'number']);
 
         $resultMap = [];

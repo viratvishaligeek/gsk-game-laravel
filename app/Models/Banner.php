@@ -15,8 +15,6 @@ class Banner extends Model
 
     protected $fillable = [
         'name',
-        'destinationUrl',
-        'app_screen',
         'image',
         'status',
     ];
