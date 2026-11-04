@@ -31,7 +31,7 @@
   </div>
   <div class="gsk-v3-chart-footnote"><span>ℹ️</span><p>A dash means no published value is stored for that date. Future dates are not shown as results.</p></div>
 </section>
-@endsectionn
+@endsection
 
 @section('script')
 <script>
