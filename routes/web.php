@@ -18,5 +18,10 @@ Route::controller(MainController::class)->group(function () {
     Route::get('/charts/data', 'chartData')->middleware('throttle:60,1')->name('charts.data');
     Route::get('/page/{page}', 'page')->name('frontend.page');
     Route::get('/information/{page?}', 'information')->name('information');
+    Route::get('/robots.txt', function () {
+        return response("User-agent: *\\nAllow: /\\nSitemap: " . route('sitemap') . "\\n", 200, [
+            'Content-Type' => 'text/plain; charset=UTF-8',
+        ]);
+    })->name('robots');
     Route::get('/{page}', 'page')->name('page');
 });
