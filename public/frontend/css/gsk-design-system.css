@@ -43,3 +43,7 @@
 .gsk-filter-panel,.gsk-chart-filters{border-radius:18px}.gsk-filter-panel .form-select,.gsk-chart-filters .form-select{min-height:44px;border-radius:11px}.gsk-month-table th:first-child,.gsk-month-table td:first-child{width:88px;text-align:center;font-variant-numeric:tabular-nums}.gsk-month-table td:last-child{font-size:17px;font-weight:900;color:var(--gsk-navy,#244f82);text-align:center}.gsk-table-card{overflow:hidden;border-radius:18px}
 @media(max-width:575.98px){.gsk-market-journey a{min-width:158px}.gsk-month-table th,.gsk-month-table td{padding:12px 10px}}
 @media(prefers-reduced-motion:reduce){.gsk-market-journey a{transition:none}}
+
+
+/* Customer information and community authoring journeys */
+.gsk-community-compose-guide{padding:17px;border:1px solid var(--gsk-line,#e3eaf3);border-radius:16px;background:linear-gradient(145deg,#f7faff,#fff)}.gsk-community-compose-guide>span{color:var(--gsk-blue,#315f9f);font-size:9px;font-weight:900;letter-spacing:.13em}.gsk-community-compose-guide h2{margin:5px 0;font-size:17px;font-weight:900}.gsk-community-compose-guide p{max-width:560px;margin:0;color:#718198;font-size:11px;line-height:1.6}.gsk-community-compose-guide>div{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.gsk-community-compose-guide b{padding:6px 9px;border-radius:20px;background:#eaf1fc;color:#315f9f;font-size:9px}.gsk-information-card{border-radius:18px}.gsk-information-copy{line-height:1.75}.gsk-information-card .accordion-button{font-weight:800}
