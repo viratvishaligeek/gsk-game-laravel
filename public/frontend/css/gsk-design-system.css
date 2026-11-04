@@ -275,3 +275,5 @@
 .gsk-v3-auth-card .form-check-label{color:#53617d;font-size:10px}
 @media(max-width:767.98px){.gsk-v3-community-hero .container{padding-top:32px!important;padding-bottom:34px!important}.gsk-v3-community-stats{margin-top:6px}.gsk-v3-community-feed-head{align-items:start;flex-direction:column}.gsk-v3-thread-card{padding:14px}.gsk-v3-reply-meta{flex-direction:column;gap:2px}}
 @media(max-width:390px){.gsk-v3-community-stats>div{padding:11px 7px}.gsk-v3-community-stats strong{font-size:20px}.gsk-v3-community-stats small{font-size:7px}}
+
+.gsk-v3-anchor-target{display:block;height:0;scroll-margin-top:125px}.gsk-v3-section[id],.gsk-v3-archive-band[id],.gsk-v3-disclaimer[id]{scroll-margin-top:120px}
