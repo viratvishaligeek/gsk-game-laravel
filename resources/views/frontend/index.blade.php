@@ -163,7 +163,7 @@
     @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'third_place')])
 @endif
 
-<section class="gsk-v3-section">
+<section class="gsk-v3-section" id="records">
     <div class="container py-5">
         <div class="gsk-v3-section-head"><div><span>HISTORICAL INDEX</span><h2>📚 Browse every market archive</h2><p>Open a market to explore its saved monthly and historical records.</p></div></div>
         <div class="gsk-v3-archive-grid">
@@ -197,7 +197,7 @@
 </section>
 
 <section class="gsk-v3-disclaimer">
-    <div class="container py-4"><div><span>⚖️ INFORMATION NOTICE</span><h2>Records are information, not promises.</h2><p>{{ Str::limit(setting('disclaimer_content'), 200, '…') }}</p></div><a href="{{ route('page', ['page' => 'disclaimer']) }}">Read full disclaimer →</a></div>
+    <div class="container py-4"><div><span>⚖️ INFORMATION NOTICE</span><h2>Records are information, not promises.</h2><p>{{ filled(setting('disclaimer_content')) ? Str::limit(setting('disclaimer_content'), 200, '…') : 'Please review the information and local requirements before using public result records.' }}</p></div><a href="{{ route('page', ['page' => 'disclaimer']) }}">Read full disclaimer →</a></div>
 </section>
 
 @if ($managedSections->where('location', 'before_footer')->isNotEmpty())
