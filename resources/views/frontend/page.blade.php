@@ -31,19 +31,18 @@
     <script type="application/ld+json">@json($pageSchema, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)</script>
 @endsection
 @section('content')
-<section class="gsk-page-hero"><div class="container py-4 py-lg-5">
+<section class="gsk-v3-inner-hero"><div class="container py-4 py-lg-5">
   <nav aria-label="Breadcrumb"><ol class="breadcrumb mb-3"><li class="breadcrumb-item"><a href="{{ route('index') }}">Home</a></li><li class="breadcrumb-item active" aria-current="page">{{ $page->name }}</li></ol></nav>
-  <span class="gsk-kicker">📘 INFORMATION CENTER</span><h1 class="mt-3">{{ $page->name }}</h1>
-  @if (filled($meta_description))<p class="mb-0">{{ $meta_description }}</p>@endif
+  <span class="gsk-v3-kicker"><span class="gsk-v3-live-dot"></span> PUBLISHED INFORMATION</span>
+  <h1 class="mt-3">{{ $page->name }}</h1>
+  @if (filled($meta_description))<p>{{ $meta_description }}</p>@endif
+  <div class="gsk-v3-inner-links"><a href="{{ route('index') }}#today-results">🏆 Latest results</a><a href="{{ route('charts.index') }}">📊 Result charts</a><a href="{{ route('community.index') }}">👥 Community</a></div>
 </div></section>
-<section class="container py-4 py-lg-5">
-  <nav class="gsk-market-journey mb-3" aria-label="Explore more">
-    <a href="{{ route('index') }}#today-results">🏆 Latest results <span>→</span></a>
-    <a href="{{ route('charts.index') }}">📊 Result charts <span>→</span></a>
-    <a href="{{ route('community.index') }}">👥 Community <span>→</span></a>
-  </nav>
-  <article class="gsk-information-card">
-  <div class="gsk-information-copy">{!! $page->content !!}</div>
-  <a class="btn btn-outline-primary rounded-pill mt-4" href="{{ route('index') }}">← Back to home</a>
-</article></section>
-@endsection
+<section class="container py-4 py-lg-5 gsk-v3-document-layout">
+  <article class="gsk-v3-document-card">
+    <div class="gsk-v3-document-kicker">📘 GSK INFORMATION CENTER <span>·</span> {{ $page->name }}</div>
+    <div class="gsk-information-copy">{!! $page->content !!}</div>
+    <a class="btn btn-outline-primary rounded-pill mt-4" href="{{ route('index') }}">← Back to home</a>
+  </article>
+</section>
+@endsectionn
