@@ -4,7 +4,9 @@
 @section('robots_content', 'index,follow')
 @section('content')
 <section class="gsk-page-hero"><div class="container py-4 py-lg-5"><nav aria-label="Breadcrumb"><ol class="breadcrumb mb-3"><li class="breadcrumb-item"><a href="{{ route('community.index') }}">Community</a></li><li class="breadcrumb-item active" aria-current="page">{{ $post->game->name }}</li></ol></nav><span class="gsk-kicker">🎮 {{ $post->game->name }}</span><h1 class="mt-3">{{ $post->title }}</h1><p class="mb-0">Posted by {{ $post->author->name }} · {{ $post->created_at->timezone(config('app.timezone'))->format('d M Y, h:i A') }}</p></div></section>
-<section class="container py-4 py-lg-5"><div class="gsk-community-form-card mx-auto">
+<section class="container py-4 py-lg-5">
+  <nav class="gsk-market-journey mb-3" aria-label="Community actions"><a href="{{ route('community.index') }}">👥 All discussions <span>→</span></a><a href="{{ route('community.create') }}">✍️ Create a post <span>→</span></a></nav>
+  <div class="gsk-community-form-card mx-auto">
   @if (session('success'))<div class="alert alert-success" role="status">{{ session('success') }}</div>@endif
   <article class="gsk-community-post-detail"><p>{{ $post->body }}</p></article>
   <div class="gsk-section-heading mt-4"><div><span>DISCUSSION</span><h2>💬 Replies ({{ $post->replies_count }})</h2></div></div>
