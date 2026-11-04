@@ -45,4 +45,4 @@
     <a class="btn btn-outline-primary rounded-pill mt-4" href="{{ route('index') }}">← Back to home</a>
   </article>
 </section>
-@endsectionn
+@endsection
