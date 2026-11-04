@@ -49,6 +49,13 @@ jobs:
         run: |
           php artisan view:clear
           php artisan view:cache
-          find storage/framework/views -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          for file in storage/framework/views/*.php; do
+            if ! php -l "$file"; then
+              echo "Compiled Blade source reference and failing PHP:"
+              sed -n '1,30p' "$file"
+              tail -n 3 "$file"
+              exit 1
+            fi
+          done
       - name: Run Laravel tests
         run: php artisan test
