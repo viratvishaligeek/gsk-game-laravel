@@ -4,6 +4,7 @@
 @section('content')
 <section class="gsk-page-hero"><div class="container py-4 py-lg-5"><span class="gsk-kicker">✍️ COMMUNITY DISCUSSION</span><h1 class="mt-3">Create a post</h1><p class="mb-0">Choose an active game topic and write a clear, respectful post. Posts may require administrator approval.</p></div></section>
 <section class="container py-4 py-lg-5"><div class="gsk-community-form-card mx-auto">
+  <div class="gsk-community-compose-guide mb-4"><span>✍️ POST WORKSPACE</span><h2>Start a clear conversation</h2><p>Choose the right game topic, give your post a useful title, then add the details the community needs.</p><div><b>1 · Topic</b><b>2 · Title</b><b>3 · Message</b></div></div>
   @if (session('success'))<div class="alert alert-success" role="status">{{ session('success') }}</div>@endif
   <form method="POST" action="{{ route('community.store') }}">@csrf
     <div class="mb-3"><label class="form-label fw-semibold" for="game_id">Game topic</label><select class="form-select" id="game_id" name="game_id" required><option value="">Select a game</option>@foreach ($games as $game)<option value="{{ $game->id }}" {{ (string) old('game_id') === (string) $game->id ? 'selected' : '' }}>{{ $game->name }}</option>@endforeach</select>@error('game_id')<small class="text-danger">{{ $message }}</small>@enderror</div>
