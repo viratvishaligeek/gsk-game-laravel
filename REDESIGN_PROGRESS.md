@@ -21,6 +21,7 @@ Draft PR: https://github.com/viratvishaligeek/gsk-game-laravel/pull/4
 - [x] Market archive: new record-room hero, period controls, date-wise result table and contextual navigation; existing AJAX behavior retained.
 - [x] Monthly Charts: added the missing public read-only chart page and data endpoint using the existing `MonthlyChartService`. The page renders a date-by-market matrix; the JSON endpoint returns month label, markets, date rows, numbers and statuses.
 - [x] Added the `frontend.page` alias while retaining the existing `page` route name.
+- [x] Added a public `information` route for the FAQ information view; non-FAQ slugs resolve through the existing active CMS page handler.
 - [x] Information and CMS pages: new editorial hero, document layout, contextual navigation and responsive CMS content.
 - [x] Community feed: new community hero, live post/reply counts, discussion cards and recent-reply previews.
 - [x] Community detail: original-post panel, reply thread and reply composer.
@@ -31,7 +32,7 @@ Draft PR: https://github.com/viratvishaligeek/gsk-game-laravel/pull/4
 - [x] Removed the unauthenticated public `/optimize-clear` GET route, which exposed application cache clearing.
 - [x] Bootstrap 5.3.8 remains the frontend framework; no competing UI framework added.
 - [x] No admin views/assets, authentication rules, payment processing, existing API contracts, database schema, game rules or financial calculations changed.
-- [x] The only controller additions are read-only chart view/data actions that reuse the existing chart service. The only route additions are customer-facing chart routes and a CMS route alias. No admin route was added or modified.
+- [x] Controller additions are read-only chart view/data actions using the existing chart service plus a public FAQ view action. Route additions are customer-facing chart and information routes plus a CMS alias. No admin route was added or modified.
 
 ## Deployment investigation
 - The frontend controller's fallback canonical URL is `https://galisattakings.com`; my latest public fetch returned HTTP 502. This fetch result alone does not prove every visitor receives a 502.
