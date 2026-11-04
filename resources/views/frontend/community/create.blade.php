@@ -17,4 +17,4 @@
     <button class="btn btn-primary rounded-pill px-4 mt-3" type="submit">Publish discussion request →</button>
   </form>
 </div></section>
-@endsectionn
+@endsection
