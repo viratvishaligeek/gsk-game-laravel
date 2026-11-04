@@ -19,7 +19,7 @@ Route::controller(MainController::class)->group(function () {
     Route::get('/page/{page}', 'page')->name('frontend.page');
     Route::get('/information/{page?}', 'information')->name('information');
     Route::get('/robots.txt', function () {
-        return response("User-agent: *\\nAllow: /\\nSitemap: " . route('sitemap') . "\\n", 200, [
+        return response("User-agent: *\nAllow: /\nSitemap: " . route('sitemap') . "\n", 200, [
             'Content-Type' => 'text/plain; charset=UTF-8',
         ]);
     })->name('robots');
