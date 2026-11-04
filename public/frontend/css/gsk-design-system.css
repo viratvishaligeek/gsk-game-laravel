@@ -36,3 +36,10 @@
 .gsk-mobile-dock{display:none}
 @media(max-width:767.98px){body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}.gsk-mobile-dock{position:fixed;right:0;bottom:0;left:0;z-index:1025;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:8px 6px calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--gsk-line);background:#ffffffed;backdrop-filter:blur(16px);box-shadow:0 -6px 22px #1c35530b}.gsk-mobile-dock a{display:grid;justify-items:center;gap:3px;color:#63738a;font-size:19px}.gsk-mobile-dock small{font-size:9px;font-weight:800}.gsk-mobile-dock a:active{color:var(--gsk-blue)}.market-explorer-rail>.gsk-market-column{flex-basis:min(82vw,300px)}}
 @media(prefers-reduced-motion:reduce){.market-explorer-rail{scroll-behavior:auto}}
+
+
+/* V2 customer journeys for market archives and result explorer */
+.gsk-market-journey{display:flex;gap:9px;overflow-x:auto;padding:2px 1px 8px;scrollbar-width:none}.gsk-market-journey::-webkit-scrollbar{display:none}.gsk-market-journey a{display:flex;align-items:center;justify-content:space-between;gap:15px;flex:1;min-width:175px;min-height:43px;padding:0 13px;border:1px solid var(--gsk-line,#e3eaf3);border-radius:12px;background:#fff;color:var(--gsk-navy,#244f82);font-size:10px;font-weight:800;text-decoration:none;transition:border-color .16s,transform .16s}.gsk-market-journey a span{font-size:15px}.gsk-market-journey a:hover{border-color:var(--gsk-blue,#315f9f);transform:translateY(-1px)}
+.gsk-filter-panel,.gsk-chart-filters{border-radius:18px}.gsk-filter-panel .form-select,.gsk-chart-filters .form-select{min-height:44px;border-radius:11px}.gsk-month-table th:first-child,.gsk-month-table td:first-child{width:88px;text-align:center;font-variant-numeric:tabular-nums}.gsk-month-table td:last-child{font-size:17px;font-weight:900;color:var(--gsk-navy,#244f82);text-align:center}.gsk-table-card{overflow:hidden;border-radius:18px}
+@media(max-width:575.98px){.gsk-market-journey a{min-width:158px}.gsk-month-table th,.gsk-month-table td{padding:12px 10px}}
+@media(prefers-reduced-motion:reduce){.gsk-market-journey a{transition:none}}
