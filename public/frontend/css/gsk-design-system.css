@@ -147,3 +147,27 @@ p { color: var(--gsk-muted); }
 @media (prefers-reduced-motion: reduce) {
   *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
 }
+/* Existing Blade content contracts styled by the new system */
+.skip-link { position:absolute; top:-60px; left:12px; z-index:2000; padding:10px 14px; border-radius:10px; color:#fff; background:var(--gsk-brand); }
+.skip-link:focus { top:12px; }
+.back-top { position:fixed; right:18px; bottom:18px; z-index:1010; width:46px; height:46px; border:0; border-radius:14px; color:#fff; background:var(--gsk-brand); box-shadow:var(--gsk-shadow); opacity:0; visibility:hidden; transform:translateY(8px); transition:opacity .2s,transform .2s,visibility .2s; }
+.back-top.is-visible { opacity:1; visibility:visible; transform:translateY(0); }
+.result-board-card,.archive-feature,.chart-market,.guide-list article,.faq-item,.market-card,.market-link,.result-card,.game-chart-card,.section-card,.faq,.rec-card,.prev-wrap,.chart-table {
+  border:1px solid var(--gsk-line); border-radius:var(--gsk-radius); background:#fff; box-shadow:var(--gsk-shadow);
+}
+.market-card { display:flex; flex-direction:column; gap:12px; padding:18px; color:var(--gsk-ink); }
+.market-card h2,.market-card h3,.market-card h4 { margin:0; color:var(--gsk-ink); font-size:17px; }
+.market-card .market-result,.market-card .result-number,.result-board-card .result-number { color:var(--gsk-brand); font-weight:850; }
+.result-board-card,.archive-feature,.chart-market { padding:18px; }
+.faq-item,.faq { padding:16px; }
+.market-card[hidden] { display:none!important; }
+.primary-nav.is-open { display:grid; }
+body.nav-open { overflow:hidden; }
+@media (min-width:992px) { .primary-nav { display:flex!important; } }
+@media (max-width:991.98px) {
+  .primary-nav.is-open { display:grid!important; }
+  .primary-nav { max-height:calc(100dvh - 110px); overflow:auto; }
+}
+@media (max-width:575.98px) {
+  .back-top { right:14px; bottom:calc(14px + env(safe-area-inset-bottom)); }
+}
