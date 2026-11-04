@@ -28,7 +28,7 @@
                 <div class="gsk-v3-metrics" aria-label="Market statistics">
                     <div><strong>{{ count($frontendResults) }}</strong><span>Active markets</span></div>
                     <div><strong>{{ $publishedCount }}</strong><span>Results published</span></div>
-                    <div><strong>{{ count($recordYears) }}</strong><span>Archive years</span></div>
+                    <div><strong>{{ now()->timezone(config('app.timezone'))->year }}</strong><span>Current record year</span></div>
                 </div>
             </div>
             <div class="col-lg-5">
