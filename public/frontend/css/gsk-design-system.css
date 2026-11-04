@@ -1,0 +1,149 @@
+/* GSK customer frontend — Bootstrap-first design system.
+   This file is intentionally frontend-only. Admin assets are not referenced here. */
+:root {
+  color-scheme: light;
+  --gsk-ink: #182235;
+  --gsk-muted: #66748a;
+  --gsk-paper: #f4f7fb;
+  --gsk-surface: #fff;
+  --gsk-line: #e3e9f1;
+  --gsk-brand: #183b72;
+  --gsk-brand-strong: #102b56;
+  --gsk-accent: #e7a63c;
+  --gsk-success: #16845b;
+  --gsk-danger: #c34550;
+  --gsk-radius: 18px;
+  --gsk-shadow: 0 10px 30px rgba(24, 45, 78, .08);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 92px; }
+body {
+  margin: 0; color: var(--gsk-ink); background: var(--gsk-paper);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px; line-height: 1.65; overflow-x: hidden;
+}
+img { max-width: 100%; }
+a { color: var(--gsk-brand); text-decoration: none; }
+a:hover { color: var(--gsk-brand-strong); }
+h1,h2,h3,h4,h5,h6 { color: var(--gsk-ink); font-weight: 750; letter-spacing: -.035em; }
+p { color: var(--gsk-muted); }
+.wrap { width: min(1180px, calc(100% - 36px)); margin-inline: auto; }
+.container { --bs-gutter-x: 1.5rem; }
+.site-header {
+  position: sticky; top: 0; z-index: 1030; background: rgba(255,255,255,.96);
+  border-bottom: 1px solid var(--gsk-line); box-shadow: 0 4px 18px rgba(25,42,69,.04);
+  backdrop-filter: blur(16px);
+}
+.header-main { min-height: 76px; display:flex; align-items:center; justify-content:space-between; gap:22px; }
+.brand { display:flex; align-items:center; gap:12px; color:var(--gsk-ink); font-weight:800; font-size:17px; }
+.brand-emblem { width:44px; height:44px; object-fit:contain; border-radius:14px; }
+.brand-word small { display:block; color:var(--gsk-muted); font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; }
+.primary-nav { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:6px; }
+.primary-nav a { padding:10px 13px; border-radius:11px; color:#526078; font-size:13px; font-weight:700; transition:background .18s,color .18s; }
+.primary-nav a:hover,.primary-nav a:focus-visible { color:var(--gsk-brand); background:#edf3fb; }
+.menu-toggle { display:none; width:44px; height:44px; border:1px solid var(--gsk-line); border-radius:12px; background:#fff; }
+.menu-toggle span { display:block; width:18px; height:2px; margin:4px auto; border-radius:2px; background:var(--gsk-ink); }
+.ticker { display:flex; align-items:center; gap:12px; min-height:38px; overflow:hidden; padding:6px max(18px,calc((100% - 1180px)/2)); color:#fff; background:var(--gsk-brand-strong); font-size:12px; font-weight:650; }
+.ticker-label { flex:0 0 auto; color:var(--gsk-accent); }
+.ticker-window { min-width:0; overflow:hidden; }
+.ticker-track { display:flex; align-items:center; gap:22px; width:max-content; white-space:nowrap; }
+.ticker-track span { color:rgba(255,255,255,.9); }
+.ticker-track i { color:var(--gsk-accent); font-style:normal; }
+.btn { min-height:42px; border-radius:11px; padding:10px 16px; font-size:13px; font-weight:750; }
+.btn-primary,.btn-success { border-color:var(--gsk-brand)!important; background:var(--gsk-brand)!important; color:#fff!important; }
+.btn-primary:hover,.btn-success:hover { background:var(--gsk-brand-strong)!important; }
+.btn-outline-primary,.btn-outline-success { border-color:#c8d6e9; color:var(--gsk-brand); }
+.btn-outline-primary:hover,.btn-outline-success:hover { background:var(--gsk-brand); border-color:var(--gsk-brand); color:#fff; }
+.card,.market-card,.result-card,.chart-card,.section-card,.quick-paths>a,.hero-spotlight {
+  border:1px solid var(--gsk-line); border-radius:var(--gsk-radius); background:var(--gsk-surface);
+  box-shadow:var(--gsk-shadow);
+}
+.card-header { background:#f8fafd; border-bottom:1px solid var(--gsk-line); }
+.form-control,.form-select,.input-group-text { min-height:46px; border-color:#d9e1ec; border-radius:11px; color:var(--gsk-ink); }
+.form-control:focus,.form-select:focus { border-color:#7293c0; box-shadow:0 0 0 3px rgba(24,59,114,.12); }
+.table { --bs-table-color:var(--gsk-ink); --bs-table-border-color:var(--gsk-line); }
+.table thead th { background:#f1f5fa; color:#58677d; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; }
+.table td,.table th { padding:11px 12px; vertical-align:middle; }
+.freshness-bar { background:#eaf0f8; border-bottom:1px solid var(--gsk-line); }
+.freshness-inner { display:flex; align-items:center; justify-content:space-between; gap:14px; min-height:42px; font-size:12px; }
+.freshness-date b { color:var(--gsk-brand); margin-right:8px; letter-spacing:.08em; }
+.freshness-note { color:var(--gsk-muted); }
+.freshness-note i { display:inline-block; width:7px; height:7px; margin-right:7px; border-radius:50%; background:var(--gsk-success); }
+.hero-shell { position:relative; overflow:hidden; padding:clamp(30px,5vw,64px) 0; background:linear-gradient(135deg,#112d56,#1d477f); }
+.hero-grid { position:relative; z-index:1; display:grid; grid-template-columns:1fr minmax(290px,420px); align-items:center; gap:36px; }
+.hero-copy h1,.hero-copy h2 { color:#fff; }
+.hero-copy p { color:rgba(255,255,255,.75); }
+.hero-facts { display:flex; flex-wrap:wrap; gap:12px; margin-top:24px; }
+.hero-facts>div { min-width:120px; padding:13px 16px; border:1px solid rgba(255,255,255,.16); border-radius:14px; background:rgba(255,255,255,.08); }
+.hero-facts strong { display:block; color:#fff; font-size:23px; line-height:1.2; }
+.hero-facts span { color:rgba(255,255,255,.7); font-size:11px; }
+.hero-spotlight { position:relative; overflow:hidden; padding:25px; color:#fff; border-color:rgba(255,255,255,.2); background:linear-gradient(145deg,#fff,#f3f6fb); text-align:center; }
+.spotlight-market { color:var(--gsk-brand); font-size:20px; font-weight:850; }
+.spotlight-date { margin-top:8px; color:var(--gsk-muted); font-size:12px; }
+.spotlight-caption { margin-top:20px; color:var(--gsk-success); font-size:12px; font-weight:850; letter-spacing:.12em; }
+.spotlight-number { margin:5px 0 16px; color:var(--gsk-brand-strong); font-size:clamp(42px,7vw,64px); font-weight:900; letter-spacing:.04em; line-height:1.15; }
+.spotlight-bottom { display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; padding-top:14px; border-top:1px solid var(--gsk-line); color:var(--gsk-muted); font-size:11px; }
+.section-block { padding:clamp(30px,5vw,58px) 0; }
+.section-light { background:#fff; }
+.section-heading { display:flex; align-items:end; justify-content:space-between; gap:18px; margin-bottom:22px; }
+.section-heading h2,.section-heading h3 { margin:0; font-size:clamp(21px,3vw,30px); }
+.section-heading p { margin:5px 0 0; }
+.quick-paths { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; padding-block:22px; }
+.quick-paths>a { display:flex; align-items:center; gap:14px; padding:17px; color:var(--gsk-ink); }
+.quick-paths>a>span { display:grid; text-align:left; }
+.quick-paths small { color:var(--gsk-muted); font-size:11px; }
+.quick-paths>a>strong { margin-left:auto; color:var(--gsk-brand); }
+.market-grid,.markets-grid,.result-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.market-card,.result-card,.chart-card { padding:18px; }
+.page-banner { padding:36px 0; color:#fff; background:linear-gradient(120deg,#183b72,#2b568d); }
+.page-banner h1,.page-banner h1 span { color:#fff; }
+.page-banner p { color:rgba(255,255,255,.75); }
+.breadcrumbs { display:flex; flex-wrap:wrap; gap:9px; margin-bottom:14px; color:rgba(255,255,255,.72); font-size:12px; }
+.breadcrumbs a { color:#fff; }
+.eyebrow { color:var(--gsk-accent)!important; font-size:11px; font-weight:850; letter-spacing:.14em; text-transform:uppercase; }
+.page-toolbar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:14px; margin-bottom:20px; }
+.site-footer { margin-top:0; background:#10233f!important; color:#fff; }
+.site-footer h1,.site-footer h2,.site-footer h3,.site-footer h4,.site-footer h5,.site-footer h6 { color:#fff; }
+.site-footer p,.site-footer small { color:rgba(255,255,255,.65); }
+.site-footer a { color:rgba(255,255,255,.84); }
+.site-footer a:hover { color:#fff; }
+.footer-contact-link { display:flex; align-items:center; gap:12px; color:rgba(255,255,255,.8); }
+.footer-icon { display:grid; place-items:center; width:36px; height:36px; border-radius:11px; background:rgba(255,255,255,.1); }
+.footer-social-link { display:grid; place-items:center; width:42px; height:42px; border:1px solid rgba(255,255,255,.16); border-radius:12px; }
+.footer-bottom { border-color:rgba(255,255,255,.14)!important; }
+.wa-float { position:fixed; right:18px; bottom:18px; z-index:1020; display:grid; place-items:center; width:54px; height:54px; border:0; border-radius:50%; color:#fff; background:#16845b; box-shadow:0 8px 24px rgba(22,132,91,.3); }
+.modal-content { border:0; border-radius:18px; overflow:hidden; }
+@media (max-width: 991.98px) {
+  .header-main { min-height:68px; }
+  .menu-toggle { display:block; order:3; flex:0 0 44px; }
+  .primary-nav { display:none; position:absolute; top:calc(100% - 1px); left:0; right:0; padding:12px 18px 18px; background:#fff; border-bottom:1px solid var(--gsk-line); box-shadow:var(--gsk-shadow); }
+  .primary-nav.is-open,.primary-nav.open,.primary-nav.show { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .primary-nav a { padding:12px; background:#f7f9fc; }
+  .hero-grid { grid-template-columns:1fr; }
+  .hero-spotlight { max-width:520px; width:100%; margin-inline:auto; }
+  .market-grid,.markets-grid,.result-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 575.98px) {
+  body { font-size:14px; }
+  .wrap { width:calc(100% - 28px); }
+  .brand { font-size:14px; }
+  .brand-emblem { width:39px; height:39px; }
+  .freshness-inner { align-items:flex-start; flex-direction:column; gap:3px; padding-block:8px; }
+  .freshness-inner>a { display:none; }
+  .hero-shell { padding:28px 0; }
+  .hero-facts { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; }
+  .hero-facts>div { min-width:0; padding:10px 8px; }
+  .hero-facts strong { font-size:19px; }
+  .hero-facts span { font-size:9px; }
+  .hero-spotlight { padding:19px 15px; }
+  .quick-paths { grid-template-columns:1fr; gap:10px; padding-block:16px; }
+  .market-grid,.markets-grid,.result-grid { grid-template-columns:1fr; gap:11px; }
+  .section-heading { align-items:flex-start; flex-direction:column; }
+  .page-banner { padding:27px 0; }
+  .page-banner h1 { font-size:30px; }
+  .table td,.table th { padding:9px 8px; }
+  .site-footer .container { text-align:left; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
+}
