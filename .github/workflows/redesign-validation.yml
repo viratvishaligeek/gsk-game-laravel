@@ -54,5 +54,7 @@ jobs:
               exit 1
             fi
           done
-      - name: Run Laravel tests
+      - name: Run frontend layout regression tests
+        run: php artisan test --filter=HomepageLayoutRegressionTest
+      - name: Run complete Laravel test suite
         run: php artisan test
