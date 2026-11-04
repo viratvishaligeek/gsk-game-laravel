@@ -14,5 +14,8 @@ Route::controller(MainController::class)->group(function () {
     Route::get('/result/{slug}', 'market')->where('slug', '[A-Za-z0-9-]+')->name('frontend.market');
     Route::post('/get_result', 'chart')->middleware('throttle:60,1')->name('frontend.chart');
 
+    Route::get('/charts', 'charts')->name('charts.index');
+    Route::get('/charts/data', 'chartData')->middleware('throttle:60,1')->name('charts.data');
+    Route::get('/page/{page}', 'page')->name('frontend.page');
     Route::get('/{page}', 'page')->name('page');
 });
