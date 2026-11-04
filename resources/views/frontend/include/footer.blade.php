@@ -28,6 +28,7 @@
           <li><a href="{{ route('index') }}#markets">🎮 Markets</a></li>
           <li><a href="{{ route('charts.index') }}">📊 Charts</a></li>
           <li><a href="{{ route('community.index') }}">👥 Community</a></li>
+          <li><a href="{{ route('information') }}">💡 FAQs</a></li>
           <li><a href="{{ route('sitemap') }}">🗺️ Sitemap</a></li>
         </ul>
       </div>
