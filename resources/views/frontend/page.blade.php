@@ -31,11 +31,13 @@
     <script type="application/ld+json">@json($pageSchema, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)</script>
 @endsection
 @section('content')
-    <section class="section-block section-light">
-        <div class="wrap information-panel">
-            <h2>{{ $page->name }}</h2>
-            <p>{!! $page->content !!}</p>
-            <a class="button button-gold" href="{{ route('index') }}">Back to results board ↗</a>
-        </div>
-    </section>
+<section class="gsk-page-hero"><div class="container py-4 py-lg-5">
+  <nav aria-label="Breadcrumb"><ol class="breadcrumb mb-3"><li class="breadcrumb-item"><a href="{{ route('index') }}">Home</a></li><li class="breadcrumb-item active" aria-current="page">{{ $page->name }}</li></ol></nav>
+  <span class="gsk-kicker">📘 INFORMATION CENTER</span><h1 class="mt-3">{{ $page->name }}</h1>
+  @if (filled($meta_description))<p class="mb-0">{{ $meta_description }}</p>@endif
+</div></section>
+<section class="container py-4 py-lg-5"><article class="gsk-information-card">
+  <div class="gsk-information-copy">{!! $page->content !!}</div>
+  <a class="btn btn-outline-primary rounded-pill mt-4" href="{{ route('index') }}">← Back to home</a>
+</article></section>
 @endsection
