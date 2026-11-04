@@ -36,7 +36,7 @@
   <span class="gsk-v3-kicker"><span class="gsk-v3-live-dot"></span> PUBLISHED INFORMATION</span>
   <h1 class="mt-3">{{ $page->name }}</h1>
   @if (filled($meta_description))<p>{{ $meta_description }}</p>@endif
-  <div class="gsk-v3-inner-links"><a href="{{ route('index') }}#today-results">🏆 Latest results</a><a href="{{ route('index') . '#monthly-records' }}">📊 Result charts</a><a href="{{ route('community.index') }}">👥 Community</a></div>
+  <div class="gsk-v3-inner-links"><a href="{{ route('index') }}#today-results">🏆 Latest results</a><a href="{{ route('charts.index') }}">📊 Result charts</a><a href="{{ route('community.index') }}">👥 Community</a></div>
 </div></section>
 <section class="container py-4 py-lg-5 gsk-v3-document-layout">
   <article class="gsk-v3-document-card">
