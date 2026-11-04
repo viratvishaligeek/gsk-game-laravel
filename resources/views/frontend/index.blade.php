@@ -125,7 +125,7 @@
     @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'second_place_another')])
 @endif
 
-<section class="gsk-v3-archive-band" id="monthly-records">
+<section class="gsk-v3-archive-band" id="monthly-records"><span id="market-charts" class="gsk-v3-anchor-target" aria-hidden="true"></span>
     <div class="container py-5">
         <div class="gsk-v3-section-head gsk-v3-section-head-light">
             <div><span>THE RECORD ROOM · {{ strtoupper($monthLabel) }}</span><h2>📊 Monthly result charts</h2><p>Browse the saved daily record for each market in the selected month.</p></div>
@@ -196,7 +196,7 @@
     </div>
 </section>
 
-<section class="gsk-v3-disclaimer">
+<section class="gsk-v3-disclaimer" id="disclaimer">
     <div class="container py-4"><div><span>⚖️ INFORMATION NOTICE</span><h2>Records are information, not promises.</h2><p>{{ filled(setting('disclaimer_content')) ? Str::limit(setting('disclaimer_content'), 200, '…') : 'Please review the information and local requirements before using public result records.' }}</p></div><a href="{{ route('page', ['page' => 'disclaimer']) }}">Read full disclaimer →</a></div>
 </section>
 
