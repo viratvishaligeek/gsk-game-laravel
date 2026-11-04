@@ -108,7 +108,11 @@
                         row.append(dateCell, resultCell);
                         tbody.appendChild(row);
                     });
-                    if (payload.month_label) {\n                        if (monthLabel) monthLabel.textContent = payload.month_label;\n                        const tableMonthLabel = document.querySelector('[data-table-month-label]');\n                        if (tableMonthLabel) tableMonthLabel.textContent = payload.month_label;\n                    }
+                    if (payload.month_label) {
+                        if (monthLabel) monthLabel.textContent = payload.month_label;
+                        const tableMonthLabel = document.querySelector('[data-table-month-label]');
+                        if (tableMonthLabel) tableMonthLabel.textContent = payload.month_label;
+                    }
                     empty.hidden = hasPublished;
                     setStatus(hasPublished ? 'Results updated.' : 'No published results for this month.', false);
                 } catch (error) {
