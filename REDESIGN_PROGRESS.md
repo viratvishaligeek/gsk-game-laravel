@@ -42,13 +42,14 @@ Draft PR: https://github.com/viratvishaligeek/gsk-game-laravel/pull/4
 - The exact production cause still needs the actual cPanel document root, deployed branch/commit, PHP-FPM/Apache error log and `storage/logs/laravel.log`.
 
 ## Validation
-- [x] Blade compilation and PHP syntax checks passed in CI runs #60, #66, #69, #71 and #73.
-- [x] Focused homepage layout assertions passed after restoring the legacy hero selector and base managed-section order.
-- [x] Full suite in CI #73: 55 passed / 15 failed. That run preceded the new chart route/controller actions and public maintenance-route removal, so those route-related failures require a fresh run.
-- [ ] Rerun monthly chart, FAQ, robots and public frontend route tests after the latest route additions.
-- [ ] Rerun the full Laravel suite; compare any remaining failures against the exact base commit before attributing them.
+- [x] Blade compilation and PHP syntax checks passed in CI run #92.
+- [x] Focused frontend layout regression tests passed: 3 tests / 35 assertions.
+- [x] Monthly chart page/data tests passed.
+- [x] Public frontend route tests passed, including the read-only / rate-limited chart endpoint and removal of the public cache-clear route.
+- [x] Full suite in CI #92: 60 passed / 10 failed.
+- Remaining failures are in `DisawarBusinessDateBoundaryTest`, `AdminBidAndSupportChatEnhancementTest` and `SupportFeaturesRegressionTest`. The PR did not modify the business-date, admin bidding/support or support-feature implementation areas. An exact `main` baseline run has not been obtained, so these failures are not labelled pre-existing.
 - [ ] Browser-test homepage, charts, market archive, information/CMS and community pages at mobile/tablet/desktop widths.
-- [ ] Verify chart and market AJAX filters and responsive tables.
+- [ ] Verify chart and market AJAX filters and responsive tables in a real browser.
 - [ ] Confirm production document root, deployed branch/commit, rewrite rules, asset paths, cache and Laravel logs.
 - [ ] Capture genuine before/after screenshots.
 
