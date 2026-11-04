@@ -39,7 +39,7 @@
   </div>
   <div class="gsk-v3-archive-back"><a href="{{ route('index') }}#markets">← Back to market directory</a><a href="{{ route('charts.index') }}">Open all monthly charts →</a></div>
 </section>
-@endsectionn
+@endsection
 
 @section('script')
     <script>
