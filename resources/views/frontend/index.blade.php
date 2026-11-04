@@ -32,7 +32,7 @@
                 </div>
             </div>
             <div class="col-lg-5">
-                <article class="gsk-v3-spotlight">
+                <article class="gsk-featured-result gsk-v3-spotlight">
                     <div class="gsk-v3-spotlight-top"><span>⭐ MOST RECENT UPDATE</span><small>🗓️ {{ $todayLabel }}</small></div>
                     @if ($featuredGame)
                         <div class="gsk-v3-spotlight-market">{{ $featuredGame['name'] }}</div>
