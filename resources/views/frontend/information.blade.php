@@ -6,7 +6,7 @@
 <section class="gsk-v3-inner-hero"><div class="container py-4 py-lg-5">
   <span class="gsk-v3-kicker"><span class="gsk-v3-live-dot"></span> INFORMATION DESK</span>
   <h1 class="mt-3">{{ $title }}</h1><p>Helpful information and guidance from {{ setting('title') }}.</p>
-  <div class="gsk-v3-inner-links"><a href="{{ route('index') }}#markets">🎮 Browse markets</a><a href="{{ route('charts.index') }}">📊 Monthly charts</a><a href="{{ route('community.index') }}">👥 Community</a></div>
+  <div class="gsk-v3-inner-links"><a href="{{ route('index') }}#markets">🎮 Browse markets</a><a href="{{ route('index') . '#monthly-records' }}">📊 Monthly charts</a><a href="{{ route('community.index') }}">👥 Community</a></div>
 </div></section>
 <section class="container py-4 py-lg-5 gsk-v3-document-layout">
   <article class="gsk-v3-document-card">
