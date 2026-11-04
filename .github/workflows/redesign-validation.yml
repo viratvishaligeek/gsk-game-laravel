@@ -39,7 +39,11 @@ jobs:
         run: composer install --no-interaction --prefer-dist --no-progress
       - name: Prepare Laravel environment
         run: |
-          cp .env.example .env
+          if [ -f .env.example ]; then
+            cp .env.example .env
+          else
+            printf 'APP_NAME=GSK\nAPP_ENV=testing\nAPP_KEY=\nAPP_DEBUG=true\nAPP_URL=http://localhost\nDB_CONNECTION=sqlite\nDB_DATABASE=:memory:\nCACHE_STORE=array\nSESSION_DRIVER=array\nQUEUE_CONNECTION=sync\n' > .env
+          fi
           php artisan key:generate
       - name: Compile Blade views
         run: php artisan view:cache
