@@ -4,35 +4,42 @@
 @section('meta_keywords', $game->name . ', Satta King result, monthly result chart')
 @section('robots_content', request()->query->count() > 0 ? 'noindex,follow' : setting('robots_default', 'index,follow'))
 @section('content')
-<section class="gsk-page-hero"><div class="container py-4 py-lg-5">
-  <nav aria-label="Breadcrumb"><ol class="breadcrumb mb-3"><li class="breadcrumb-item"><a href="{{ route('index') }}">Home</a></li><li class="breadcrumb-item"><a href="{{ route('index') }}#markets">Markets</a></li><li class="breadcrumb-item active" aria-current="page">{{ $game->name }}</li></ol></nav>
-  <span class="gsk-kicker">📊 MARKET ARCHIVE</span><h1 class="mt-3">{{ $game->name }}</h1><p class="mb-0" data-month-label>{{ $monthLabel }}</p><p class="mb-0">Saved daily results for {{ $monthLabel }}. Missing values are shown as a dash.</p>
-</div></section>
-<section class="container py-4 py-lg-5">
-  <nav class="gsk-market-journey mb-3" aria-label="Market actions">
-    <a href="{{ route('charts.index', ['game_id' => $game->id]) }}">📊 Compare in monthly charts <span>→</span></a>
-    <a href="{{ route('index') }}#markets">🎮 Browse other markets <span>→</span></a>
-    <a href="{{ route('community.index') }}">👥 Community <span>→</span></a>
-  </nav>
-  <div class="gsk-filter-panel mb-3">
-    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3"><div><span class="gsk-filter-kicker">🗓️ SELECT PERIOD</span><h2 class="h5 mb-0">Monthly result history</h2></div><span class="badge text-bg-light">Date-wise records</span></div>
+<section class="gsk-v3-archive-hero">
+  <div class="container py-4 py-lg-5">
+    <nav aria-label="Breadcrumb"><ol class="breadcrumb mb-4"><li class="breadcrumb-item"><a href="{{ route('index') }}">Home</a></li><li class="breadcrumb-item"><a href="{{ route('index') }}#markets">Markets</a></li><li class="breadcrumb-item active" aria-current="page">{{ $game->name }}</li></ol></nav>
+    <div class="row align-items-end g-4">
+      <div class="col-lg-8">
+        <span class="gsk-v3-kicker"><span class="gsk-v3-live-dot"></span> MARKET RECORD ROOM</span>
+        <h1 class="mt-3">{{ $game->name }}</h1>
+        <p>Explore the saved day-by-day results for this market. Choose a month and year to move through the archive.</p>
+        <div class="gsk-v3-archive-hero-actions"><a href="{{ route('index') }}#markets">🎮 All markets</a><a href="{{ route('charts.index', ['game_id' => $game->id]) }}">📊 Compare charts</a><a href="{{ route('community.index') }}">👥 Community</a></div>
+      </div>
+      <div class="col-lg-4"><div class="gsk-v3-archive-summary"><small>SELECTED PERIOD</small><strong data-month-label>{{ $monthLabel }}</strong><span>{{ count($results) }} calendar dates</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="container py-4 py-lg-5 gsk-v3-archive-content">
+  <div class="gsk-v3-period-panel mb-4">
+    <div class="gsk-v3-period-heading"><div><span>🗓️ CHANGE THE PERIOD</span><h2>Browse market history</h2><p>Results refresh automatically when you select a different month or year.</p></div><span>📈 DATE-WISE ARCHIVE</span></div>
     <form method="GET" action="{{ route('frontend.market', ['slug' => $game->slug]) }}" class="row g-3 align-items-end" data-result-filter data-endpoint="{{ route('frontend.chart') }}">
       <input type="hidden" data-csrf-token value="{{ csrf_token() }}">
-      <div class="col-12 col-sm-6"><label class="form-label fw-semibold" for="result-year">Year</label><select class="form-select" id="result-year" name="year" data-result-year>@foreach ($availableYears as $yearOption)<option value="{{ $yearOption }}" {{ (int) $yearOption === (int) $year ? 'selected' : '' }}>{{ $yearOption }}</option>@endforeach</select></div>
-      <div class="col-12 col-sm-6"><label class="form-label fw-semibold" for="result-month">Month</label><select class="form-select" id="result-month" name="month" data-result-month>@for ($monthOption=1;$monthOption<=12;$monthOption++)<option value="{{ $monthOption }}" {{ $monthOption === (int) $month ? 'selected' : '' }}>{{ \Carbon\Carbon::createFromDate($year,$monthOption,1,config('app.timezone'))->translatedFormat('F') }}</option>@endfor</select></div>
-      <div class="col-12"><button class="btn btn-primary rounded-pill px-4" type="submit">Update results</button></div>
+      <div class="col-12 col-sm-5"><label class="form-label" for="result-year">Year</label><select class="form-select" id="result-year" name="year" data-result-year>@foreach ($availableYears as $yearOption)<option value="{{ $yearOption }}" {{ (int) $yearOption === (int) $year ? 'selected' : '' }}>{{ $yearOption }}</option>@endforeach</select></div>
+      <div class="col-12 col-sm-5"><label class="form-label" for="result-month">Month</label><select class="form-select" id="result-month" name="month" data-result-month>@for ($monthOption=1;$monthOption<=12;$monthOption++)<option value="{{ $monthOption }}" {{ $monthOption === (int) $month ? 'selected' : '' }}>{{ \Carbon\Carbon::createFromDate($year,$monthOption,1,config('app.timezone'))->translatedFormat('F') }}</option>@endfor</select></div>
+      <div class="col-12 col-sm-2"><button class="btn btn-primary w-100" type="submit">Update ↗</button></div>
     </form>
   </div>
-  <p class="small text-secondary" data-result-status role="status" aria-live="polite" hidden></p>
-  <div class="gsk-empty-state mb-3" data-result-empty {{ $results->contains(fn(array $row) => $row['status'] === 'published') ? 'hidden' : '' }}><span>🗓️</span><strong>No published results for this month.</strong><p>Choose another month or year to review saved records.</p></div>
-  <div class="gsk-table-card"><div class="gsk-table-heading"><strong>📋 {{ $game->name }} · <span data-table-month-label>{{ $monthLabel }}</span></strong><span>{{ count($results) }} dates</span></div>
-    <div class="table-responsive"><table class="table table-hover align-middle mb-0 gsk-month-table"><thead><tr><th>Date</th><th>{{ $game->name }} result</th></tr></thead><tbody data-result-body>
+  <p class="gsk-v3-result-status" data-result-status role="status" aria-live="polite" hidden></p>
+  <div class="gsk-v3-archive-empty mb-3" data-result-empty {{ $results->contains(fn(array $row) => $row['status'] === 'published') ? 'hidden' : '' }}><span>🗓️</span><strong>No published results for this month.</strong><p>Choose another month or year to review saved records.</p></div>
+  <div class="gsk-v3-archive-table-card">
+    <div class="gsk-v3-archive-table-head"><div><span>📋</span><strong>{{ $game->name }} <i>·</i> <span data-table-month-label>{{ $monthLabel }}</span></strong></div><small>{{ count($results) }} days in this month</small></div>
+    <div class="table-responsive"><table class="table align-middle mb-0 gsk-v3-archive-table"><thead><tr><th>Date</th><th>{{ $game->name }} result</th></tr></thead><tbody data-result-body>
       @foreach ($results as $entry)<tr data-result-row="{{ $entry['date']->day }}"><th scope="row">{{ $entry['date']->format('d') }}</th><td data-result-cell>{{ $entry['number'] ?? '—' }}</td></tr>@endforeach
     </tbody></table></div>
   </div>
-  <div class="mt-3"><a class="btn btn-outline-primary rounded-pill" href="{{ route('index') }}#markets">← Back to all markets</a></div>
+  <div class="gsk-v3-archive-back"><a href="{{ route('index') }}#markets">← Back to market directory</a><a href="{{ route('charts.index') }}">Open all monthly charts →</a></div>
 </section>
-@endsection
+@endsectionn
 
 @section('script')
     <script>
