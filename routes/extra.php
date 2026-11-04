@@ -6,7 +6,6 @@ use App\Models\Page;
 use App\Models\Result;
 use App\Services\AppSettingsService;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/firebase-config.js', function () {
@@ -38,15 +37,6 @@ Route::get('/firebase-config.json', function () {
         'appId' => $web['app_id'] ?? '',
         'vapidKey' => $web['vapid_key'] ?? '',
     ])->header('Cache-Control', 'no-store, max-age=0');
-});
-
-Route::get('/optimize-clear', function () {
-    Artisan::call('optimize:clear');
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Application cache cleared successfully.',
-    ]);
 });
 
 // Route::get('/storage-link', function () {

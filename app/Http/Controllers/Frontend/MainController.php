@@ -97,6 +97,128 @@ class MainController extends Controller
         ));
     }
 
+    /**
+     * Render the read-only monthly chart workspace using the existing chart service.
+     */
+    public function charts(Request $request, MonthlyChartService $charts)
+    {
+        $now = now()->timezone(config('app.timezone'));
+        $validated = $request->validate([
+            'game_id' => ['nullable', 'integer', 'min:1'],
+            'year' => ['sometimes', 'required', 'integer', 'between:2000,' . $now->year],
+            'month' => ['sometimes', 'required', 'integer', 'between:1,12'],
+        ]);
+
+        $selectedGameId = isset($validated['game_id']) ? (int) $validated['game_id'] : null;
+        $year = (int) ($validated['year'] ?? $now->year);
+        $month = (int) ($validated['month'] ?? $now->month);
+        abort_if($year > $now->year || ($year === $now->year && $month > $now->month), 404);
+
+        $games = Game::query()
+            ->where('status', 'active')
+            ->when($selectedGameId !== null, fn ($query) => $query->where('id', $selectedGameId))
+            ->orderBy('serial')
+            ->orderBy('id')
+            ->get(['id', 'name', 'slug', 'serial']);
+        abort_if($selectedGameId !== null && $games->isEmpty(), 404);
+
+        [$monthStart, $monthEnd, $monthDays] = $charts->monthDates($year, $month);
+        $flatRows = $charts->homepageRows($games, $monthStart, $monthEnd, $monthDays);
+        $valuesByDay = [];
+        foreach ($flatRows as $row) {
+            $valuesByDay[$row['date']->day][(int) $row['game']->id] = $row['number'];
+        }
+
+        $chartRows = collect($monthDays)->map(fn (Carbon $date) => [
+            'date' => $date->copy(),
+            'values' => $valuesByDay[$date->day] ?? [],
+        ]);
+        $availableMonths = $charts->availableMonths($selectedGameId);
+        $availableYears = array_map('intval', array_keys($availableMonths));
+        $availableYears[] = $now->year;
+        $availableYears[] = $year;
+        $availableYears = array_values(array_unique(array_filter(
+            $availableYears,
+            fn (int $availableYear) => $availableYear >= 2000 && $availableYear <= $now->year
+        )));
+        rsort($availableYears);
+
+        $monthLabel = $charts->monthLabel($year, $month);
+        $publishedCount = $flatRows->where('status', 'published')->count();
+
+        return view('frontend.charts', compact(
+            'games',
+            'selectedGameId',
+            'year',
+            'month',
+            'availableYears',
+            'monthLabel',
+            'chartRows',
+            'publishedCount'
+        ));
+    }
+
+    /**
+     * Read-only, rate-limited monthly chart data for the public chart workspace.
+     */
+    public function chartData(Request $request, MonthlyChartService $charts)
+    {
+        $now = now()->timezone(config('app.timezone'));
+        $validated = $request->validate([
+            'game_id' => ['nullable', 'integer', 'min:1'],
+            'year' => ['required', 'integer', 'between:2000,' . $now->year],
+            'month' => ['required', 'integer', 'between:1,12'],
+        ]);
+
+        $selectedGameId = isset($validated['game_id']) ? (int) $validated['game_id'] : null;
+        $year = (int) $validated['year'];
+        $month = (int) $validated['month'];
+        abort_if($year > $now->year || ($year === $now->year && $month > $now->month), 404);
+
+        $games = Game::query()
+            ->where('status', 'active')
+            ->when($selectedGameId !== null, fn ($query) => $query->where('id', $selectedGameId))
+            ->orderBy('serial')
+            ->orderBy('id')
+            ->get(['id', 'name']);
+        abort_if($selectedGameId !== null && $games->isEmpty(), 404);
+
+        [$monthStart, $monthEnd, $monthDays] = $charts->monthDates($year, $month);
+        $flatRows = $charts->homepageRows($games, $monthStart, $monthEnd, $monthDays);
+        $valuesByDay = [];
+        foreach ($flatRows as $row) {
+            $valuesByDay[$row['date']->day][(int) $row['game']->id] = [
+                'number' => $row['number'],
+                'status' => $row['status'],
+            ];
+        }
+
+        $rows = collect($monthDays)->map(function (Carbon $date) use ($games, $valuesByDay, $now) {
+            $dayValues = $valuesByDay[$date->day] ?? [];
+            $values = $games->map(fn (Game $game) => $dayValues[$game->id] ?? [
+                'number' => null,
+                'status' => $date->gt($now->copy()->startOfDay()) ? 'upcoming' : 'pending',
+            ])->values();
+
+            return [
+                'date' => $date->toDateString(),
+                'day' => $date->day,
+                'label' => $date->format('d M'),
+                'values' => $values,
+            ];
+        });
+
+        return response()->json([
+            'month_label' => $charts->monthLabel($year, $month),
+            'games' => $games->map(fn (Game $game) => [
+                'id' => $game->id,
+                'name' => $game->name,
+            ])->values(),
+            'rows' => $rows,
+            'published_count' => $flatRows->where('status', 'published')->count(),
+        ])->header('Cache-Control', 'no-store');
+    }
+
     public function market(Request $request, string $slug, MonthlyChartService $charts)
     {
         $game = Game::query()->where('status', 'active')->where('slug', $slug)->firstOrFail();
@@ -166,6 +288,23 @@ class MainController extends Controller
                 'status' => $row['status'],
             ])->values(),
         ])->header('Cache-Control', 'no-store');
+    }
+
+    /**
+     * Render the public FAQ information page; other slugs resolve to active CMS pages.
+     */
+    public function information(?string $page = null)
+    {
+        $page = $page ?: 'faq';
+        if ($page !== 'faq') {
+            return $this->page($page);
+        }
+
+        $title = 'Frequently asked questions';
+        $copy = 'Browse answers to common questions about the result archive, market pages and community features.';
+        $faqs = Faq::query()->latest('id')->get();
+
+        return view('frontend.information', compact('page', 'title', 'copy', 'faqs'));
     }
 
     /**
