@@ -5,18 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @include('frontend.include.meta')
+    <meta name="theme-color" content="#183b72">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ URL::asset('frontend') }}/css/style.css">
-    <script>
-        document.documentElement.classList.add('js-reveal');
-        setTimeout(function() {
-            if (!document.querySelector('.reveal-run')) document.documentElement.classList.remove('js-reveal');
-        }, 9000);
-    </script>
+    <link rel="stylesheet" href="{{ URL::asset('frontend') }}/css/gsk-design-system.css">
     @yield('style')
     @stack('schema')
 </head>
