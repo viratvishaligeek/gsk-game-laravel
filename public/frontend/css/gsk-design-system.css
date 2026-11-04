@@ -29,3 +29,10 @@
 @media(max-width:575.98px){.gsk-community-form-card{padding:16px}.gsk-community-post{padding:14px}.gsk-community-hero h1{font-size:32px}}
 
 [data-result-status].is-error{color:#b64f58!important}
+
+
+/* Product experience v2: market explorer and mobile task navigation */
+.market-explorer-controls{display:grid;gap:12px}.market-filter-tabs{display:flex;gap:8px;overflow-x:auto;padding:2px 0 5px;scrollbar-width:none}.market-filter-tabs::-webkit-scrollbar{display:none}.market-filter-tabs button{display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;min-height:38px;padding:0 13px;border:1px solid var(--gsk-line);border-radius:30px;background:#fff;color:#5d6c82;font-size:10px;font-weight:800}.market-filter-tabs button span{padding:2px 6px;border-radius:20px;background:#edf2f8;font-size:9px}.market-filter-tabs button.is-active{border-color:var(--gsk-navy);background:var(--gsk-navy);color:#fff}.market-filter-tabs button.is-active span{background:#ffffff25;color:#fff}.market-explorer-rail{display:flex;gap:14px;overflow-x:auto;padding:2px 2px 15px;scroll-snap-type:x mandatory;scrollbar-width:thin}.market-explorer-rail>.gsk-market-column{display:flex;flex:0 0 min(84vw,310px);min-width:0;scroll-snap-align:start}.market-explorer-rail .gsk-market-card{width:100%;min-height:100%}.market-explorer-rail>.gsk-market-column[hidden]{display:none!important}
+.gsk-mobile-dock{display:none}
+@media(max-width:767.98px){body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}.gsk-mobile-dock{position:fixed;right:0;bottom:0;left:0;z-index:1025;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:8px 6px calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--gsk-line);background:#ffffffed;backdrop-filter:blur(16px);box-shadow:0 -6px 22px #1c35530b}.gsk-mobile-dock a{display:grid;justify-items:center;gap:3px;color:#63738a;font-size:19px}.gsk-mobile-dock small{font-size:9px;font-weight:800}.gsk-mobile-dock a:active{color:var(--gsk-blue)}.market-explorer-rail>.gsk-market-column{flex-basis:min(82vw,300px)}}
+@media(prefers-reduced-motion:reduce){.market-explorer-rail{scroll-behavior:auto}}
