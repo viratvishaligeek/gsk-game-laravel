@@ -21,6 +21,7 @@
           <li class="nav-item"><a class="nav-link" href="{{ route('index') }}#markets">🎮 Markets</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ route('charts.index') }}">📊 Charts</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ route('community.index') }}">👥 Community</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ route('information') }}">💡 FAQ</a></li>
           @foreach ($navPages ?? collect() as $navPage)
             <li class="nav-item"><a class="nav-link" href="{{ route('page', ['page' => $navPage->slug]) }}">{{ $navPage->name }}</a></li>
           @endforeach
