@@ -291,6 +291,23 @@ class MainController extends Controller
     }
 
     /**
+     * Render the public FAQ information page; other slugs resolve to active CMS pages.
+     */
+    public function information(?string $page = null)
+    {
+        $page = $page ?: 'faq';
+        if ($page !== 'faq') {
+            return $this->page($page);
+        }
+
+        $title = 'Frequently asked questions';
+        $copy = 'Browse answers to common questions about the result archive, market pages and community features.';
+        $faqs = Faq::query()->latest('id')->get();
+
+        return view('frontend.information', compact('page', 'title', 'copy', 'faqs'));
+    }
+
+    /**
      * Render an active administrator-managed CMS page linked from the homepage navigation.
      */
     public function page(string $slug)
