@@ -1,90 +1,34 @@
 @extends('frontend.include.app')
-@section('title',
-    $game->name .
-    ' ' .
-    $monthLabel .
-    ' Satta King Result Chart | ' .
-    setting(
-    'title',
-    'gali satta
-    kings',
-    ))
-@section('meta_description',
-    'Browse saved date-wise Satta King results for ' .
-    $game->name .
-    ' in ' .
-    $monthLabel .
-    '.
-    Choose a month and year to load that market\'s records.')
+@section('title', $game->name . ' ' . $monthLabel . ' Satta King Result Chart | ' . setting('title', 'GSK'))
+@section('meta_description', 'Browse saved date-wise results for ' . $game->name . ' in ' . $monthLabel . '. Select a month and year to review market records.')
 @section('meta_keywords', $game->name . ', Satta King result, monthly result chart')
 @section('robots_content', request()->query->count() > 0 ? 'noindex,follow' : setting('robots_default', 'index,follow'))
 @section('content')
-
-    <section class="page-banner page-banner--blue">
-        <div class="wrap">
-            <div class="breadcrumbs"><a href="{{ route('index') }}">Home</a><span>/</span><a
-                    href="{{ route('index') }}#markets">Markets</a><span>/</span><b>{{ $game->name }}</b></div>
-            <p class="eyebrow">GAME RESULT</p>
-            <h1>{{ $game->name }} <br> <span>{{ $monthLabel }}</span></h1>
-            <p>Monthly results are loaded from saved records. Missing values are shown as a dash.</p>
-        </div>
-    </section>
-    <section class="section-block section-light">
-        <div class="wrap">
-            <div class="page-toolbar result-month-toolbar">
-                <form method="GET" action="{{ route('frontend.market', ['slug' => $game->slug]) }}"
-                    class="monthly-chart-filter result-month-filter" data-result-filter
-                    data-endpoint="{{ route('frontend.chart') }}">
-                    <input type="hidden" data-csrf-token value="{{ csrf_token() }}">
-                    <label for="result-year">Year</label>
-                    <select class="form-select" id="result-year" name="year" data-result-year>
-                        @foreach ($availableYears as $yearOption)
-                            <option value="{{ $yearOption }}" {{ (int) $yearOption === (int) $year ? 'selected' : '' }}>
-                                {{ $yearOption }}</option>
-                        @endforeach
-                    </select>
-                    <label for="result-month">Month</label>
-                    <select class="form-select" id="result-month" name="month" data-result-month>
-                        @for ($monthOption = 1; $monthOption <= 12; $monthOption++)
-                            <option value="{{ $monthOption }}" {{ $monthOption === (int) $month ? 'selected' : '' }}>
-                                {{ \Carbon\Carbon::createFromDate($year, $monthOption, 1, config('app.timezone'))->translatedFormat('F') }}
-                            </option>
-                        @endfor
-                    </select>
-                </form>
-            </div>
-            <p class="result-fetch-status" data-result-status role="status" aria-live="polite" hidden></p>
-            <div class="empty-state" data-result-empty
-                {{ $results->contains(fn(array $row) => $row['status'] === 'published') ? 'hidden' : '' }}>
-                <b>No published results for this month.</b>
-                <p>Choose another month or year to review saved records.</p>
-            </div>
-            <div class="table-shell light-table result-table-compact">
-                <table class="quick-record-table monthly-result-table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Date</th>
-                            <th scope="col">{{ $game->name }}</th>
-                        </tr>
-                    </thead>
-
-                    <tbody data-result-body>
-                        @foreach ($results as $entry)
-                            <tr data-result-row="{{ $entry['date']->day }}">
-                                <th scope="row" style="text-align: center; font-weight:bold">
-                                    {{ $entry['date']->format('d') }}
-                                </th>
-                                <td data-result-cell>
-                                    {{ $entry['number'] ?? '—' }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
-    </section>
+<section class="gsk-page-hero"><div class="container py-4 py-lg-5">
+  <nav aria-label="Breadcrumb"><ol class="breadcrumb mb-3"><li class="breadcrumb-item"><a href="{{ route('index') }}">Home</a></li><li class="breadcrumb-item"><a href="{{ route('index') }}#markets">Markets</a></li><li class="breadcrumb-item active" aria-current="page">{{ $game->name }}</li></ol></nav>
+  <span class="gsk-kicker">📊 MARKET ARCHIVE</span><h1 class="mt-3">{{ $game->name }}</h1><p class="mb-0" data-month-label>{{ $monthLabel }}</p><p class="mb-0">Saved daily results for {{ $monthLabel }}. Missing values are shown as a dash.</p>
+</div></section>
+<section class="container py-4 py-lg-5">
+  <div class="gsk-filter-panel mb-3">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3"><div><span class="gsk-filter-kicker">🗓️ SELECT PERIOD</span><h2 class="h5 mb-0">Monthly result history</h2></div><span class="badge text-bg-light">Date-wise records</span></div>
+    <form method="GET" action="{{ route('frontend.market', ['slug' => $game->slug]) }}" class="row g-3 align-items-end" data-result-filter data-endpoint="{{ route('frontend.chart') }}">
+      <input type="hidden" data-csrf-token value="{{ csrf_token() }}">
+      <div class="col-12 col-sm-6"><label class="form-label fw-semibold" for="result-year">Year</label><select class="form-select" id="result-year" name="year" data-result-year>@foreach ($availableYears as $yearOption)<option value="{{ $yearOption }}" {{ (int) $yearOption === (int) $year ? 'selected' : '' }}>{{ $yearOption }}</option>@endforeach</select></div>
+      <div class="col-12 col-sm-6"><label class="form-label fw-semibold" for="result-month">Month</label><select class="form-select" id="result-month" name="month" data-result-month>@for ($monthOption=1;$monthOption<=12;$monthOption++)<option value="{{ $monthOption }}" {{ $monthOption === (int) $month ? 'selected' : '' }}>{{ \Carbon\Carbon::createFromDate($year,$monthOption,1,config('app.timezone'))->translatedFormat('F') }}</option>@endfor</select></div>
+      <div class="col-12"><button class="btn btn-primary rounded-pill px-4" type="submit">Update results</button></div>
+    </form>
+  </div>
+  <p class="small text-secondary" data-result-status role="status" aria-live="polite" hidden></p>
+  <div class="gsk-empty-state mb-3" data-result-empty {{ $results->contains(fn(array $row) => $row['status'] === 'published') ? 'hidden' : '' }}><span>🗓️</span><strong>No published results for this month.</strong><p>Choose another month or year to review saved records.</p></div>
+  <div class="gsk-table-card"><div class="gsk-table-heading"><strong>📋 {{ $game->name }} · {{ $monthLabel }}</strong><span>{{ count($results) }} dates</span></div>
+    <div class="table-responsive"><table class="table table-hover align-middle mb-0 gsk-month-table"><thead><tr><th>Date</th><th>{{ $game->name }} result</th></tr></thead><tbody data-result-body>
+      @foreach ($results as $entry)<tr data-result-row="{{ $entry['date']->day }}"><th scope="row">{{ $entry['date']->format('d') }}</th><td data-result-cell>{{ $entry['number'] ?? '—' }}</td></tr>@endforeach
+    </tbody></table></div>
+  </div>
+  <div class="mt-3"><a class="btn btn-outline-primary rounded-pill" href="{{ route('index') }}#markets">← Back to all markets</a></div>
+</section>
 @endsection
+
 @section('script')
     <script>
         (function() {

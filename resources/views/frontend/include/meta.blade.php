@@ -68,7 +68,7 @@
     ];
 @endphp
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{ $sectionTitle }}</title>
 <meta name="description" content="{{ $sectionDescription }}">
 @if (filled(setting('meta_keywords')) || filled(trim($__env->yieldContent('meta_keywords'))))
@@ -79,7 +79,7 @@
 @if (filled(setting('site_favicon')) && is_file(public_path('logos/' . basename(setting('site_favicon')))))
     <link rel="icon" href="{{ $canonicalBase . '/logos/' . basename(setting('site_favicon')) }}">
 @endif
-<meta name="theme-color" content="#071329">
+<meta name="theme-color" content="#17345c">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{{ $siteName }}">
 <meta property="og:title" content="{{ $ogTitle }}">

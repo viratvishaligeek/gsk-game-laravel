@@ -1,42 +1,24 @@
-@extends('frontend.include.layout')
-
-@section('meta_title', 'Monthly Results Charts | ' . app(\App\Services\AppSettingsService::class)->value('title', config('app.name')))
+@extends('frontend.include.app')
+@section('title', 'Monthly Results Charts | ' . app(\App\Services\AppSettingsService::class)->value('title', config('app.name')))
 @section('meta_description', 'Browse monthly result records by game, month, and year.')
-@section('meta_robots', request()->query->count() ? 'noindex,follow' : 'index,follow')
-
+@section('robots_content', request()->query->count() ? 'noindex,follow' : 'index,follow')
 @section('content')
-<section class="section">
-    <div class="">
-        <div class="center mb-4">
-            <h1>Monthly Results Charts</h1>
-            <p class="muted">Select a game, month, and year to view stored result records.</p>
-        </div>
-        <form class="card mb-4" method="GET" action="{{ route('charts.index') }}" data-chart-filters data-endpoint="{{ route('charts.data') }}" data-current-year="{{ now()->timezone(config('app.timezone'))->year }}" data-current-month="{{ now()->timezone(config('app.timezone'))->month }}">
-            <div class="card-body"><div class="row g-3 align-items-end">
-                <div class="col-12 col-md-4"><label class="form-label" for="game_id">Game</label><select class="form-select" name="game_id" id="game_id"><option value="">All active games</option>@foreach ($games as $game)<option value="{{ $game->id }}" @selected((string)($selectedGameId ?? '') === (string)$game->id)>{{ $game->name }}</option>@endforeach</select></div>
-                <div class="col-6 col-md-3"><label class="form-label" for="year">Year</label><select class="form-select" name="year" id="year">@foreach ($availableYears as $availableYear)<option value="{{ $availableYear }}" @selected($year === $availableYear)>{{ $availableYear }}</option>@endforeach</select></div>
-                <div class="col-6 col-md-3"><label class="form-label" for="month">Month</label><select class="form-select" name="month" id="month">@foreach (range(1,12) as $monthNumber)@if ($year < now()->timezone(config('app.timezone'))->year || $monthNumber <= now()->timezone(config('app.timezone'))->month)<option value="{{ $monthNumber }}" @selected($month === $monthNumber)>{{ \Carbon\Carbon::create()->month($monthNumber)->format('F') }}</option>@endif @endforeach</select></div>
-                <div class="col-12 col-md-2 d-grid"><button class="btn btn-primary" type="submit">Update chart</button></div>
-            </div></div>
-        </form>
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-            <h2 class="h4 mb-0" data-chart-title>{{ $monthLabel }}</h2>
-            <span class="small text-body-secondary" data-chart-status aria-live="polite">{{ number_format($publishedCount) }} published records</span>
-        </div>
-        <div class="table-scroll" data-chart-wrap>
-            <table class="chart-table" data-chart-table>
-                <thead><tr><th class="wk-h">Date</th>@foreach ($games as $game)<th>{{ $game->name }}</th>@endforeach</tr></thead>
-                <tbody>
-                    @forelse ($chartRows as $row)
-                        <tr><td class="wk">{{ $row['date']->format('d M') }}</td>@foreach ($games as $game)<td>{{ $row['values'][$game->id] ?? '—' }}</td>@endforeach</tr>
-                    @empty
-                        <tr><td colspan="{{ $games->count() + 1 }}">No active games are configured.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        <p class="muted small mt-3">A dash means no published value is stored for that date. Future dates are not shown as results.</p>
+<section class="gsk-page-hero"><div class="container py-4 py-lg-5"><span class="gsk-kicker">📊 HISTORICAL REGISTER</span><h1 class="mt-3">Monthly result charts</h1><p class="mb-0">Select a market and period to explore saved date-wise results.</p></div></section>
+<section class="container py-4 py-lg-5">
+  <form class="gsk-chart-filters mb-4" method="GET" action="{{ route('charts.index') }}" data-chart-filters data-endpoint="{{ route('charts.data') }}" data-current-year="{{ now()->timezone(config('app.timezone'))->year }}" data-current-month="{{ now()->timezone(config('app.timezone'))->month }}">
+    <div class="row g-3 align-items-end">
+      <div class="col-12 col-md-4"><label class="form-label fw-semibold" for="game_id">🎮 Market</label><select class="form-select" name="game_id" id="game_id"><option value="">All active markets</option>@foreach ($games as $game)<option value="{{ $game->id }}" @selected((string)($selectedGameId ?? '') === (string)$game->id)>{{ $game->name }}</option>@endforeach</select></div>
+      <div class="col-6 col-md-3"><label class="form-label fw-semibold" for="year">📅 Year</label><select class="form-select" name="year" id="year">@foreach ($availableYears as $availableYear)<option value="{{ $availableYear }}" @selected($year === $availableYear)>{{ $availableYear }}</option>@endforeach</select></div>
+      <div class="col-6 col-md-3"><label class="form-label fw-semibold" for="month">🗓️ Month</label><select class="form-select" name="month" id="month">@foreach (range(1,12) as $monthNumber)@if ($year < now()->timezone(config('app.timezone'))->year || $monthNumber <= now()->timezone(config('app.timezone'))->month)<option value="{{ $monthNumber }}" @selected($month === $monthNumber)>{{ \Carbon\Carbon::create()->month($monthNumber)->format('F') }}</option>@endif @endforeach</select></div>
+      <div class="col-12 col-md-2 d-grid"><button class="btn btn-primary rounded-pill" type="submit">Update chart</button></div>
     </div>
+  </form>
+  <div class="d-flex justify-content-between align-items-center gap-2 mb-3"><h2 class="h5 mb-0" data-chart-title>{{ $monthLabel }}</h2><span class="small text-secondary" data-chart-status aria-live="polite">{{ number_format($publishedCount) }} published records</span></div>
+  <div class="gsk-chart-wrap" data-chart-wrap><table class="table table-hover align-middle gsk-chart-table" data-chart-table>
+    <thead><tr><th>Date</th>@foreach ($games as $game)<th>{{ $game->name }}</th>@endforeach</tr></thead>
+    <tbody>@forelse ($chartRows as $row)<tr><th>{{ $row['date']->format('d M') }}</th>@foreach ($games as $game)<td>{{ $row['values'][$game->id] ?? '—' }}</td>@endforeach</tr>@empty<tr><td colspan="{{ $games->count()+1 }}">No active games are configured.</td></tr>@endforelse</tbody>
+  </table></div>
+  <p class="small text-secondary mt-3">A dash means no published value is stored for that date. Future dates are not shown as results.</p>
 </section>
 @endsection
 

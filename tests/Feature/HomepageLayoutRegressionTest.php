@@ -40,20 +40,30 @@ class HomepageLayoutRegressionTest extends TestCase
             ->assertSee('data-test-section="top-managed"', false)
             ->assertSee('data-test-section="after-results"', false)
             ->assertDontSee('data-test-section="hidden-managed"', false)
-            ->assertSee('class="home-intro', false)
-            ->assertSee('class="live-hero"', false)
-            ->assertSee('class="hero"', false)
-            ->assertSee('class="lrb-section"', false);
+            ->assertSee('class="gsk-home-hero"', false)
+            ->assertSee('id="today-results"', false)
+            ->assertSee('id="markets"', false)
+            ->assertSee('id="market-charts"', false);
 
         $html = $response->getContent();
-        $this->assertLessThan(strpos($html, 'class="home-intro'), strpos($html, 'class="ticker"'));
-        $this->assertLessThan(strpos($html, 'class="live-hero"'), strpos($html, 'class="home-intro'));
-        $this->assertLessThan(strpos($html, 'class="hero"'), strpos($html, 'class="live-hero"'));
-        $this->assertLessThan(strpos($html, 'class="lrb-section"'), strpos($html, 'class="hero"'));
-        $this->assertLessThan(strpos($html, 'data-test-section="top-managed"'), strpos($html, 'class="live-hero"'));
-        $this->assertLessThan(strpos($html, 'class="hero"'), strpos($html, 'data-test-section="top-managed"'));
-        $this->assertLessThan(strpos($html, 'class="section alt"'), strpos($html, 'data-test-section="after-results"'));
-        $this->assertGreaterThan(strpos($html, 'class="lrb-section"'), strpos($html, 'data-test-section="after-results"'));
+        $heroPosition = strpos($html, 'class="gsk-home-hero"');
+        $topPosition = strpos($html, 'data-test-section="top-managed"');
+        $resultsPosition = strpos($html, 'id="today-results"');
+        $afterResultsPosition = strpos($html, 'data-test-section="after-results"');
+        $marketsPosition = strpos($html, 'id="markets"');
+        $chartsPosition = strpos($html, 'id="market-charts"');
+
+        $this->assertNotFalse($heroPosition);
+        $this->assertNotFalse($topPosition);
+        $this->assertNotFalse($resultsPosition);
+        $this->assertNotFalse($afterResultsPosition);
+        $this->assertNotFalse($marketsPosition);
+        $this->assertNotFalse($chartsPosition);
+        $this->assertLessThan($topPosition, $heroPosition);
+        $this->assertLessThan($resultsPosition, $topPosition);
+        $this->assertLessThan($afterResultsPosition, $resultsPosition);
+        $this->assertLessThan($marketsPosition, $afterResultsPosition);
+        $this->assertLessThan($chartsPosition, $marketsPosition);
         $this->assertSame(1, substr_count($html, 'data-test-section="top-managed"'));
         $this->assertSame(1, substr_count($html, 'data-test-section="after-results"'));
     }
@@ -104,8 +114,8 @@ class HomepageLayoutRegressionTest extends TestCase
             ->assertSee('/result/market-beta');
 
         $html = $response->getContent();
-        $featuredStart = strpos($html, 'class="live-hero"');
-        $featuredEnd = strpos($html, '<section class="hero"', $featuredStart);
+        $featuredStart = strpos($html, 'class="gsk-featured-result"');
+        $featuredEnd = strpos($html, '</article>', $featuredStart);
         $featuredHtml = substr($html, $featuredStart, $featuredEnd - $featuredStart);
         $this->assertStringContainsString('Market Beta', $featuredHtml);
         $this->assertStringContainsString('456', $featuredHtml);
