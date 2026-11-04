@@ -22,7 +22,8 @@ Draft PR: https://github.com/viratvishaligeek/gsk-game-laravel/pull/4
 
 ### Customer-facing pages
 - [x] Market archive: new record-room hero, period controls, date-wise result table and archive navigation; existing AJAX endpoint and month/year behavior retained.
-- [x] Monthly charts: new filter workspace, selected-period summary, horizontally scrollable date-by-market result matrix and explanatory note; existing AJAX and browser-history behavior retained.
+- [x] Monthly records: rebuilt the homepage's date-by-market record room and individual market archive pages; existing market AJAX endpoint and month/year behavior retained.
+- [x] Verified current web routes: there is no registered `charts.index` / `charts.data` public route. New navigation points to the existing homepage monthly-record anchor and per-market archives; no backend route or new API was invented. The standalone `charts.blade.php` remains unchanged because no current public route serves it.
 - [x] Information and CMS pages: new editorial hero, document layout, contextual navigation and responsive CMS content.
 - [x] Community feed: new community hero, live post/reply counts, discussion cards and recent-reply previews.
 - [x] Community detail: dedicated original-post panel, reply thread and reply composer.
@@ -40,9 +41,10 @@ Draft PR: https://github.com/viratvishaligeek/gsk-game-laravel/pull/4
 - Need the production hosting document root, deployed Git branch/commit, rewrite configuration and server error log to diagnose any homepage-wide outage conclusively.
 
 ## Validation still required
-- [ ] Run Blade compilation and PHP syntax checks on v3.
-- [ ] Run focused public-route and monthly-chart tests.
-- [ ] Run the full Laravel test suite and compare failures against the exact v3 base commit.
+- [x] Blade compilation and PHP syntax checks passed on the first v3 CI run.
+- [ ] Fix route-name failures found by focused homepage regression tests and rerun the suite.
+- [ ] Run focused public-route and market-archive AJAX tests.
+- [ ] Run the full Laravel test suite after the route-link correction and compare failures against the exact v3 base commit.
 - [ ] Browser-check homepage, market archive, charts, information/CMS and community pages at mobile/tablet/desktop widths.
 - [ ] Verify market and chart AJAX filters after the markup changes.
 - [ ] Confirm cPanel document root, deployed branch/commit, rewrite rules, asset paths, cache and Laravel logs.
