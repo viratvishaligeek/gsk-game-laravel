@@ -22,6 +22,7 @@ Draft PR: https://github.com/viratvishaligeek/gsk-game-laravel/pull/4
 - [x] Monthly Charts: added the missing public read-only chart page and data endpoint using the existing `MonthlyChartService`. The page renders a date-by-market matrix; the JSON endpoint returns month label, markets, date rows, numbers and statuses.
 - [x] Added the `frontend.page` alias while retaining the existing `page` route name.
 - [x] Added a public `information` route for the FAQ information view; non-FAQ slugs resolve through the existing active CMS page handler.
+- [x] Added a read-only `robots.txt` route that advertises the existing sitemap.
 - [x] Information and CMS pages: new editorial hero, document layout, contextual navigation and responsive CMS content.
 - [x] Community feed: new community hero, live post/reply counts, discussion cards and recent-reply previews.
 - [x] Community detail: original-post panel, reply thread and reply composer.
@@ -44,7 +45,7 @@ Draft PR: https://github.com/viratvishaligeek/gsk-game-laravel/pull/4
 - [x] Blade compilation and PHP syntax checks passed in CI runs #60, #66, #69, #71 and #73.
 - [x] Focused homepage layout assertions passed after restoring the legacy hero selector and base managed-section order.
 - [x] Full suite in CI #73: 55 passed / 15 failed. That run preceded the new chart route/controller actions and public maintenance-route removal, so those route-related failures require a fresh run.
-- [ ] Rerun monthly chart route/data tests and public frontend route tests after the route additions.
+- [ ] Rerun monthly chart, FAQ, robots and public frontend route tests after the latest route additions.
 - [ ] Rerun the full Laravel suite; compare any remaining failures against the exact base commit before attributing them.
 - [ ] Browser-test homepage, charts, market archive, information/CMS and community pages at mobile/tablet/desktop widths.
 - [ ] Verify chart and market AJAX filters and responsive tables.
