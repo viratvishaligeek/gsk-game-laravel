@@ -136,6 +136,7 @@ class MainController extends Controller
         $availableMonths = $charts->availableMonths($selectedGameId);
         $availableYears = array_map('intval', array_keys($availableMonths));
         $availableYears[] = $now->year;
+        $availableYears[] = $year;
         $availableYears = array_values(array_unique(array_filter(
             $availableYears,
             fn (int $availableYear) => $availableYear >= 2000 && $availableYear <= $now->year
