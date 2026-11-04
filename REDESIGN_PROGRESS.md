@@ -31,8 +31,8 @@ Draft PR: https://github.com/viratvishaligeek/gsk-game-laravel/pull/3
 ## Validation status
 - [x] Blade compilation passed after the current view updates.
 - [x] PHP syntax and focused frontend layout regression checks passed on the earlier v2 commits.
-- [ ] Latest full GitHub Actions run still executing; re-check after all current commits.
-- [ ] Full Laravel suite is not green: most recent completed run reported 56 passed / 14 failed. Failures are in business-date boundary, admin bidding/support, monthly chart route, public route, notification cap, site cookie and support configuration tests. No backend/admin files were changed in this PR, but a clean main-branch baseline run has not yet been obtained; do not label these proven pre-existing until that baseline is run.
+- [x] Latest full GitHub Actions run completed: Blade compilation, generated PHP syntax and focused frontend layout regression checks passed; full suite remains failed as documented below.
+- [x] Full Laravel suite is not green: latest run `41912392862` reported 56 passed / 14 failed (246 assertions). Failures are in `DisawarBusinessDateBoundaryTest`, `AdminBidAndSupportChatEnhancementTest`, `MonthlyChartsPageTest`, `PublicFrontendRoutesTest` and `SupportFeaturesRegressionTest`. These same test classes failed in the earliest v2 CI run too. Their test files and `routes/web.php` / `routes/api.php` are blob-identical to `main`, and this PR changes no backend/admin code. A dedicated test run on exact base commit `4457c6b` was not available, so a strict main-baseline comparison remains outstanding.
 - [ ] Browser test homepage, market archives, charts, community and CMS pages at desktop and mobile widths.
 - [ ] Verify AJAX market/month switching, header collapse, dock anchors and footer modal.
 - [ ] Capture genuine before/after screenshots.
