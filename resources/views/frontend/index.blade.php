@@ -129,7 +129,7 @@
     <div class="container py-5">
         <div class="gsk-v3-section-head gsk-v3-section-head-light">
             <div><span>THE RECORD ROOM · {{ strtoupper($monthLabel) }}</span><h2>📊 Monthly result charts</h2><p>Browse the saved daily record for each market in the selected month.</p></div>
-            <a href="{{ route('charts.index') }}" class="btn btn-warning">Open full chart archive →</a>
+            <a href="{{ route('index') . '#monthly-records' }}" class="btn btn-warning">Open full chart archive →</a>
         </div>
         @forelse ($monthlyTables as $tableIndex => $table)
             <div class="gsk-v3-chart-card mb-4">
