@@ -50,8 +50,8 @@ class PresenceController extends Controller
             $activityAt = $activity
                 ? (
                     isset($validated['activity_at'])
-                    ? \Illuminate\Support\Carbon::parse($validated['activity_at'])->utc()
-                    : $now->copy()->utc()
+                    ? \Illuminate\Support\Carbon::parse($validated['activity_at'])->setTimezone(config('app.timezone'))
+                    : $now->copy()
                 )
                 : null;
             if ($activityAt && $activityAt->greaterThan($now)) {
