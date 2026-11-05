@@ -3,7 +3,7 @@
 @section('robots_content', 'noindex,follow')
 @section('content')
 <header class="v5-page-hero"><div class="v5-page-hero-inner"><div><span class="v5-kicker">COMMUNITY STUDIO / NEW THREAD</span><h1>Start with a good question.</h1><p>Choose a game topic, write a clear title and give other members enough context to respond.</p></div><aside class="v5-page-aside"><a class="text-white" href="{{ route('community.index') }}">← Return to discussions</a></aside></div></header>
-<main class="v5-form-layout">
+<section class="v5-form-layout">
   <aside class="v5-form-intro"><span class="v5-kicker">BEFORE YOU POST</span><h2>Make it useful.</h2><p class="text-secondary small">Choose the most relevant game, give the thread a specific title and include the details that will help other members understand your message.</p><ol class="small text-secondary ps-3"><li class="mb-2">Select a topic</li><li class="mb-2">Write a clear title</li><li>Explain your message</li></ol></aside>
   <section class="v5-form-sheet">
     @if (session('success'))<div class="alert alert-success" role="status">{{ session('success') }}</div>@endif
@@ -15,5 +15,5 @@
       <button class="v5-button v5-button-gold" type="submit">Submit discussion ↗</button>
     </form>
   </section>
-</main>
+</section>
 @endsection
