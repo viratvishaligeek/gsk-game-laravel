@@ -11,197 +11,173 @@
     $managedSections = $homepageSections ?? collect();
 @endphp
 
-<section class="gsk-home-hero">
-    <div class="container py-5 py-xl-6">
-        <div class="row align-items-center g-4 g-xl-5">
-            <div class="col-lg-7">
-                <div class="gsk-v3-kicker"><span class="gsk-v3-live-dot"></span> LIVE RESULT DESK <i></i> {{ $todayLabel }}</div>
-                <h1>{{ setting('homepage_heading_line1', 'Today’s results.') }} <span>{{ setting('homepage_heading_line2', 'Every market.') }}</span></h1>
-                <p class="gsk-v3-hero-copy">{{ setting('homepage_intro', 'A clear daily board for published results, market timings and date-wise historical charts.') }}</p>
-                <div class="gsk-v3-hero-actions">
-                    <a href="#today-results" class="btn btn-warning btn-lg">🏆 Check today’s board <b>→</b></a>
-                    <a href="#monthly-records" class="btn btn-outline-light btn-lg">📊 Explore charts</a>
-                    @if (filled(setting('app_download_url')))
-                        <a href="{{ setting('app_download_url') }}" target="_blank" rel="noopener noreferrer" class="btn btn-light btn-lg">📲 Get the app</a>
-                    @endif
-                </div>
-                <div class="gsk-v3-metrics" aria-label="Market statistics">
-                    <div><strong>{{ count($frontendResults) }}</strong><span>Active markets</span></div>
-                    <div><strong>{{ $publishedCount }}</strong><span>Published result records</span></div>
-                    <div><strong>{{ now()->timezone(config('app.timezone'))->year }}</strong><span>Current record year</span></div>
-                </div>
-            </div>
-            <div class="col-lg-5">
-                <article class="gsk-featured-result gsk-v3-spotlight">
-                    <div class="gsk-v3-spotlight-top"><span>⭐ MOST RECENT UPDATE</span><small>🗓️ {{ $todayLabel }}</small></div>
-                    @if ($featuredGame)
-                        <div class="gsk-v3-spotlight-market">{{ $featuredGame['name'] }}</div>
-                        <div class="gsk-v3-spotlight-time">🕒 Scheduled result · {{ $featuredGame['time'] }}</div>
-                        <div class="gsk-v3-spotlight-number {{ ($featuredGame['today'] ?? '--') === '--' ? 'is-pending' : '' }}">{{ $featuredGame['today'] ?? '--' }}</div>
-                        <div class="gsk-v3-spotlight-state {{ ($featuredGame['today'] ?? '--') === '--' ? 'is-waiting' : 'is-published' }}">
-                            {{ ($featuredGame['today'] ?? '--') === '--' ? '⌛ Awaiting publication' : '● Result published' }}
-                        </div>
-                        <div class="gsk-v3-spotlight-bottom">
-                            <span>Previous <strong>{{ $featuredGame['yesterday'] ?? '--' }}</strong></span>
-                            <a href="{{ route('frontend.market', ['slug' => $featuredGame['slug']]) }}">Open history →</a>
-                        </div>
-                    @else
-                        <div class="gsk-v3-spotlight-empty"><span>🎯</span><strong>No featured market yet</strong><p>Configured markets will appear here.</p></div>
-                    @endif
-                </article>
-            </div>
-        </div>
+<section class="v5-home-hero gsk-home-hero">
+  <div class="v5-home-grid">
+    <div class="v5-home-copy">
+      <span class="v5-kicker">LIVE RESULT DESK · {{ $todayLabel }}</span>
+      <h1>{{ setting('homepage_heading_line1', 'Today’s results.') }} <span>{{ setting('homepage_heading_line2', 'Every market.') }}</span></h1>
+      <p>{{ setting('homepage_intro', 'A clear daily board for published results, market timings and date-wise historical charts.') }}</p>
+      <div class="v5-home-actions">
+        <a class="v5-button v5-button-gold" href="#today-results">Explore today’s board <b>↘</b></a>
+        <a class="v5-button v5-button-glass" href="#monthly-records">Open the record room</a>
+        @if (filled(setting('app_download_url')))
+          <a class="v5-button v5-button-glass" href="{{ setting('app_download_url') }}" target="_blank" rel="noopener noreferrer">Get the app ↗</a>
+        @endif
+      </div>
+      <div class="v5-home-facts" aria-label="Market statistics">
+        <div><strong>{{ count($frontendResults) }}</strong><small>Active markets</small></div>
+        <div><strong>{{ $publishedCount }}</strong><small>Published today</small></div>
+        <div><strong>{{ now()->timezone(config('app.timezone'))->year }}</strong><small>Record year</small></div>
+      </div>
     </div>
+    <div class="v5-feature-stage">
+      <span class="v5-feature-orbit" aria-hidden="true"></span>
+      <article class="gsk-featured-result" aria-label="Most recently updated market">
+        <div class="v5-feature-label"><span>✦ LATEST UPDATE</span><small>{{ $todayLabel }}</small></div>
+        @if ($featuredGame)
+          <div class="v5-feature-name">{{ $featuredGame['name'] }}</div>
+          <div class="v5-feature-time">Scheduled result · {{ $featuredGame['time'] }}</div>
+          <div class="v5-feature-number {{ ($featuredGame['today'] ?? '--') === '--' ? 'is-pending' : '' }}">{{ $featuredGame['today'] ?? '--' }}</div>
+          <div class="v5-feature-state {{ ($featuredGame['today'] ?? '--') === '--' ? 'is-waiting' : '' }}">
+            <span aria-hidden="true">{{ ($featuredGame['today'] ?? '--') === '--' ? '◷' : '●' }}</span>
+            {{ ($featuredGame['today'] ?? '--') === '--' ? 'Awaiting publication' : 'Result published' }}
+          </div>
+          <div class="v5-feature-foot"><span>Previous <strong>{{ $featuredGame['yesterday'] ?? '--' }}</strong></span><a href="{{ route('frontend.market', ['slug' => $featuredGame['slug']]) }}">View history ↗</a></div>
+        @else
+          <div class="v5-feature-empty"><span>◎</span><strong>No featured market yet</strong><p>Configured markets will appear here.</p></div>
+        @endif
+      </article>
+    </div>
+  </div>
 </section>
 
 @if ($managedSections->where('location', 'first_place')->isNotEmpty())
-    @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'first_place')])
+  @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'first_place')])
 @endif
 
-<section class="gsk-v3-taskbar container" aria-label="Quick destinations">
-    <a href="#today-results"><span>🏆</span><b>Today’s board</b><small>Published & pending</small></a>
-    <a href="#markets"><span>🎮</span><b>Market directory</b><small>Find a market</small></a>
-    <a href="#monthly-records"><span>📊</span><b>Monthly charts</b><small>Date-wise records</small></a>
-    <a href="{{ route('community.index') }}"><span>👥</span><b>Community</b><small>Join discussions</small></a>
-</section>
+<nav class="v5-quick-rail" aria-label="Quick destinations">
+  <a href="#today-results"><span class="v5-quick-icon">↗</span><span><b>Today’s board</b><small>Published and pending</small></span></a>
+  <a href="#markets"><span class="v5-quick-icon">⌕</span><span><b>Market directory</b><small>Find a market</small></span></a>
+  <a href="#monthly-records"><span class="v5-quick-icon">▦</span><span><b>Monthly charts</b><small>Date-wise records</small></span></a>
+  <a href="{{ route('community.index') }}"><span class="v5-quick-icon">◎</span><span><b>Community</b><small>Join discussions</small></span></a>
+</nav>
 
-<section class="gsk-v3-section gsk-v3-results" id="today-results">
-    <div class="container py-5">
-        <div class="gsk-v3-section-head">
-            <div><span>THE DAILY BOARD</span><h2>🏆 Today’s market results</h2><p>Latest published numbers with each market’s scheduled time.</p></div>
-            <div class="gsk-v3-date-chip">🗓️ {{ $todayLabel }}</div>
-        </div>
-        <div class="row g-3">
-            @forelse ($remainingFrontendResults as $game)
-                <div class="col-12 col-md-6 col-xl-4">
-                    <article class="gsk-v3-result-card h-100">
-                        <div class="gsk-v3-result-card-head"><span>🎯 {{ $game['name'] }}</span><small>🕒 {{ $game['time'] }}</small></div>
-                        <div class="gsk-v3-result-number {{ ($game['today'] ?? '--') === '--' ? 'is-pending' : '' }}">
-                            <div><small>TODAY’S NUMBER</small><strong>{{ $game['today'] ?? '--' }}</strong></div>
-                            <span>{{ ($game['today'] ?? '--') === '--' ? '⌛ Waiting' : '● Published' }}</span>
-                        </div>
-                        <div class="gsk-v3-result-card-foot"><span>Yesterday <b>{{ $game['yesterday'] ?? '--' }}</b></span><a href="{{ route('frontend.market', ['slug' => $game['slug']]) }}">Market archive →</a></div>
-                    </article>
-                </div>
-            @empty
-                <div class="col-12"><div class="gsk-v3-empty"><span>🎲</span><strong>No active markets are configured.</strong><p>Published results appear here when markets are activated.</p></div></div>
-            @endforelse
-        </div>
+<section class="v5-section v5-results-section" id="today-results">
+  <div class="v5-section-inner">
+    <header class="v5-section-head">
+      <div><span class="v5-kicker">THE DAILY REGISTER</span><h2>Results, market by market.</h2><p>Published numbers are shown alongside each market’s scheduled result time.</p></div>
+      <time class="v5-date-stamp" datetime="{{ now()->timezone(config('app.timezone'))->toDateString() }}">{{ $todayLabel }}</time>
+    </header>
+    <div class="v5-results-layout">
+      <aside class="v5-results-index"><strong>{{ str_pad((string) count($remainingFrontendResults), 2, '0', STR_PAD_LEFT) }}</strong><small>MARKETS ON TODAY’S BOARD</small><p class="mt-3 text-secondary small">A dash indicates that today’s result has not been published yet.</p></aside>
+      <div class="v5-result-list">
+        @forelse ($remainingFrontendResults as $game)
+          <article class="v5-result-row">
+            <div><div class="v5-result-meta"><i></i><span>{{ ($game['today'] ?? '--') === '--' ? 'AWAITING RESULT' : 'PUBLISHED' }}</span></div><h3>{{ $game['name'] }}</h3><p>Scheduled · {{ $game['time'] }} · Yesterday {{ $game['yesterday'] ?? '--' }}</p></div>
+            <div class="v5-result-value {{ ($game['today'] ?? '--') === '--' ? 'is-pending' : '' }}"><strong>{{ $game['today'] ?? '--' }}</strong><small>TODAY’S NUMBER</small></div>
+          </article>
+        @empty
+          <div class="gsk-v3-empty"><strong>No active markets are configured.</strong><p>Published results appear here when markets are activated.</p></div>
+        @endforelse
+      </div>
     </div>
+  </div>
 </section>
 
 @if ($managedSections->where('location', 'second_place')->isNotEmpty())
-    @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'second_place')])
+  @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'second_place')])
 @endif
-
 @if ($managedSections->where('location', 'second_place_another')->isNotEmpty())
-    @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'second_place_another')])
+  @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'second_place_another')])
 @endif
 
-<section class="gsk-v3-section gsk-v3-market-section" id="markets">
-    <div class="container py-5">
-        <div class="gsk-v3-section-head">
-            <div><span>FIND YOUR MARKET</span><h2>🎮 Explore the market directory</h2><p>Search by name or filter by today’s publication status.</p></div>
-            <div class="gsk-v3-date-chip">{{ count($marketResults) }} more markets</div>
-        </div>
+<section class="v5-section v5-market-section" id="markets">
+  <div class="v5-section-inner">
+    <header class="v5-section-head"><div><span class="v5-kicker">MARKET EXPLORER</span><h2>Find the market you’re following.</h2><p>Search the live directory or narrow it down by publication status.</p></div><div class="v5-date-stamp">{{ count($marketResults) }} markets</div></header>
+    <div class="v5-market-console">
+      <aside class="v5-market-aside">
+        <span class="v5-kicker">DIRECTORY TOOLS</span><h3>Search the board.</h3><p>Use a market name or choose a result status to focus the list.</p>
         <div class="gsk-v3-market-tools">
-            <label class="gsk-v3-search"><span>🔎</span><input id="market-search" type="search" placeholder="Search market name…" aria-label="Search markets"></label>
-            <div class="gsk-v3-filter-tabs" role="group" aria-label="Filter markets">
-                <button type="button" class="is-active" data-market-filter="all" aria-pressed="true">All <span>{{ count($marketResults) }}</span></button>
-                <button type="button" data-market-filter="published" aria-pressed="false">🟢 Published <span>{{ collect($marketResults)->where('today', '!=', '--')->count() }}</span></button>
-                <button type="button" data-market-filter="pending" aria-pressed="false">⌛ Awaiting <span>{{ collect($marketResults)->where('today', '--')->count() }}</span></button>
-            </div>
+          <label class="gsk-v3-search"><span aria-hidden="true">⌕</span><input id="market-search" type="search" placeholder="Search market…" aria-label="Search markets"></label>
+          <div class="gsk-v3-filter-tabs" role="group" aria-label="Filter markets">
+            <button type="button" class="is-active" data-market-filter="all" aria-pressed="true">All <span>{{ count($marketResults) }}</span></button>
+            <button type="button" data-market-filter="published" aria-pressed="false">Published <span>{{ collect($marketResults)->where('today', '!=', '--')->count() }}</span></button>
+            <button type="button" data-market-filter="pending" aria-pressed="false">Awaiting <span>{{ collect($marketResults)->where('today', '--')->count() }}</span></button>
+          </div>
         </div>
-        <div class="gsk-v3-market-rail" id="market-grid">
-            @forelse ($marketResults as $index => $game)
-                <div class="gsk-v3-market-item" data-result-state="@if (($game['today'] ?? '--') === '--') pending @else published @endif">
-                    @include('frontend.partial.market-card', ['game' => $game, 'index' => $index])
-                </div>
-            @empty
-                <div class="w-100"><div class="gsk-v3-empty"><span>🗂️</span><strong>No markets to display</strong><p>Activate a market to show it here.</p></div></div>
-            @endforelse
-        </div>
-        <p class="gsk-v3-no-results" id="no-markets" hidden>No market matches that search.</p>
+      </aside>
+      <div class="v5-market-list" id="market-grid">
+        @forelse ($marketResults as $index => $game)
+          <div class="gsk-v3-market-item" data-result-state="@if (($game['today'] ?? '--') === '--') pending @else published @endif">
+            @include('frontend.partial.market-card', ['game' => $game, 'index' => $index])
+          </div>
+        @empty
+          <div class="gsk-v3-empty"><strong>No markets to display</strong><p>Activate a market to show it here.</p></div>
+        @endforelse
+      </div>
     </div>
+    <p class="gsk-v3-no-results mt-3" id="no-markets" hidden>No market matches that search.</p>
+  </div>
 </section>
 
-<section class="gsk-v3-archive-band" id="monthly-records"><span id="market-charts" class="gsk-v3-anchor-target" aria-hidden="true"></span>
-    <div class="container py-5">
-        <div class="gsk-v3-section-head gsk-v3-section-head-light">
-            <div><span>THE RECORD ROOM · {{ strtoupper($monthLabel) }}</span><h2>📊 Monthly result charts</h2><p>Browse the saved daily record for each market in the selected month.</p></div>
-            <a href="{{ route('charts.index') }}" class="btn btn-warning">Open full chart archive →</a>
-        </div>
-        @forelse ($monthlyTables as $tableIndex => $table)
-            <div class="gsk-v3-chart-card mb-4">
-                <div class="gsk-v3-chart-card-head"><strong>🗓️ {{ $monthLabel }} · Record set {{ $tableIndex + 1 }}</strong><span>{{ count($table['games']) }} markets</span></div>
-                <div class="table-responsive">
-                    <table class="table table-bordered align-middle mb-0 gsk-v3-month-table">
-                        <thead><tr><th scope="col">Date</th>
-                            @foreach ($table['games'] as $game)
-                                <th scope="col"><a href="{{ route('frontend.market', ['slug' => $game->slug]) }}">{{ $game->name }}</a></th>
-                            @endforeach
-                        </tr></thead>
-                        <tbody>
-                            @foreach ($table['dates'] as $date)
-                                <tr><th scope="row">{{ $date->format('d') }}</th>
-                                    @foreach ($table['games'] as $game)
-                                        <td>{{ $table['results'][$game->id][$date->day] ?? '—' }}</td>
-                                    @endforeach
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        @empty
-            <div class="gsk-v3-empty"><span>📊</span><strong>No monthly records available</strong><p>Market results will appear here when published.</p></div>
-        @endforelse
-    </div>
+<section class="v5-section v5-chart-section" id="monthly-records"><span id="market-charts" aria-hidden="true"></span>
+  <div class="v5-section-inner">
+    <header class="v5-section-head"><div><span class="v5-kicker">THE RECORD ROOM · {{ strtoupper($monthLabel) }}</span><h2>A month, laid out day by day.</h2><p>Read the saved daily record across every market in the selected period.</p></div><a class="v5-button v5-button-gold" href="{{ route('charts.index') }}">Full chart archive ↗</a></header>
+    @forelse ($monthlyTables as $tableIndex => $table)
+      <section class="v5-chart-table-shell mb-4">
+        <header class="v5-chart-shell-head"><strong>{{ $monthLabel }} · Record set {{ $tableIndex + 1 }}</strong><span>{{ count($table['games']) }} markets</span></header>
+        <div class="table-responsive"><table class="table table-bordered align-middle mb-0 gsk-v3-month-table">
+          <thead><tr><th scope="col">Date</th>@foreach ($table['games'] as $game)<th scope="col"><a href="{{ route('frontend.market', ['slug' => $game->slug]) }}">{{ $game->name }}</a></th>@endforeach</tr></thead>
+          <tbody>@foreach ($table['dates'] as $date)<tr><th scope="row">{{ $date->format('d') }}</th>@foreach ($table['games'] as $game)<td>{{ $table['results'][$game->id][$date->day] ?? '—' }}</td>@endforeach</tr>@endforeach</tbody>
+        </table></div>
+      </section>
+    @empty
+      <div class="gsk-v3-empty"><strong>No monthly records available</strong><p>Market results will appear here when published.</p></div>
+    @endforelse
+    <div class="v5-chart-footer"><span>Historical records are shown as stored for the selected month.</span><a href="{{ route('charts.index') }}">Compare all markets →</a></div>
+  </div>
 </section>
 
 @if ($managedSections->where('location', 'third_place')->isNotEmpty())
-    @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'third_place')])
+  @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'third_place')])
 @endif
 
-<section class="gsk-v3-section" id="records">
-    <div class="container py-5">
-        <div class="gsk-v3-section-head"><div><span>HISTORICAL INDEX</span><h2>📚 Browse every market archive</h2><p>Open a market to explore its saved monthly and historical records.</p></div></div>
-        <div class="gsk-v3-archive-grid">
-            @forelse ($games as $game)
-                <a href="{{ route('frontend.market', ['slug' => $game->slug]) }}"><span>📈</span><strong>{{ $game->name }}</strong><small>Open archive ↗</small></a>
-            @empty
-                <div class="gsk-v3-empty">No historical markets are available.</div>
-            @endforelse
-        </div>
+<section class="v5-section v5-archive-index" id="records">
+  <div class="v5-section-inner">
+    <header class="v5-section-head"><div><span class="v5-kicker">HISTORICAL INDEX</span><h2>Every market has a record.</h2><p>Choose a market to open its month-by-month archive.</p></div></header>
+    <div class="v5-archive-index-list">
+      @forelse ($games as $game)
+        <a href="{{ route('frontend.market', ['slug' => $game->slug]) }}"><span>{{ $game->name }}</span><b aria-hidden="true">↗</b></a>
+      @empty
+        <div class="gsk-v3-empty">No historical markets are available.</div>
+      @endforelse
     </div>
+  </div>
 </section>
 
 @if ($managedSections->where('location', 'third_place_another')->isNotEmpty())
-    @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'third_place_another')])
+  @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'third_place_another')])
 @endif
 
-<section class="gsk-v3-section gsk-v3-faq-section" id="faq">
-    <div class="container py-5">
-        <div class="gsk-v3-section-head"><div><span>HELP & INFORMATION</span><h2>💡 Frequently asked questions</h2><p>Helpful notes about the market records and information shown here.</p></div></div>
-        <div class="accordion gsk-v3-faq" id="gskFaq">
-            @forelse ($faqs as $index => $faq)
-                <div class="accordion-item">
-                    <h3 class="accordion-header"><button class="accordion-button {{ $index ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#gskFaq{{ $index }}" aria-expanded="{{ $index ? 'false' : 'true' }}" aria-controls="gskFaq{{ $index }}">{{ $faq->question }}</button></h3>
-                    <div id="gskFaq{{ $index }}" class="accordion-collapse collapse {{ $index ? '' : 'show' }}" data-bs-parent="#gskFaq"><div class="accordion-body">{{ $faq->answer }}</div></div>
-                </div>
-            @empty
-                <div class="gsk-v3-empty">No frequently asked questions have been added yet.</div>
-            @endforelse
+<section class="v5-section v5-faq-section" id="faq">
+  <div class="v5-section-inner v5-faq-layout">
+    <header class="v5-faq-intro"><span class="v5-kicker">HELP DESK</span><h2>Good to know.</h2><p class="text-secondary">Answers to common questions about the records and information shown on this site.</p></header>
+    <div class="accordion gsk-v3-faq" id="gskFaq">
+      @forelse ($faqs as $index => $faq)
+        <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button {{ $index ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#gskFaq{{ $index }}" aria-expanded="{{ $index ? 'false' : 'true' }}" aria-controls="gskFaq{{ $index }}">{{ $faq->question }}</button></h3>
+          <div id="gskFaq{{ $index }}" class="accordion-collapse collapse {{ $index ? '' : 'show' }}" data-bs-parent="#gskFaq"><div class="accordion-body">{{ $faq->answer }}</div></div>
         </div>
+      @empty
+        <div class="gsk-v3-empty">No frequently asked questions have been added yet.</div>
+      @endforelse
     </div>
+  </div>
 </section>
 
-<section class="gsk-v3-disclaimer" id="disclaimer">
-    <div class="container py-4"><div><span>⚖️ INFORMATION NOTICE</span><h2>Records are information, not promises.</h2><p>{{ filled(setting('disclaimer_content')) ? Str::limit(setting('disclaimer_content'), 200, '…') : 'Please review the information and local requirements before using public result records.' }}</p></div><a href="{{ route('page', ['page' => 'disclaimer']) }}">Read full disclaimer →</a></div>
-</section>
+<section class="v5-disclaimer" id="disclaimer"><div class="v5-disclaimer-inner"><div><span class="v5-kicker">INFORMATION NOTICE</span><h2>Records are information, not promises.</h2><p>{{ filled(setting('disclaimer_content')) ? Str::limit(setting('disclaimer_content'), 200, '…') : 'Please review the information and local requirements before using public result records.' }}</p></div><a href="{{ route('page', ['page' => 'disclaimer']) }}">Read the full disclaimer ↗</a></div></section>
 
 @if ($managedSections->where('location', 'before_footer')->isNotEmpty())
-    @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'before_footer')])
+  @include('frontend.partial.homepage-sections', ['sections' => $managedSections->where('location', 'before_footer')])
 @endif
 @endsection
 
