@@ -2,7 +2,7 @@
 
 ## Working branch
 - Branch: `redesign/gsk-frontend-rebuild-2026`
-- The earlier PR #5 was merged to `main`; this branch continues from that merged redesign history.
+- The earlier PR #5 was merged and later reverted on `main`; v5 intentionally replaces that attempt. The branch has now been synchronized with current `main` while retaining the v5 frontend changes.
 - This v5 work is a separate structural reconstruction, not a continuation of the old v4 CSS styling approach.
 
 ## Structural redesign implemented
