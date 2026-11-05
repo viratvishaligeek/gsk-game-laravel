@@ -13,6 +13,7 @@ use App\Http\Controllers\Backend\Game\ResultController;
 use App\Http\Controllers\Backend\Game\WinnerController;
 use App\Http\Controllers\Backend\HomePageController;
 use App\Http\Controllers\Backend\MobileAppController;
+use App\Http\Controllers\Backend\NotificationSoundController;
 use App\Http\Controllers\Backend\PagesController;
 use App\Http\Controllers\Backend\PushNotificationController;
 use App\Http\Controllers\Backend\SettingController;
@@ -67,6 +68,10 @@ Route::prefix('admin')->as('admin.')->middleware(['auth:admin', 'admin.site'])->
         Route::get('{conversation}/messages', 'messages')->name('messages');
         Route::post('{conversation}/send', 'send')->name('send');
     });
+
+    // Notification sound settings used by the Admin notification controls.
+    Route::get('notification-sounds', [NotificationSoundController::class, 'index'])->name('notification-sounds.index');
+    Route::post('notification-sounds', [NotificationSoundController::class, 'update'])->name('notification-sounds.update');
 
     // Push subscriptions and Admin-issued notifications.
     Route::post('push-subscribe', [AdminPushSubscriptionController::class, 'subscribe'])->name('push-subscribe');

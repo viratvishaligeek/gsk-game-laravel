@@ -58,6 +58,16 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="small mb-1" for="url">Destination URL <small class="text-muted">(optional; opens when a user taps the banner)</small></label>
+                        <input class="form-control @error('url') is-invalid @enderror" id="url" name="url"
+                            type="url" inputmode="url" maxlength="2048" placeholder="https://example.com/page"
+                            value="{{ old('url') }}">
+                        @error('url')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <label class="small mb-1" for="image">Banner Image <span class="text-danger">*</span></label>
                         <input type="file" name="image" id="image"
                             class="form-control @error('image') is-invalid @enderror" accept="image/*" required

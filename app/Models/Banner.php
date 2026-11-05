@@ -16,6 +16,7 @@ class Banner extends Model
     protected $fillable = [
         'name',
         'image',
+        'url',
         'status',
     ];
     protected $appends = [

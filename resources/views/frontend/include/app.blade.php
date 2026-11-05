@@ -6,7 +6,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  <link rel="stylesheet" href="{{ asset('frontend/css/gsk-vibrant-v6.css') }}">@yield('style')@stack('schema')
+  <link rel="stylesheet" href="{{ asset('frontend/css/gsk-vibrant-v6.css') }}">
+  <link rel="stylesheet" href="{{ asset('frontend/css/gsk-arcade-v7.css') }}">@yield('style')@stack('schema')
 </head><body>
 <a class="v6-skip" href="#main-content">Skip to content</a>
 @include('frontend.include.header')

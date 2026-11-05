@@ -66,25 +66,53 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
         $user = $this->makeUser();
 
         Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => 'TEST-ORDER-1', 'user_id' => $user->id, 'game_id' => $game->id,
             'game_date' => '2026-11-03', 'type' => 'jodi', 'number' => '25', 'amount' => 100,
             'status' => 'pending', 'winning_amount' => 0,
         ]);
         Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => 'TEST-ORDER-1', 'user_id' => $user->id, 'game_id' => $game->id,
             'game_date' => '2026-11-03', 'type' => 'jodi', 'number' => '01', 'amount' => 50,
             'status' => 'pending', 'winning_amount' => 0,
         ]);
         Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => 'TEST-ORDER-2', 'user_id' => $user->id, 'game_id' => $game->id,
             'game_date' => '2026-11-03', 'type' => 'cross', 'number' => '25', 'amount' => 200,
             'status' => 'pending', 'winning_amount' => 0,
         ]);
         Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => 'TEST-ORDER-3', 'user_id' => $user->id, 'game_id' => $game->id,
             'game_date' => '2026-11-03', 'type' => 'haruf', 'number' => 'ander-2', 'amount' => 25,
             'status' => 'pending', 'winning_amount' => 0,
         ]);
+
+        $this->assertSame(config('sites.default'), config('sites.current_key'));
+        $firstStoredBid = Bid::withoutGlobalScope('site')
+            ->where('game_id', $game->id)
+            ->whereDate('game_date', '2026-11-03')
+            ->firstOrFail();
+        $this->assertSame($game->site_key, $firstStoredBid->site_key, 'Bid and game must be assigned to the same site.');
+        $this->assertSame(config('sites.current_key'), $firstStoredBid->site_key, 'Bid site key must match the active site.');
+        $storedSiteKeys = Bid::withoutGlobalScope('site')
+            ->where('game_id', $game->id)
+            ->whereDate('game_date', '2026-11-03')
+            ->pluck('site_key')
+            ->unique()
+            ->values()
+            ->all();
+        $this->assertSame([config('sites.current_key')], $storedSiteKeys, 'All fixture bids must share the current site key.');
+        $this->assertSame(4, Bid::withoutGlobalScope('site')
+            ->where('game_id', $game->id)
+            ->whereDate('game_date', '2026-11-03')
+            ->count(), 'The test bids must be stored for the selected game/date.');
+        $this->assertSame(4, Bid::query()
+            ->where('game_id', $game->id)
+            ->whereDate('game_date', '2026-11-03')
+            ->count(), 'The site-scoped bid query must see the test bids.');
 
         $request = Request::create('/admin/bidding-desk/data', 'GET', [
             'game_id' => $game->id,
@@ -127,6 +155,7 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
 
         $otherUser = $this->makeUser('9876543212');
         Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => 'TEST-OTHER-USER',
             'user_id' => $otherUser->id,
             'game_id' => $game->id,
@@ -164,6 +193,7 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
         $game = $this->makeGame();
         $user = $this->makeUser('9876543214');
         Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => 'USER-SHOW-ORDER',
             'user_id' => $user->id,
             'game_id' => $game->id,
@@ -515,6 +545,7 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
         $game = $this->makeGame();
         $user = $this->makeUser('9876500098');
         $bid = Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => (string) Str::uuid(),
             'user_id' => $user->id,
             'game_id' => $game->id,
@@ -525,7 +556,7 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
             'status' => 'win',
             'winning_amount' => 40,
         ]);
-        Winner::query()->create([
+        $winner = Winner::query()->create([
             'bid_id' => $bid->id,
             'user_id' => $user->id,
             'game_id' => $game->id,
@@ -535,6 +566,7 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
             'amount' => 100,
             'winning_amount' => 40,
         ]);
+        $winner->forceFill(['site_key' => config('sites.current_key')])->save();
 
         $report = app(BiddingDeskProfitLossReportService::class)->build('2026-11-04', '2026-11-04');
         $gameStats = $report['gameStats']->firstWhere('id', $game->id);

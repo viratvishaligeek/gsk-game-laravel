@@ -84,12 +84,12 @@ class SupportFeaturesRegressionTest extends TestCase
             'https://galisattakings.com/admin/dashboard',
             'GET',
             [],
-            ['admin_site' => 'galidisawar']
+            ['admin_site' => '1sattaking']
         );
 
         app(ResolveSite::class)->handle($request, fn () => response()->noContent());
 
-        $this->assertSame('galidisawar', config('sites.current_key'));
+        $this->assertSame('1sattaking', config('sites.current_key'));
     }
 
     public function test_private_chat_media_routes_require_user_or_admin_authentication(): void
