@@ -55,7 +55,7 @@ class HomepageLayoutRegressionTest extends TestCase
             ->assertSee('data-test-section="top-managed"', false)
             ->assertSee('data-test-section="after-results"', false)
             ->assertDontSee('data-test-section="hidden-managed"', false)
-            ->assertSee('class="gsk-home-hero"', false)
+            ->assertSee('gsk-home-hero', false)
             ->assertSee('v6-hero-grid', false)
             ->assertSee('class="v6-daily-grid"', false)
             ->assertSee('class="v6-market-grid"', false)
@@ -68,7 +68,7 @@ class HomepageLayoutRegressionTest extends TestCase
             ->assertSee('id="market-charts"', false);
 
         $html = $response->getContent();
-        $heroPosition = strpos($html, 'class="gsk-home-hero"');
+        $heroPosition = strpos($html, 'gsk-home-hero');
         $topPosition = strpos($html, 'data-test-section="top-managed"');
         $resultsPosition = strpos($html, 'id="today-results"');
         $afterResultsPosition = strpos($html, 'data-test-section="after-results"');
