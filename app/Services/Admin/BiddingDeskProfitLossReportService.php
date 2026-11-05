@@ -69,7 +69,8 @@ class BiddingDeskProfitLossReportService
         $games = Game::where('status', 'active')->orderBy('serial', 'asc')->get();
         $bidTotals = Bid::query()
             ->select('game_id', DB::raw('SUM(amount) as total_bid'))
-            ->whereBetween('game_date', [$startDate, $endDate])
+            ->whereDate('game_date', '>=', $startDate)
+            ->whereDate('game_date', '<=', $endDate)
             ->groupBy('game_id')
             ->pluck('total_bid', 'game_id');
         $winTotals = Winner::query()
