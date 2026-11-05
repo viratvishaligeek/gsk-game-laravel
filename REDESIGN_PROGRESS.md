@@ -1,60 +1,72 @@
-# GSK Laravel customer website — complete product redesign v3
+# GSK customer frontend — structural rebuild v5
 
-Base: `main` at `724ac8f5eea66efe4a8a1b116c1d7eaf651abdc9`
-Working branch: `redesign/gsk-complete-product-v3`
-Draft PR: https://github.com/viratvishaligeek/gsk-game-laravel/pull/4
+## Working branch
+- Branch: `redesign/gsk-frontend-rebuild-2026`
+- The earlier PR #5 was merged and later reverted on `main`; v5 intentionally replaces that attempt. The branch has now been synchronized with current `main` while retaining the v5 frontend changes.
+- This v5 work is a separate structural reconstruction, not a continuation of the old v4 CSS styling approach.
 
-## Implemented in v3
+## Structural redesign implemented
+- [x] New standalone presentation system: `public/frontend/css/gsk-structural-v5.css`.
+- [x] Shared shell now loads Bootstrap 5 and the new v5 stylesheet; the old v4 stylesheet is no longer loaded.
+- [x] Rebuilt header DOM: brand block, separate top strip, primary navigation list, custom mobile menu toggle and announcement ticker.
+- [x] Rebuilt homepage DOM: asymmetric hero and featured-result stage, quick destination rail, daily result register, split market explorer, historical matrix, archive index, editorial FAQ and disclaimer strip.
+- [x] Rebuilt dynamic market card markup and admin-managed homepage section wrapper.
+- [x] Rebuilt market archive DOM into a market-period control rail and separate date-wise record workspace.
+- [x] Rebuilt monthly charts DOM into a distinct chart hero, filter console and output workspace.
+- [x] Rebuilt information and CMS page layouts into editorial document layouts with contextual side navigation.
+- [x] Rebuilt community feed into a numbered discussion stream with separate community navigation.
+- [x] Rebuilt discussion detail into a post-and-replies reading column plus a separate reply composer.
+- [x] Rebuilt discussion creation into an instruction rail and dedicated authoring sheet.
+- [x] Rebuilt login/registration into a split-screen community access experience.
+- [x] Rebuilt the 404 page into a large typographic error composition.
+- [x] Updated homepage regression assertions to test the new structural composition and verify that old repeated homepage result-card/taskbar markup is absent.
 
-### First-priority market archive fix
-- [x] Fixed literal backslash-n sequences in the existing market archive inline JavaScript. The malformed characters made the script invalid and broke the month/year result-label update.
-- [x] Kept the existing `frontend.chart` endpoint, payload and business-date result service unchanged.
+## Dynamic and interaction contracts preserved
+- Homepage database-driven results, featured market, previous result, schedule, game list, monthly tables, FAQs, homepage settings and schema data.
+- Admin-managed homepage content locations: first_place, second_place, second_place_another, third_place, third_place_another, before_footer and after_footer.
+- Existing homepage anchors: today-results, markets, monthly-records and market-charts.
+- Existing market search/filter selectors and result-state data attributes.
+- Market archive POST endpoint, CSRF header, request payload (slug/year/month), response fields (days/day/result/month_label), abort handling and live status.
+- Monthly chart GET endpoint, query parameter names (game_id/year/month), response fields, history navigation and live table updates.
+- Existing community routes, post/reply data, pagination, author information, CSRF fields, validation display and form limits.
+- Existing metadata, canonical/robots output, Open Graph/Twitter metadata and structured data.
+- Existing WhatsApp contact modal, configured contact/social links and download URL.
 
-### Homepage, header and footer
-- [x] Recomposed the homepage into a live-result hero, latest-market spotlight, daily result board, market directory, monthly record room, historical archive, FAQ and information notice.
-- [x] Preserved admin-managed homepage section locations and existing Blade partials, including the configured order around results and markets.
-- [x] Preserved legacy anchors and the `gsk-home-hero` selector while applying the new visual design.
-- [x] Rebuilt the responsive Bootstrap header with brand presentation, desktop/mobile navigation, Bootstrap collapse and announcement ticker.
-- [x] Rebuilt the footer with a chart CTA, responsive information columns, configured contact/social links and the existing WhatsApp contact modal.
+## Backend boundary
+No changes in this v5 work to controllers, models, services, migrations, database, routes, APIs, middleware, authentication logic, payment/transaction logic, game logic, admin views or backend assets. No new dependency was introduced.
 
-### Customer-facing pages
-- [x] Market archive: new record-room hero, period controls, date-wise result table and contextual navigation; existing AJAX behavior retained.
-- [x] Monthly Charts: added the missing public read-only chart page and data endpoint using the existing `MonthlyChartService`. The page renders a date-by-market matrix; the JSON endpoint returns month label, markets, date rows, numbers and statuses.
-- [x] Added the `frontend.page` alias while retaining the existing `page` route name.
-- [x] Added a public `information` route for the FAQ information view; non-FAQ slugs resolve through the existing active CMS page handler.
-- [x] Added a read-only `robots.txt` route that advertises the existing sitemap.
-- [x] Information and CMS pages: new editorial hero, document layout, contextual navigation and responsive CMS content.
-- [x] Community feed: new community hero, live post/reply counts, discussion cards and recent-reply previews.
-- [x] Community detail: original-post panel, reply thread and reply composer.
-- [x] Community creation: topic/title/message authoring steps and clearer approval notice.
-- [x] Community login/registration: dedicated member access presentation; existing routes, CSRF and form actions retained.
+## Changed frontend files
+- `public/frontend/css/gsk-structural-v5.css` (new)
+- `resources/views/frontend/include/app.blade.php`
+- `resources/views/frontend/include/header.blade.php`
+- `resources/views/frontend/include/footer.blade.php`
+- `resources/views/frontend/index.blade.php`
+- `resources/views/frontend/market.blade.php`
+- `resources/views/frontend/charts.blade.php`
+- `resources/views/frontend/information.blade.php`
+- `resources/views/frontend/page.blade.php`
+- `resources/views/frontend/community/index.blade.php`
+- `resources/views/frontend/community/show.blade.php`
+- `resources/views/frontend/community/create.blade.php`
+- `resources/views/frontend/community/auth.blade.php`
+- `resources/views/frontend/community/partials/game-summary.blade.php`
+- `resources/views/frontend/community/partials/posts.blade.php`
+- `resources/views/frontend/partial/section-heading.blade.php`
+- `resources/views/frontend/partial/homepage-sections.blade.php`
+- `resources/views/frontend/partial/market-card.blade.php`
+- `resources/views/errors/404.blade.php`
+- `tests/Feature/HomepageLayoutRegressionTest.php`
 
-### Security and scope
-- [x] Removed the unauthenticated public `/optimize-clear` GET route, which exposed application cache clearing.
-- [x] Bootstrap 5.3.8 remains the frontend framework; no competing UI framework added.
-- [x] No admin views/assets, authentication rules, payment processing, existing API contracts, database schema, game rules or financial calculations changed.
-- [x] Controller additions are read-only chart view/data actions using the existing chart service plus a public FAQ view action. Route additions are customer-facing chart and information routes plus a CMS alias. No admin route was added or modified.
+## Validation still required
+- [ ] GitHub Actions Blade compilation and frontend regression tests for this v5 commit.
+- [ ] Full Laravel suite and comparison with a same-commit `main` baseline for unrelated failures.
+- [ ] Browser-level functional testing of search/filter, market AJAX, chart AJAX/history, mobile navigation, FAQ accordion, WhatsApp modal, community forms and pagination.
+- [ ] Genuine before/after screenshots for homepage, market archive, charts, information/CMS, community feed and discussion detail at desktop and mobile sizes.
+- [ ] Confirm production asset paths and check for console errors/overflow at 360px, 390px, 768px, 1024px and desktop.
+- [ ] Review all rendered sections with real database content, including every managed homepage insertion point.
 
-## Deployment investigation
-- The frontend controller's fallback canonical URL is `https://galisattakings.com`; my latest public fetch returned HTTP 502. This fetch result alone does not prove every visitor receives a 502.
-- `public/index.php` loads `../vendor/autoload.php` and `../bootstrap/app.php`; `public/.htaccess` contains standard Laravel front-controller rewrites.
-- There is no root-level `.htaccess` in this repository. The cPanel domain document root must point to the Laravel project's `public/` directory.
-- The exact production cause still needs the actual cPanel document root, deployed branch/commit, PHP-FPM/Apache error log and `storage/logs/laravel.log`.
+## Important screenshot limitation
+The current GitHub integration can edit and validate repository files but does not provide a browser session or screenshot capture tool. Do not fabricate before/after screenshots or claim visual browser verification. Capture the required screenshots in a real browser once an accessible preview/deployment is available.
 
-## Validation
-- [x] Blade compilation and PHP syntax checks passed in CI run #92.
-- [x] Focused frontend layout regression tests passed: 3 tests / 35 assertions.
-- [x] Monthly chart page/data tests passed.
-- [x] Public frontend route tests passed, including the read-only / rate-limited chart endpoint and removal of the public cache-clear route.
-- [x] Full suite in CI #92: 60 passed / 10 failed.
-- Remaining failures are in `DisawarBusinessDateBoundaryTest`, `AdminBidAndSupportChatEnhancementTest` and `SupportFeaturesRegressionTest`. The PR did not modify the business-date, admin bidding/support or support-feature implementation areas. An exact `main` baseline run has not been obtained, so these failures are not labelled pre-existing.
-- [ ] Browser-test homepage, charts, market archive, information/CMS and community pages at mobile/tablet/desktop widths.
-- [ ] Verify chart and market AJAX filters and responsive tables in a real browser.
-- [ ] Confirm production document root, deployed branch/commit, rewrite rules, asset paths, cache and Laravel logs.
-- [ ] Capture genuine before/after screenshots.
-
-## Guardrails
-- v3 is based on current `main`; no changes were pushed to `main`.
-- No admin code was touched.
-- No database schema, existing API contract, auth rule, game rule or financial logic was changed.
-- Do not merge until the live deployment issue, regression suite and browser visual checks are resolved.
+## Merge policy
+Do not merge or deploy the v5 PR until CI, browser interaction tests and genuine before/after screenshots have been reviewed.

@@ -20,7 +20,8 @@ class HomepageLayoutRegressionTest extends TestCase
 
         $response->assertOk()
             ->assertSee('bootstrap@5.3.8/dist/css/bootstrap.min.css', false)
-            ->assertSee('frontend/css/gsk-design-system.css', false)
+            ->assertSee('frontend/css/gsk-structural-v5.css', false)
+            ->assertDontSee('frontend/css/gsk-frontend-v4.css', false)
             ->assertDontSee('site-theme.css', false)
             ->assertDontSee('static-home.css', false)
             ->assertDontSee('static-home.js', false)
@@ -55,6 +56,11 @@ class HomepageLayoutRegressionTest extends TestCase
             ->assertSee('data-test-section="after-results"', false)
             ->assertDontSee('data-test-section="hidden-managed"', false)
             ->assertSee('class="gsk-home-hero"', false)
+            ->assertSee('v5-home-grid', false)
+            ->assertSee('class="v5-results-layout"', false)
+            ->assertSee('class="v5-market-console"', false)
+            ->assertDontSee('gsk-v3-result-card', false)
+            ->assertDontSee('gsk-v3-taskbar', false)
             ->assertSee('id="today-results"', false)
             ->assertSee('id="markets"', false)
             ->assertSee('id="market-charts"', false);

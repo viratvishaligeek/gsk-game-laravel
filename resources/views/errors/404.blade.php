@@ -1,7 +1,12 @@
 @extends('frontend.include.app')
-@section('title', 'Page not found | Satta 786')
-@section('meta_description', 'The requested page could not be found. Return to the result board or choose a market.')
+@section('title', 'Page not found | ' . setting('title', 'GSK'))
+@section('meta_description', 'The requested page could not be found. Return to the result board or browse the available markets.')
+@section('robots_content', 'noindex,follow')
 @section('content')
-<section class="page-banner"><div class="wrap"><p class="eyebrow">ERROR 404 · RECORD NOT FOUND</p><h1>This page <span>isn't here.</span></h1><p>The link may be old or the market/year may not have a published archive.</p></div></section>
-<section class="section-block section-light"><div class="wrap information-panel"><h2>Back to the result desk</h2><p>Return to the homepage to choose an active market or browse the available record years.</p><a class="button button-gold" href="{{ route('index') }}">Return home ↗</a></div></section>
+<section class="v5-error">
+  <div class="v5-error-code" aria-hidden="true">404</div>
+  <section><span class="v5-kicker">ERROR / RECORD NOT FOUND</span><h1>This page is off the board.</h1><p class="text-secondary lh-lg">The address may have changed, or the requested archive may no longer be available. Choose a destination and continue exploring.</p>
+    <div class="d-flex flex-wrap gap-2 mt-4"><a class="v5-button v5-button-gold" href="{{ route('index') }}">Return home ↗</a><a class="v5-button border border-secondary" href="{{ route('charts.index') }}">Monthly charts</a><a class="v5-button border border-secondary" href="{{ route('community.index') }}">Community</a></div>
+  </section>
+</section>
 @endsection
