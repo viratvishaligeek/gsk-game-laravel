@@ -556,8 +556,7 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
             'status' => 'win',
             'winning_amount' => 40,
         ]);
-        Winner::query()->create([
-            'site_key' => config('sites.current_key'),
+        $winner = Winner::query()->create([
             'bid_id' => $bid->id,
             'user_id' => $user->id,
             'game_id' => $game->id,
@@ -567,6 +566,7 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
             'amount' => 100,
             'winning_amount' => 40,
         ]);
+        $winner->forceFill(['site_key' => config('sites.current_key')])->save();
 
         $report = app(BiddingDeskProfitLossReportService::class)->build('2026-11-04', '2026-11-04');
         $gameStats = $report['gameStats']->firstWhere('id', $game->id);
