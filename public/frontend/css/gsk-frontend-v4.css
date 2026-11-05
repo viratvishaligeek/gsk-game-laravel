@@ -497,6 +497,7 @@ a { text-underline-offset: .2em; }
 }
 
 /* Shared customer-facing not-found screen. */
+.gsk-v4-not-found-hero .container { padding-top: clamp(3rem,7vw,5.5rem) !important; padding-bottom: clamp(3rem,7vw,5.5rem) !important; }
 .gsk-v4-not-found-hero h1 em { color: var(--gsk-v4-gold); font-style: normal; }
 .gsk-v4-not-found-panel {
   display: grid;
