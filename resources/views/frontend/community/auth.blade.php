@@ -2,7 +2,7 @@
 @section('title', ($mode === 'login' ? 'Member Login' : 'Create Member Account') . ' | ' . setting('title', 'GSK'))
 @section('robots_content', 'noindex,follow')
 @section('content')
-<main class="v5-auth-layout">
+<section class="v5-auth-layout">
   <section class="v5-auth-story"><span class="v5-kicker">COMMUNITY / MEMBER ACCESS</span><h1>{{ $mode === 'login' ? 'Good to have you back.' : 'Your next conversation starts here.' }}</h1><p>{{ $mode === 'login' ? 'Sign in to reply to discussions and manage your community activity.' : 'Create a member profile to publish discussions and reply to other members.' }}</p><a class="text-warning fw-bold mt-3" href="{{ route('community.index') }}">Browse community discussions ↗</a></section>
   <section class="v5-auth-panel"><div class="v5-form-sheet">
     <span class="v5-kicker">SECURE MEMBER AREA</span><h2 class="h3 fw-bold mt-3">{{ $mode === 'login' ? 'Sign in' : 'Create your account' }}</h2><p class="text-secondary small">This account is for community discussions and replies.</p>
@@ -16,5 +16,5 @@
     </form>
     <p class="small mt-4 mb-0">{{ $mode === 'login' ? 'New to the community?' : 'Already a member?' }} <a class="fw-bold" href="{{ $mode === 'login' ? route('community.register') : route('community.login') }}">{{ $mode === 'login' ? 'Create an account' : 'Sign in' }}</a></p>
   </div></section>
-</main>
+</section>
 @endsection
