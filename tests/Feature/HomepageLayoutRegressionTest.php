@@ -20,7 +20,7 @@ class HomepageLayoutRegressionTest extends TestCase
 
         $response->assertOk()
             ->assertSee('bootstrap@5.3.8/dist/css/bootstrap.min.css', false)
-            ->assertSee('frontend/css/gsk-structural-v5.css', false)
+            ->assertSee('frontend/css/gsk-vibrant-v6.css', false)
             ->assertDontSee('frontend/css/gsk-frontend-v4.css', false)
             ->assertDontSee('site-theme.css', false)
             ->assertDontSee('static-home.css', false)
@@ -56,9 +56,11 @@ class HomepageLayoutRegressionTest extends TestCase
             ->assertSee('data-test-section="after-results"', false)
             ->assertDontSee('data-test-section="hidden-managed"', false)
             ->assertSee('class="gsk-home-hero"', false)
-            ->assertSee('v5-home-grid', false)
-            ->assertSee('class="v5-results-layout"', false)
-            ->assertSee('class="v5-market-console"', false)
+            ->assertSee('v6-hero-grid', false)
+            ->assertSee('class="v6-daily-grid"', false)
+            ->assertSee('class="v6-market-grid"', false)
+            ->assertDontSee('v5-home-grid', false)
+            ->assertSee('class="v6-mobile-dock"', false)
             ->assertDontSee('gsk-v3-result-card', false)
             ->assertDontSee('gsk-v3-taskbar', false)
             ->assertSee('id="today-results"', false)
@@ -134,7 +136,7 @@ class HomepageLayoutRegressionTest extends TestCase
             ->assertSee('/result/market-beta');
 
         $html = $response->getContent();
-        $featuredStart = strpos($html, 'class="gsk-featured-result"');
+        $featuredStart = strpos($html, 'class="v6-hero-feature"');
         $featuredEnd = strpos($html, '</article>', $featuredStart);
         $featuredHtml = substr($html, $featuredStart, $featuredEnd - $featuredStart);
         $this->assertStringContainsString('Market Beta', $featuredHtml);
