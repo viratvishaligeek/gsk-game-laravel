@@ -137,7 +137,8 @@ class HomepageLayoutRegressionTest extends TestCase
 
         $html = $response->getContent();
         $featuredStart = strpos($html, 'class="v6-hero-feature"');
-        $featuredHtml = substr($html, $featuredStart, 2500);
+        $dailySectionStart = strpos($html, 'id="today-results"', $featuredStart);
+        $featuredHtml = substr($html, $featuredStart, $dailySectionStart - $featuredStart);
         $this->assertStringContainsString('Market Beta', $featuredHtml);
         $this->assertStringContainsString('456', $featuredHtml);
         $this->assertStringNotContainsString('Market Alpha', $featuredHtml);
