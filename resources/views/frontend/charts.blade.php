@@ -4,7 +4,7 @@
 @section('robots_content', request()->query->count() ? 'noindex,follow' : 'index,follow')
 @section('content')
 <header class="v5-chart-hero"><div class="v5-chart-hero-inner"><div><span class="v5-kicker">HISTORICAL RECORDS / ALL MARKETS</span><h1>Monthly result charts.</h1><p>Move through the archive by market, month and year. Each row represents a calendar date; each column represents a market.</p></div><nav class="d-flex flex-wrap gap-3"><a href="{{ route('index') }}#today-results">Today’s results ↗</a><a href="{{ route('index') }}#markets">Market directory ↗</a><a href="{{ route('community.index') }}">Community ↗</a></nav></div></header>
-<main class="v5-chart-workspace">
+<section class="v5-chart-workspace">
   <form class="v5-chart-controls" method="GET" action="{{ route('charts.index') }}" data-chart-filters data-endpoint="{{ route('charts.data') }}" data-current-year="{{ now()->timezone(config('app.timezone'))->year }}" data-current-month="{{ now()->timezone(config('app.timezone'))->month }}">
     <div><label for="game_id">MARKET</label><select class="form-select" name="game_id" id="game_id"><option value="">All active markets</option>@foreach ($games as $game)<option value="{{ $game->id }}" @selected((string)($selectedGameId ?? '') === (string)$game->id)>{{ $game->name }}</option>@endforeach</select></div>
     <div><label for="year">YEAR</label><select class="form-select" name="year" id="year">@foreach ($availableYears as $availableYear)<option value="{{ $availableYear }}" @selected($year === $availableYear)>{{ $availableYear }}</option>@endforeach</select></div>
@@ -24,7 +24,7 @@
     </div>
     <p class="gsk-v3-chart-footnote">A dash means no published value is stored for that date. Future dates are not shown as results.</p>
   </section>
-</main>
+</section>
 @endsection
 
 @section('script')
