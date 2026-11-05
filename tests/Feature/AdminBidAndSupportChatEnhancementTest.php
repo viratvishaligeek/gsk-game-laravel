@@ -87,13 +87,19 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
         ]);
 
         $this->assertSame(config('sites.default'), config('sites.current_key'));
+        $firstStoredBid = Bid::withoutGlobalScope('site')
+            ->where('game_id', $game->id)
+            ->whereDate('game_date', '2026-11-03')
+            ->firstOrFail();
+        $this->assertSame($game->site_key, $firstStoredBid->site_key, 'Bid and game must be assigned to the same site.');
+        $this->assertSame(config('sites.current_key'), $firstStoredBid->site_key, 'Bid site key must match the active site.');
         $this->assertSame(4, Bid::withoutGlobalScope('site')
             ->where('game_id', $game->id)
             ->whereDate('game_date', '2026-11-03')
             ->count(), 'The test bids must be stored for the selected game/date.');
         $this->assertSame(4, Bid::query()
             ->where('game_id', $game->id)
-            ->where('game_date', '2026-11-03')
+            ->whereDate('game_date', '2026-11-03')
             ->count(), 'The site-scoped bid query must see the test bids.');
 
         $request = Request::create('/admin/bidding-desk/data', 'GET', [
