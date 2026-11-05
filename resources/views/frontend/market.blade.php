@@ -16,7 +16,7 @@
     <aside class="v5-market-stamp"><small>SELECTED RECORD PERIOD</small><strong data-month-label>{{ $monthLabel }}</strong><span>{{ count($results) }} calendar dates</span></aside>
   </div>
 </header>
-<main class="v5-market-workspace">
+<section class="v5-market-workspace">
   <aside class="v5-period-control">
     <span class="v5-kicker">ARCHIVE CONTROLS</span><h2>Choose a period</h2><p class="small text-secondary">The record table updates when the month or year changes.</p>
     <form method="GET" action="{{ route('frontend.market', ['slug' => $game->slug]) }}" data-result-filter data-endpoint="{{ route('frontend.chart') }}">
@@ -38,7 +38,7 @@
     </div>
     <nav class="v5-archive-back" aria-label="Archive navigation"><a href="{{ route('index') }}#markets">← Market directory</a><a href="{{ route('charts.index') }}">All market charts →</a></nav>
   </section>
-</main>
+</section>
 @endsection
 
 @section('script')
