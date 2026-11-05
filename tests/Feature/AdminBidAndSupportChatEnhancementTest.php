@@ -66,21 +66,25 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
         $user = $this->makeUser();
 
         Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => 'TEST-ORDER-1', 'user_id' => $user->id, 'game_id' => $game->id,
             'game_date' => '2026-11-03', 'type' => 'jodi', 'number' => '25', 'amount' => 100,
             'status' => 'pending', 'winning_amount' => 0,
         ]);
         Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => 'TEST-ORDER-1', 'user_id' => $user->id, 'game_id' => $game->id,
             'game_date' => '2026-11-03', 'type' => 'jodi', 'number' => '01', 'amount' => 50,
             'status' => 'pending', 'winning_amount' => 0,
         ]);
         Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => 'TEST-ORDER-2', 'user_id' => $user->id, 'game_id' => $game->id,
             'game_date' => '2026-11-03', 'type' => 'cross', 'number' => '25', 'amount' => 200,
             'status' => 'pending', 'winning_amount' => 0,
         ]);
         Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => 'TEST-ORDER-3', 'user_id' => $user->id, 'game_id' => $game->id,
             'game_date' => '2026-11-03', 'type' => 'haruf', 'number' => 'ander-2', 'amount' => 25,
             'status' => 'pending', 'winning_amount' => 0,
@@ -143,6 +147,7 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
 
         $otherUser = $this->makeUser('9876543212');
         Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => 'TEST-OTHER-USER',
             'user_id' => $otherUser->id,
             'game_id' => $game->id,
@@ -180,6 +185,7 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
         $game = $this->makeGame();
         $user = $this->makeUser('9876543214');
         Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => 'USER-SHOW-ORDER',
             'user_id' => $user->id,
             'game_id' => $game->id,
@@ -531,6 +537,7 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
         $game = $this->makeGame();
         $user = $this->makeUser('9876500098');
         $bid = Bid::query()->create([
+            'site_key' => config('sites.current_key'),
             'order_no' => (string) Str::uuid(),
             'user_id' => $user->id,
             'game_id' => $game->id,
@@ -542,6 +549,7 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
             'winning_amount' => 40,
         ]);
         Winner::query()->create([
+            'site_key' => config('sites.current_key'),
             'bid_id' => $bid->id,
             'user_id' => $user->id,
             'game_id' => $game->id,
