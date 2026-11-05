@@ -427,7 +427,7 @@ a { text-underline-offset: .2em; }
 .gsk-v3-footer-socials a { display: grid; width: 40px; height: 40px; place-items: center; border: 1px solid rgba(255,255,255,.16); border-radius: 13px; color: #fff; text-decoration: none; }
 .gsk-v3-footer-bottom { border-top: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.5); }
 .gsk-whatsapp-float { box-shadow: 0 12px 30px rgba(0,0,0,.2); }
-.gsk-mobile-dock { border: 1px solid rgba(220,229,240,.9); border-bottom: 0; background: rgba(255,255,255,.96); box-shadow: 0 -8px 28px rgba(16,39,70,.1); backdrop-filter: blur(16px); }
+.gsk-mobile-dock { padding-bottom: env(safe-area-inset-bottom); border: 1px solid rgba(220,229,240,.9); border-bottom: 0; background: rgba(255,255,255,.96); box-shadow: 0 -8px 28px rgba(16,39,70,.1); backdrop-filter: blur(16px); }
 .gsk-mobile-dock a { color: #52647b; font-weight: 800; }
 .gsk-mobile-dock a:focus-visible { border-radius: 10px; }
 .gsk-mobile-dock a:active { color: var(--gsk-v4-blue); }
@@ -483,7 +483,7 @@ a { text-underline-offset: .2em; }
   .gsk-v3-compose-steps { gap: .35rem; }
   .gsk-v3-compose-steps > div { gap: .25rem; font-size: .67rem; }
   .gsk-v3-compose-steps > div span { width: 25px; height: 25px; }
-  .gsk-v3-mobile-dock { padding-bottom: env(safe-area-inset-bottom); }
+  .gsk-mobile-dock { padding-bottom: env(safe-area-inset-bottom); }
   .gsk-v3-footer-cta a { width: 100%; text-align: center; }
 }
 @media (max-width: 360px) {
