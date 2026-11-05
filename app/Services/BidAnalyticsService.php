@@ -14,7 +14,7 @@ class BidAnalyticsService
     {
         $baseQuery = Bid::query()
             ->where('game_id', $game->id)
-            ->where('game_date', $date);
+            ->whereDate('game_date', $date);
 
         $aggregate = static function (string $type) use ($baseQuery) {
             return (clone $baseQuery)
@@ -116,7 +116,7 @@ class BidAnalyticsService
 
         $baseQuery = Bid::query()
             ->where('game_id', $validated['game_id'])
-            ->where('game_date', $validated['date'])
+            ->whereDate('game_date', $validated['date'])
             ->where('type', $type)
             ->where('number', $validated['number']);
 
@@ -153,7 +153,7 @@ class BidAnalyticsService
             ? collect()
             : Bid::query()
                 ->where('game_id', $validated['game_id'])
-                ->where('game_date', $validated['date'])
+                ->whereDate('game_date', $validated['date'])
                 ->where('type', $type)
                 ->whereIn('user_id', $userIds)
                 ->select([
