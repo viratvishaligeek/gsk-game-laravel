@@ -48,7 +48,9 @@ Customer-facing Blade templates under `resources/views/frontend`:
 - [x] Repository tree and all customer Blade templates inventoried.
 - [x] Existing brand tokens and page/section hierarchy inspected.
 - [x] Protected backend areas reviewed for this continuation's changed-file scope.
-- [ ] GitHub Actions Blade compilation and Laravel regression workflow for the v4 pull request.
+- [x] GitHub Actions run [#96](https://github.com/viratvishaligeek/gsk-game-laravel/actions/runs/42056191338): dependency install, Laravel environment preparation and Blade compilation/PHP syntax checks passed.
+- [x] Focused `HomepageLayoutRegressionTest`: 3 passed / 35 assertions.
+- [x] Full Laravel suite executed: 60 passed / 10 failed (267 assertions). Failures are in `DisawarBusinessDateBoundaryTest`, `AdminBidAndSupportChatEnhancementTest` and `SupportFeaturesRegressionTest`; none of those files or implementation areas are changed in this PR. An exact baseline run on the same `main` commit has not been performed, so these failures are not declared pre-existing.
 - [ ] Browser verification at 360px, 390px, 768px, 1024px and desktop widths.
 - [ ] Interactive verification of market search/filter, market archive AJAX, monthly chart filters/history, Bootstrap navigation/accordion/modal, community forms and pagination.
 - [ ] Production asset loading and real-device visual check.
