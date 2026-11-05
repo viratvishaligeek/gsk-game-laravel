@@ -4,7 +4,7 @@
 @section('robots_content', 'noindex,follow')
 @section('content')
 <section class="gsk-v3-inner-hero gsk-v4-not-found-hero">
-  <div class="container py-5 py-lg-6">
+  <div class="container py-5">
     <span class="gsk-v3-kicker"><span class="gsk-v3-live-dot"></span> ERROR 404 · RECORD NOT FOUND</span>
     <h1 class="mt-3">This page <em>isn't here.</em></h1>
     <p>The address may have changed, or the requested market archive may no longer be available. Choose a destination below to continue.</p>
