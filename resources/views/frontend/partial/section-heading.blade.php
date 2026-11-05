@@ -1,6 +1,6 @@
 <header class="v5-section-heading {{ $class ?? '' }}">
   <div class="v5-section-heading-copy">
-    @if (isset($eyebrow))<p class="v5-kicker">{{ $eyebrow }}</p>@endif
+    <p class="v5-kicker">{{ $eyebrow ?? 'RESULT DIRECTORY' }}</p>
     <h2>{!! $title !!}</h2>
     @isset($description)<p>{{ $description }}</p>@endisset
   </div>
