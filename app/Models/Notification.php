@@ -14,6 +14,7 @@ class Notification extends Model
                 ->where('user_id', $notification->user_id)
                 ->orderByDesc('id')
                 ->skip(10)
+                ->take(10000)
                 ->pluck('id');
 
             if ($olderIds->isNotEmpty()) {
