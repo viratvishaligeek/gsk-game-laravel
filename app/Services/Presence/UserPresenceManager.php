@@ -25,12 +25,6 @@ class UserPresenceManager
         $backgroundCutoff = $now->copy()->subSeconds(
             max(1, (int) config('presence.background_grace_seconds', 90))
         );
-        \Log::info('TIMEZONE DEBUG', [
-            'app_timezone' => config('app.timezone'),
-            'php_timezone' => date_default_timezone_get(),
-            'carbon_now' => now()->toIso8601String(),
-            'carbon_utc' => now('UTC')->toIso8601String(),
-        ]);
         $hasActiveSession = $user->presenceSessions()
             ->whereNull('ended_at')
             ->where(function ($query) use ($foregroundLeaseCutoff, $idleCutoff, $backgroundCutoff) {
