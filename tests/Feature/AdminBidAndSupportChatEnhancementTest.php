@@ -89,7 +89,7 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
         $this->assertSame(config('sites.default'), config('sites.current_key'));
         $this->assertSame(4, Bid::withoutGlobalScope('site')
             ->where('game_id', $game->id)
-            ->where('game_date', '2026-11-03')
+            ->whereDate('game_date', '2026-11-03')
             ->count(), 'The test bids must be stored for the selected game/date.');
         $this->assertSame(4, Bid::query()
             ->where('game_id', $game->id)
