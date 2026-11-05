@@ -14,7 +14,7 @@ class UserPresenceManager
      */
     public function sync(User $user, ?\Illuminate\Support\Carbon $now = null): string
     {
-        $now = ($now ?? now())->copy()->utc();
+        $now = ($now ?? now())->copy();
 
         $foregroundLeaseCutoff = $now->copy()->subSeconds(
             max(1, (int) config('presence.heartbeat_timeout_seconds', 45))
