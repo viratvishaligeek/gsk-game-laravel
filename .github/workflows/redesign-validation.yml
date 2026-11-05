@@ -9,6 +9,7 @@ on:
       - 'public/frontend/**'
       - 'routes/**'
       - 'app/**'
+      - 'tests/**'
       - 'composer.json'
       - 'composer.lock'
       - '.github/workflows/**'
