@@ -1,65 +1,69 @@
-# GSK customer frontend redesign — v4 continuation
+# GSK customer frontend — structural rebuild v5
 
-## Repository baseline
-- Default branch: `main`
-- Baseline commit: `984fc3610ac93b22e8a5102cd5c6b6087147cefa`
-- Existing redesign PRs #1, #3 and #4 are already merged into `main`. PR #4's merged state supersedes its older draft/in-progress wording.
-- Current continuation branch: `redesign/gsk-frontend-rebuild-2026`
+## Working branch
+- Branch: `redesign/gsk-frontend-rebuild-2026`
+- The earlier PR #5 was merged to `main`; this branch continues from that merged redesign history.
+- This v5 work is a separate structural reconstruction, not a continuation of the old v4 CSS styling approach.
 
-## Existing customer frontend already present on main
-The merged work has already replaced the customer-facing shell and page structures. It includes:
-- Homepage hero, latest-result spotlight, daily results board, market search/filter directory, monthly result matrix, historical archive index, FAQ, information notice and all configured managed-homepage insertion points.
-- Responsive header, announcement bar, mobile quick-navigation dock, footer, social/contact links and WhatsApp schedule modal.
-- Market archive with date/month/year controls and the existing AJAX result endpoint.
-- Monthly charts workspace with market/month/year filters and the existing read-only chart data endpoint.
-- CMS/information pages, FAQ page and community feed, discussion detail, post creation and member login/registration.
-- Original brand colors retained: navy/blue with gold accents.
-- Bootstrap 5.3.8 retained; the project has no new frontend framework dependency.
+## Structural redesign implemented
+- [x] New standalone presentation system: `public/frontend/css/gsk-structural-v5.css`.
+- [x] Shared shell now loads Bootstrap 5 and the new v5 stylesheet; the old v4 stylesheet is no longer loaded.
+- [x] Rebuilt header DOM: brand block, separate top strip, primary navigation list, custom mobile menu toggle and announcement ticker.
+- [x] Rebuilt homepage DOM: asymmetric hero and featured-result stage, quick destination rail, daily result register, split market explorer, historical matrix, archive index, editorial FAQ and disclaimer strip.
+- [x] Rebuilt dynamic market card markup and admin-managed homepage section wrapper.
+- [x] Rebuilt market archive DOM into a market-period control rail and separate date-wise record workspace.
+- [x] Rebuilt monthly charts DOM into a distinct chart hero, filter console and output workspace.
+- [x] Rebuilt information and CMS page layouts into editorial document layouts with contextual side navigation.
+- [x] Rebuilt community feed into a numbered discussion stream with separate community navigation.
+- [x] Rebuilt discussion detail into a post-and-replies reading column plus a separate reply composer.
+- [x] Rebuilt discussion creation into an instruction rail and dedicated authoring sheet.
+- [x] Rebuilt login/registration into a split-screen community access experience.
+- [x] Rebuilt the 404 page into a large typographic error composition.
+- [x] Updated homepage regression assertions to test the new structural composition and verify that old repeated homepage result-card/taskbar markup is absent.
 
-## v4 continuation changes
-- [x] Added `public/frontend/css/gsk-frontend-v4.css`, a separate visual refinement layer for the customer frontend. It preserves the existing navy/blue and gold brand palette, adds distinct treatments for the hero, result board, market directory, archive matrix, FAQ, document pages, community, forms, footer and mobile navigation, and includes reduced-motion and safe-area handling.
-- [x] Loaded the v4 stylesheet after the existing design-system stylesheet in `resources/views/frontend/include/app.blade.php`; existing Blade selectors and behavior remain intact.
-- [x] Removed duplicate viewport and theme-color metadata from the shared frontend layout; those values remain supplied by the existing metadata partial.
-- [x] Rebuilt the customer-facing 404 view using the existing frontend shell and real destinations (home, charts and community).
-- [x] Added responsive styling for the 404 experience.
-- [x] No controller, model, service, migration, route, API, middleware, authentication, payment, admin view or backend asset was changed in this continuation.
+## Dynamic and interaction contracts preserved
+- Homepage database-driven results, featured market, previous result, schedule, game list, monthly tables, FAQs, homepage settings and schema data.
+- Admin-managed homepage content locations: first_place, second_place, second_place_another, third_place, third_place_another, before_footer and after_footer.
+- Existing homepage anchors: today-results, markets, monthly-records and market-charts.
+- Existing market search/filter selectors and result-state data attributes.
+- Market archive POST endpoint, CSRF header, request payload (slug/year/month), response fields (days/day/result/month_label), abort handling and live status.
+- Monthly chart GET endpoint, query parameter names (game_id/year/month), response fields, history navigation and live table updates.
+- Existing community routes, post/reply data, pagination, author information, CSRF fields, validation display and form limits.
+- Existing metadata, canonical/robots output, Open Graph/Twitter metadata and structured data.
+- Existing WhatsApp contact modal, configured contact/social links and download URL.
 
-## Frontend inventory
-Customer-facing Blade templates under `resources/views/frontend`:
-- `index.blade.php` — homepage and configured homepage sections.
-- `market.blade.php` — individual market archive.
-- `charts.blade.php` — monthly multi-market charts.
-- `information.blade.php` and `page.blade.php` — FAQ and CMS content.
-- `include/app.blade.php`, `include/meta.blade.php`, `include/header.blade.php`, `include/footer.blade.php` — shared customer shell, SEO, navigation and footer.
-- `community/index.blade.php`, `community/show.blade.php`, `community/create.blade.php`, `community/auth.blade.php` — community journeys.
-- `partial/homepage-sections.blade.php`, `partial/market-card.blade.php`, `partial/section-heading.blade.php` — reusable dynamic presentation components.
-- `resources/views/errors/404.blade.php` — shared customer-facing not-found page, now styled with the customer shell.
+## Backend boundary
+No changes in this v5 work to controllers, models, services, migrations, database, routes, APIs, middleware, authentication logic, payment/transaction logic, game logic, admin views or backend assets. No new dependency was introduced.
 
-## Existing dynamic integrations retained
-- Admin-managed homepage sections and configured insertion positions.
-- Database-driven markets, latest result, previous result, scheduled time and monthly matrix.
-- Existing market archive POST/AJAX contract, CSRF token and response fields.
-- Existing monthly chart GET data endpoint and query parameter names.
-- Dynamic CMS content, FAQ content, metadata, logos, social links, contact settings and app-download URL.
-- Existing community pagination, posts, replies, author data, CSRF forms, validation errors and auth endpoints.
-- Existing named routes and Bootstrap collapse/accordion/modal behavior.
+## Changed frontend files
+- `public/frontend/css/gsk-structural-v5.css` (new)
+- `resources/views/frontend/include/app.blade.php`
+- `resources/views/frontend/include/header.blade.php`
+- `resources/views/frontend/include/footer.blade.php`
+- `resources/views/frontend/index.blade.php`
+- `resources/views/frontend/market.blade.php`
+- `resources/views/frontend/charts.blade.php`
+- `resources/views/frontend/information.blade.php`
+- `resources/views/frontend/page.blade.php`
+- `resources/views/frontend/community/index.blade.php`
+- `resources/views/frontend/community/show.blade.php`
+- `resources/views/frontend/community/create.blade.php`
+- `resources/views/frontend/community/auth.blade.php`
+- `resources/views/frontend/partial/homepage-sections.blade.php`
+- `resources/views/frontend/partial/market-card.blade.php`
+- `resources/views/errors/404.blade.php`
+- `tests/Feature/HomepageLayoutRegressionTest.php`
 
-## Validation status
-- [x] Repository tree and all customer Blade templates inventoried.
-- [x] Existing brand tokens and page/section hierarchy inspected.
-- [x] Protected backend areas reviewed for this continuation's changed-file scope.
-- [x] GitHub Actions run [#96](https://github.com/viratvishaligeek/gsk-game-laravel/actions/runs/42056191338): dependency install, Laravel environment preparation and Blade compilation/PHP syntax checks passed.
-- [x] Focused `HomepageLayoutRegressionTest`: 3 passed / 35 assertions.
-- [x] Full Laravel suite executed: 60 passed / 10 failed (267 assertions). Failures are in `DisawarBusinessDateBoundaryTest`, `AdminBidAndSupportChatEnhancementTest` and `SupportFeaturesRegressionTest`; none of those files or implementation areas are changed in this PR. An exact baseline run on the same `main` commit has not been performed, so these failures are not declared pre-existing.
-- [ ] Browser verification at 360px, 390px, 768px, 1024px and desktop widths.
-- [ ] Interactive verification of market search/filter, market archive AJAX, monthly chart filters/history, Bootstrap navigation/accordion/modal, community forms and pagination.
-- [ ] Production asset loading and real-device visual check.
-- [ ] Capture before/after screenshots.
+## Validation still required
+- [ ] GitHub Actions Blade compilation and frontend regression tests for this v5 commit.
+- [ ] Full Laravel suite and comparison with a same-commit `main` baseline for unrelated failures.
+- [ ] Browser-level functional testing of search/filter, market AJAX, chart AJAX/history, mobile navigation, FAQ accordion, WhatsApp modal, community forms and pagination.
+- [ ] Genuine before/after screenshots for homepage, market archive, charts, information/CMS, community feed and discussion detail at desktop and mobile sizes.
+- [ ] Confirm production asset paths and check for console errors/overflow at 360px, 390px, 768px, 1024px and desktop.
+- [ ] Review all rendered sections with real database content, including every managed homepage insertion point.
 
-## Known baseline test caveat from the previously merged v3 report
-The v3 report recorded 60 passing and 10 failing tests in its full-suite run, across business-date, admin bidding/support and support-feature test classes. That report did not establish an exact `main` baseline for those failures. The v4 continuation must not label them pre-existing without a same-commit baseline comparison.
+## Important screenshot limitation
+The current GitHub integration can edit and validate repository files but does not provide a browser session or screenshot capture tool. Do not fabricate before/after screenshots or claim visual browser verification. Capture the required screenshots in a real browser once an accessible preview/deployment is available.
 
-## Scope guardrails
-- Do not modify `app/`, `routes/`, `database/`, `resources/views/backend/`, authentication, payment, APIs or business logic.
-- Do not remove existing dynamic Blade bindings or frontend interactions.
-- Do not merge or deploy until the new CI run and browser-level checks are reviewed.
+## Merge policy
+Do not merge or deploy the v5 PR until CI, browser interaction tests and genuine before/after screenshots have been reviewed.
