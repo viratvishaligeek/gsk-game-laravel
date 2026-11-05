@@ -7,7 +7,7 @@
   <div><span class="v5-kicker">COMMUNITY / OPEN DISCUSSION</span><h1>Ideas move the conversation.</h1><p>Read game-wise discussions, share a respectful post and take part in the community feed.</p><div class="d-flex flex-wrap gap-2 mt-4"><a class="v5-button v5-button-gold" href="{{ route('community.create') }}">Start a discussion ↗</a><a class="v5-button v5-button-glass" href="{{ route('index') }}#markets">Browse markets</a></div></div>
   <aside class="v5-community-stat"><span>VISIBLE COMMUNITY POSTS</span><strong>{{ number_format($posts->total()) }}</strong><span>{{ number_format($posts->sum('replies_count')) }} replies across this page</span></aside>
 </div></header>
-<main class="v5-community-layout" id="community-feed">
+<section class="v5-community-layout" id="community-feed">
   <aside class="v5-community-sidebar"><span class="v5-kicker">COMMUNITY DESK</span><a href="{{ route('community.create') }}">＋ Write a discussion</a><a href="{{ route('index') }}#markets">Browse game topics</a><a href="{{ route('charts.index') }}">Explore result charts</a><p class="small text-secondary mt-3">Posts and replies are shown according to the community moderation settings.</p></aside>
   <section class="v5-community-feed" aria-label="Latest discussions">
     @if (session('success'))<div class="alert alert-success" role="status">{{ session('success') }}</div>@endif
