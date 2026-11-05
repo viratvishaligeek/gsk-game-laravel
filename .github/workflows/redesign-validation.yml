@@ -1,6 +1,17 @@
 name: GSK Laravel frontend validation
 
 on:
+  push:
+    branches:
+      - implementation/**
+    paths:
+      - 'resources/views/frontend/**'
+      - 'public/frontend/**'
+      - 'routes/**'
+      - 'app/**'
+      - 'composer.json'
+      - 'composer.lock'
+      - '.github/workflows/**'
   pull_request:
     branches:
       - main
