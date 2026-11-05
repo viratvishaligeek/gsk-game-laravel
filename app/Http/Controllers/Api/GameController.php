@@ -289,6 +289,7 @@ class GameController extends Controller
                 'id',
                 'name',
                 'image',
+                'url',
             ])
             ->map(function ($banner) {
                 return [
@@ -297,6 +298,7 @@ class GameController extends Controller
                     'title' => $banner->name,
                     'image' => $banner->image,
                     'image_url' => $banner->image_url ?? $banner->image,
+                    'url' => $banner->url,
                 ];
             })
             ->values();
