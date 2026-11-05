@@ -49,6 +49,9 @@ No changes in this v5 work to controllers, models, services, migrations, databas
 - `resources/views/frontend/community/show.blade.php`
 - `resources/views/frontend/community/create.blade.php`
 - `resources/views/frontend/community/auth.blade.php`
+- `resources/views/frontend/community/partials/game-summary.blade.php`
+- `resources/views/frontend/community/partials/posts.blade.php`
+- `resources/views/frontend/partial/section-heading.blade.php`
 - `resources/views/frontend/partial/homepage-sections.blade.php`
 - `resources/views/frontend/partial/market-card.blade.php`
 - `resources/views/errors/404.blade.php`
