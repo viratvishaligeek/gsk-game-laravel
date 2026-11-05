@@ -1,13 +1,1 @@
-<article class="gsk-market-card">
-  <div class="gsk-market-card-top"><h3>{{ $game['name'] }}</h3><span class="gsk-market-card-time">{{ $game['time'] }}</span></div>
-  <div class="gsk-market-results">
-    <div class="gsk-market-value"><small>PREVIOUS</small><strong>{{ $game['yesterday'] }}</strong></div>
-    <div class="gsk-market-value today"><small>TODAY</small><strong>{{ $game['today'] }}</strong></div>
-  </div>
-  @if (($game['today'] ?? '--') !== '--')
-    <span class="badge rounded-pill text-bg-success align-self-center">Published</span>
-  @else
-    <span class="badge rounded-pill text-bg-light text-secondary align-self-center">Awaiting</span>
-  @endif
-  <a class="gsk-market-card-link" href="{{ route('frontend.market', ['slug' => $game['slug']]) }}"><span>Open this market’s archive</span><span aria-hidden="true">↗</span></a>
-</article>
+<article class="v6-market-card tone-{{ $index % 4 }}"><div class="v6-market-card-head"><span class="v6-market-symbol">{{ mb_strtoupper(mb_substr($game['name'],0,1)) }}</span><div><h3>{{ $game['name'] }}</h3><small>Result time · {{ $game['time'] }}</small></div>@if(($game['today']??'--')!=='--')<span class="v6-market-status status-published">Published</span>@else<span class="v6-market-status status-waiting">Waiting</span>@endif</div><div class="v6-market-numbers"><div><small>YESTERDAY</small><strong>{{ $game['yesterday'] }}</strong></div><div class="v6-market-today"><small>TODAY’S RESULT</small><strong>{{ $game['today'] }}</strong></div></div><a href="{{ route('frontend.market',['slug'=>$game['slug']]) }}">View market history <span>↗</span></a></article>
