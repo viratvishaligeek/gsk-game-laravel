@@ -75,7 +75,8 @@ class BiddingDeskProfitLossReportService
             ->pluck('total_bid', 'game_id');
         $winTotals = Winner::query()
             ->select('game_id', DB::raw('SUM(winning_amount) as total_win'))
-            ->whereBetween('game_date', [$startDate, $endDate])
+            ->whereDate('game_date', '>=', $startDate)
+            ->whereDate('game_date', '<=', $endDate)
             ->groupBy('game_id')
             ->pluck('total_win', 'game_id');
 
