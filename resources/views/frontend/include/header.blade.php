@@ -1,42 +1,7 @@
-<header class="v5-header">
-  <div class="v5-header-top"><span><strong>●</strong> PUBLIC RESULT ARCHIVE</span><span>{{ now()->timezone(config('app.timezone'))->format('D · d M Y') }}</span></div>
-  <nav class="v5-nav" aria-label="Primary navigation">
-    <a class="v5-brand" href="{{ route('index') }}" aria-label="{{ setting('title') }} home">
-      @if (filled(setting('site_logo')) && is_file(public_path('logos/' . basename(setting('site_logo')))))
-        <img src="{{ asset('logos/' . basename(setting('site_logo'))) }}" width="48" height="48" alt="{{ setting('title') }}">
-      @else
-        <span class="v5-brand-mark" aria-hidden="true">G</span>
-      @endif
-      <span class="v5-brand-copy"><strong>{{ setting('title') }}</strong><small>{{ setting('site_tagline') }}</small></span>
-    </a>
-    <ul class="v5-nav-links" id="gskPrimaryNav">
-      <li><a href="{{ route('index') }}">Home</a></li>
-      <li><a href="{{ route('index') }}#today-results">Live results</a></li>
-      <li><a href="{{ route('index') }}#markets">Markets</a></li>
-      <li><a href="{{ route('charts.index') }}">Charts</a></li>
-      <li><a href="{{ route('community.index') }}">Community</a></li>
-      <li><a href="{{ route('information') }}">FAQ</a></li>
-      @foreach ($navPages ?? collect() as $navPage)
-        <li><a href="{{ route('page', ['page' => $navPage->slug]) }}">{{ $navPage->name }}</a></li>
-      @endforeach
-      @if (filled(setting('app_download_url')))
-        <li><a class="v5-nav-cta" href="{{ setting('app_download_url') }}" target="_blank" rel="noopener noreferrer">Get the app ↗</a></li>
-      @endif
-    </ul>
-    <button class="v5-nav-toggle" type="button" data-v5-menu aria-controls="gskPrimaryNav" aria-expanded="false" aria-label="Open navigation">☰</button>
-  </nav>
-</header>
-<div class="v5-ticker" role="status"><b>ON THE BOARD</b><div class="v5-ticker-track"><span>{{ filled(setting('web_marquee')) ? setting('web_marquee') : 'Today’s published results · Market schedules · Previous records · Monthly charts' }}　✦　{{ filled(setting('web_marquee')) ? setting('web_marquee') : 'Today’s published results · Market schedules · Previous records · Monthly charts' }}</span></div><a href="{{ route('charts.index') }}">Archive ↗</a></div>
-<script>
-(() => {
-  const button = document.querySelector('[data-v5-menu]');
-  const menu = document.getElementById('gskPrimaryNav');
-  if (!button || !menu) return;
-  button.addEventListener('click', () => {
-    const open = button.getAttribute('aria-expanded') !== 'true';
-    button.setAttribute('aria-expanded', open ? 'true' : 'false');
-    button.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
-    menu.classList.toggle('is-open', open);
-  });
-})();
-</script>
+<header class="v6-header">
+<div class="v6-topline"><div class="v6-wrap"><span><i></i> Results & records, all in one place</span><time>{{ now()->timezone(config('app.timezone'))->format('D, d M Y') }}</time></div></div>
+<div class="v6-wrap v6-header-main"><a class="v6-brand" href="{{ route('index') }}" aria-label="{{ setting('title') }} home">@if (filled(setting('site_logo')) && is_file(public_path('logos/' . basename(setting('site_logo')))))<img src="{{ asset('logos/' . basename(setting('site_logo'))) }}" width="44" height="44" alt="{{ setting('title') }}">@else<span class="v6-brand-symbol">G</span>@endif<span><strong>{{ setting('title') }}</strong><small>{{ setting('site_tagline') }}</small></span></a>
+<button class="v6-menu-button" type="button" data-v6-menu aria-controls="gskPrimaryNav" aria-expanded="false" aria-label="Open navigation"><span></span><span></span><span></span></button>
+<nav class="v6-navigation" id="gskPrimaryNav" aria-label="Primary navigation"><a href="{{ route('index') }}">Home</a><a href="{{ route('index') }}#today-results">Results</a><a href="{{ route('index') }}#markets">Markets</a><a href="{{ route('charts.index') }}">Charts</a><a href="{{ route('community.index') }}">Community</a><a href="{{ route('information') }}">FAQ</a>@foreach ($navPages ?? collect() as $navPage)<a href="{{ route('page', ['page' => $navPage->slug]) }}">{{ $navPage->name }}</a>@endforeach @if (filled(setting('app_download_url')))<a class="v6-nav-download" href="{{ setting('app_download_url') }}" target="_blank" rel="noopener noreferrer">Get the app ↗</a>@endif</nav></div></header>
+<div class="v6-announcement"><div class="v6-wrap"><b>ON THE BOARD</b><span>{{ filled(setting('web_marquee')) ? setting('web_marquee') : 'Today’s results · Market timings · Monthly charts · Historical records' }}</span><a href="{{ route('charts.index') }}">Explore charts ↗</a></div></div>
+<script>(()=>{const b=document.querySelector('[data-v6-menu]'),m=document.getElementById('gskPrimaryNav');if(!b||!m)return;b.addEventListener('click',()=>{const o=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Close navigation':'Open navigation');m.classList.toggle('is-open',o);});})();</script>

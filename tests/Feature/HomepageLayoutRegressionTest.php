@@ -20,7 +20,7 @@ class HomepageLayoutRegressionTest extends TestCase
 
         $response->assertOk()
             ->assertSee('bootstrap@5.3.8/dist/css/bootstrap.min.css', false)
-            ->assertSee('frontend/css/gsk-structural-v5.css', false)
+            ->assertSee('frontend/css/gsk-vibrant-v6.css', false)
             ->assertDontSee('frontend/css/gsk-frontend-v4.css', false)
             ->assertDontSee('site-theme.css', false)
             ->assertDontSee('static-home.css', false)
@@ -55,10 +55,12 @@ class HomepageLayoutRegressionTest extends TestCase
             ->assertSee('data-test-section="top-managed"', false)
             ->assertSee('data-test-section="after-results"', false)
             ->assertDontSee('data-test-section="hidden-managed"', false)
-            ->assertSee('class="gsk-home-hero"', false)
-            ->assertSee('v5-home-grid', false)
-            ->assertSee('class="v5-results-layout"', false)
-            ->assertSee('class="v5-market-console"', false)
+            ->assertSee('gsk-home-hero', false)
+            ->assertSee('v6-hero-grid', false)
+            ->assertSee('class="v6-daily-grid"', false)
+            ->assertSee('class="v6-market-grid"', false)
+            ->assertDontSee('v5-home-grid', false)
+            ->assertSee('class="v6-mobile-dock"', false)
             ->assertDontSee('gsk-v3-result-card', false)
             ->assertDontSee('gsk-v3-taskbar', false)
             ->assertSee('id="today-results"', false)
@@ -66,7 +68,7 @@ class HomepageLayoutRegressionTest extends TestCase
             ->assertSee('id="market-charts"', false);
 
         $html = $response->getContent();
-        $heroPosition = strpos($html, 'class="gsk-home-hero"');
+        $heroPosition = strpos($html, 'gsk-home-hero');
         $topPosition = strpos($html, 'data-test-section="top-managed"');
         $resultsPosition = strpos($html, 'id="today-results"');
         $afterResultsPosition = strpos($html, 'data-test-section="after-results"');
@@ -134,9 +136,9 @@ class HomepageLayoutRegressionTest extends TestCase
             ->assertSee('/result/market-beta');
 
         $html = $response->getContent();
-        $featuredStart = strpos($html, 'class="gsk-featured-result"');
-        $featuredEnd = strpos($html, '</article>', $featuredStart);
-        $featuredHtml = substr($html, $featuredStart, $featuredEnd - $featuredStart);
+        $featuredStart = strpos($html, 'class="v6-hero-feature"');
+        $dailySectionStart = strpos($html, 'id="today-results"', $featuredStart);
+        $featuredHtml = substr($html, $featuredStart, $dailySectionStart - $featuredStart);
         $this->assertStringContainsString('Market Beta', $featuredHtml);
         $this->assertStringContainsString('456', $featuredHtml);
         $this->assertStringNotContainsString('Market Alpha', $featuredHtml);
