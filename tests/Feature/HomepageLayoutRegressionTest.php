@@ -56,9 +56,11 @@ class HomepageLayoutRegressionTest extends TestCase
             ->assertSee('data-test-section="after-results"', false)
             ->assertDontSee('data-test-section="hidden-managed"', false)
             ->assertSee('class="gsk-home-hero"', false)
-            ->assertSee('class="v5-home-grid"', false)
+            ->assertSee('v5-home-grid', false)
             ->assertSee('class="v5-results-layout"', false)
             ->assertSee('class="v5-market-console"', false)
+            ->assertDontSee('gsk-v3-result-card', false)
+            ->assertDontSee('gsk-v3-taskbar', false)
             ->assertSee('id="today-results"', false)
             ->assertSee('id="markets"', false)
             ->assertSee('id="market-charts"', false);
