@@ -11,8 +11,8 @@
     $managedSections = $homepageSections ?? collect();
 @endphp
 
-<section class="v5-home-hero gsk-home-hero">
-  <div class="v5-home-grid">
+<section class="gsk-home-hero">
+  <div class="v5-home-hero v5-home-grid">
     <div class="v5-home-copy">
       <span class="v5-kicker">LIVE RESULT DESK · {{ $todayLabel }}</span>
       <h1>{{ setting('homepage_heading_line1', 'Today’s results.') }} <span>{{ setting('homepage_heading_line2', 'Every market.') }}</span></h1>
