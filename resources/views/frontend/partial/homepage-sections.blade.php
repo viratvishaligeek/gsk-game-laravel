@@ -1,14 +1,1 @@
-@forelse ($sections as $homepageSection)
-  <section class="v5-managed" id="homepage-section-{{ $homepageSection->id }}" data-homepage-section="{{ $homepageSection->id }}">
-    <div class="v5-managed-inner">
-      <div class="v5-managed-label"><span>✦</span><br>FEATURED<br>INFORMATION</div>
-      <div class="v5-managed-content">
-        @if (filled($homepageSection->title))<h2>{{ $homepageSection->title }}</h2>@endif
-        @if (filled($homepageSection->content))
-          <article @if (filled($homepageSection->background)) style="background: {{ $homepageSection->background }}" @endif>{!! $homepageSection->content !!}</article>
-        @endif
-      </div>
-    </div>
-  </section>
-@empty
-@endforelse
+@forelse($sections as $homepageSection)<section class="v6-managed" id="homepage-section-{{ $homepageSection->id }}" data-homepage-section="{{ $homepageSection->id }}"><div class="v6-wrap"><div class="v6-managed-heading"><span class="v6-managed-icon">✦</span><div>@if(filled($homepageSection->title))<h2>{{ $homepageSection->title }}</h2>@else<span class="v6-eyebrow eyebrow-blue">FEATURED INFORMATION</span>@endif</div></div>@if(filled($homepageSection->content))<article class="v6-managed-content" @if(filled($homepageSection->background)) style="background: {{ $homepageSection->background }}" @endif>{!! $homepageSection->content !!}</article>@endif</div></section>@empty @endforelse
