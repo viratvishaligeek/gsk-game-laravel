@@ -4,7 +4,7 @@
 @section('robots_content', 'index,follow')
 @section('content')
 <header class="v5-page-hero"><div class="v5-page-hero-inner"><div><nav class="v5-breadcrumb" aria-label="Breadcrumb"><a href="{{ route('community.index') }}">Community</a> / {{ $post->game->name }}</nav><span class="v5-kicker mt-4">DISCUSSION / {{ $post->game->name }}</span><h1>{{ $post->title }}</h1><p>Posted by {{ $post->author->name }} · {{ $post->created_at->timezone(config('app.timezone'))->format('d M Y, h:i A') }}</p></div><aside class="v5-page-aside"><strong class="fs-2">{{ $post->replies_count }}</strong><br>community replies</aside></div></header>
-<main class="v5-discussion-layout">
+<section class="v5-discussion-layout">
   <section>
     @if (session('success'))<div class="alert alert-success" role="status">{{ session('success') }}</div>@endif
     <article class="v5-post-body"><span class="v5-kicker">ORIGINAL POST</span><p class="mt-3 mb-0">{{ $post->body }}</p></article>
@@ -26,5 +26,5 @@
     <a class="d-block mt-4 text-white small" href="{{ route('community.index') }}">← All discussions</a>
     <a class="d-block mt-2 text-white small" href="{{ route('community.create') }}">Start a new post ↗</a>
   </aside>
-</main>
+</section>
 @endsection
