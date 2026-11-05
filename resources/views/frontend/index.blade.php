@@ -26,7 +26,7 @@
       </div>
       <div class="v5-home-facts" aria-label="Market statistics">
         <div><strong>{{ count($frontendResults) }}</strong><small>Active markets</small></div>
-        <div><strong>{{ $publishedCount }}</strong><small>Published today</small></div>
+        <div><strong>{{ $publishedCount }}</strong><small>Published result records</small></div>
         <div><strong>{{ now()->timezone(config('app.timezone'))->year }}</strong><small>Record year</small></div>
       </div>
     </div>
