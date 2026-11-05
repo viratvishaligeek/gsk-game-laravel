@@ -58,8 +58,8 @@ class Game extends Model
      */
     public function isDisawar(): bool
     {
-        return Str::slug((string) $this->slug) === 'desawar'
-            || Str::slug((string) $this->name) === 'desawar';
+        return in_array(Str::slug((string) $this->slug), ['desawar', 'disawar'], true)
+            || in_array(Str::slug((string) $this->name), ['desawar', 'disawar'], true);
     }
 
     /**
