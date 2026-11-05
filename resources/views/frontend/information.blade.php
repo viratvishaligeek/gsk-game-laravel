@@ -4,7 +4,7 @@
 @section('robots_content', 'index,follow')
 @section('content')
 <header class="v5-page-hero"><div class="v5-page-hero-inner"><div><span class="v5-kicker">INFORMATION DESK / KNOWLEDGE BASE</span><h1>{{ $title }}</h1><p>Helpful information and guidance from {{ setting('title') }}.</p></div><aside class="v5-page-aside">A quick reference from the {{ setting('title') }} information desk.</aside></div></header>
-<main class="v5-content-layout">
+<section class="v5-content-layout">
   <aside class="v5-content-rail"><strong>On this page</strong><a href="{{ route('index') }}#markets">Browse markets ↗</a><a href="{{ route('charts.index') }}">Monthly charts ↗</a><a href="{{ route('community.index') }}">Community ↗</a><a href="{{ route('index') }}">Return home ↗</a></aside>
   <article class="v5-document"><div class="v5-kicker mb-3">REFERENCE / {{ strtoupper($title) }}</div><div class="gsk-information-copy">{{ $copy }}</div>
     @if ($page === 'faq' && $faqs->isNotEmpty())
@@ -15,7 +15,7 @@
       </div></section>
     @endif
   </article>
-</main>
+</section>
 @endsection
 @if ($page === 'faq' && $faqs->isNotEmpty())
 @push('schema')
