@@ -97,6 +97,14 @@ class AdminBidAndSupportChatEnhancementTest extends TestCase
             ->firstOrFail();
         $this->assertSame($game->site_key, $firstStoredBid->site_key, 'Bid and game must be assigned to the same site.');
         $this->assertSame(config('sites.current_key'), $firstStoredBid->site_key, 'Bid site key must match the active site.');
+        $storedSiteKeys = Bid::withoutGlobalScope('site')
+            ->where('game_id', $game->id)
+            ->whereDate('game_date', '2026-11-03')
+            ->pluck('site_key')
+            ->unique()
+            ->values()
+            ->all();
+        $this->assertSame([config('sites.current_key')], $storedSiteKeys, 'All fixture bids must share the current site key.');
         $this->assertSame(4, Bid::withoutGlobalScope('site')
             ->where('game_id', $game->id)
             ->whereDate('game_date', '2026-11-03')
