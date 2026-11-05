@@ -180,3 +180,16 @@ body{background:var(--v7-paper);color:var(--v7-ink);font-family:"DM Sans",system
   .v6-reply-panel,.v6-form-panel{padding:15px;border-radius:16px}
   .v6-page-hero,.v6-market-hero,.v6-chart-hero,.v6-community-hero{padding-block:26px}
 }
+
+/* Bootstrap component defaults follow the same GSK palette on inner pages. */
+:root{
+  --bs-body-color:#10172d;
+  --bs-body-bg:#f4f5ff;
+  --bs-secondary-color:#66718a;
+  --bs-tertiary-color:#8490a8;
+  --bs-border-color:#e4e7f5;
+  --bs-link-color:#6847e8;
+  --bs-link-hover-color:#315be8;
+  --bs-primary:#6847e8;
+  --bs-primary-rgb:104,71,232;
+}
