@@ -129,3 +129,14 @@ body{background:var(--gsk8-paper);color:var(--gsk8-ink);-webkit-font-smoothing:a
   html{scroll-behavior:auto}
   *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
 }
+
+/* Swipe-first market discovery on narrow screens; search and status filters remain intact. */
+@media(max-width:640px){
+  .v6-market-grid{display:flex;gap:12px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;padding:2px 2px 14px;margin-right:-2px;scrollbar-width:thin}
+  .v6-market-grid>.gsk-v3-market-item{flex:0 0 min(84vw,330px);min-width:0;scroll-snap-align:start}
+  .v6-market-grid>.v6-empty{flex:0 0 100%}
+  .v6-market-grid::-webkit-scrollbar{height:5px}
+  .v6-market-grid::-webkit-scrollbar-thumb{background:#cbd5ed;border-radius:99px}
+  .v6-hero-grid{gap:20px}
+  .v6-hero-feature{order:-1;justify-self:stretch;max-width:none}
+}
