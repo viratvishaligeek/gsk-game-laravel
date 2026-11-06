@@ -21,11 +21,17 @@ class HomepageLayoutRegressionTest extends TestCase
         $response->assertOk()
             ->assertSee('bootstrap@5.3.8/dist/css/bootstrap.min.css', false)
             ->assertSee('frontend/css/gsk-vibrant-v6.css', false)
+            ->assertSee('frontend/css/gsk-premium-v8.css', false)
+            ->assertDontSee('frontend/css/gsk-arcade-v7.css', false)
             ->assertDontSee('frontend/css/gsk-frontend-v4.css', false)
             ->assertDontSee('site-theme.css', false)
+            ->assertDontSee('Delhi Bazaar', false)
+            ->assertDontSee('03:15 PM', false)
             ->assertDontSee('static-home.css', false)
             ->assertDontSee('static-home.js', false)
             ->assertDontSee('bootstrap-icons', false);
+
+        $this->assertSame(1, substr_count($response->getContent(), 'name="theme-color"'));
     }
 
     public function test_homepage_sections_render_once_in_configured_positions_and_inactive_sections_stay_hidden(): void
