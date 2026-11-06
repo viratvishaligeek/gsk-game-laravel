@@ -41,7 +41,6 @@ Route::get('/firebase-config.json', function () {
 
 // Route::get('/storage-link', function () {
 //     Artisan::call('storage:link');
-
 //     return response()->json([
 //         'success' => true,
 //         'message' => 'Storage link created successfully.',
@@ -51,6 +50,7 @@ Route::get('/firebase-config.json', function () {
 // Route::get('/fresh-db', function () {
 //     Artisan::call('migrate:fresh');
 //     Artisan::call('db:seed');
+//     Artisan::call('permissions:setup');
 //     Artisan::call('permissions:setup');
 //     return response()->json([
 //         'success' => true,
