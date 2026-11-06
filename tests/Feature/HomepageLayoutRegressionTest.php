@@ -21,6 +21,8 @@ class HomepageLayoutRegressionTest extends TestCase
         $response->assertOk()
             ->assertSee('bootstrap@5.3.8/dist/css/bootstrap.min.css', false)
             ->assertSee('frontend/css/gsk-vibrant-v6.css', false)
+            ->assertSee('frontend/css/gsk-premium-v8.css', false)
+            ->assertDontSee('frontend/css/gsk-arcade-v7.css', false)
             ->assertDontSee('frontend/css/gsk-frontend-v4.css', false)
             ->assertDontSee('site-theme.css', false)
             ->assertDontSee('static-home.css', false)
