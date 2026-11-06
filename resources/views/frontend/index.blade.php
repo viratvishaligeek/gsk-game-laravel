@@ -19,8 +19,8 @@
         $managedSections = $homepageSections ?? collect();
     @endphp
     <section class="v6-hero gsk-home-hero">
-        <div class="v6-wrap v6-hero-grid">
-            <div class="v6-hero-copy text-center"><span class="v6-live-pill"><i></i> TODAY’S BOARD
+        <div class="v6-wrap">
+            <div class="v6-hero-copy mb-2 text-center"><span class="v6-live-pill"><i></i> TODAY’S BOARD
                     <b>{{ $todayLabel }}</b></span>
                 <h1>{{ setting('homepage_heading_line1', 'Your daily') }}
                     <em>{{ setting('homepage_heading_line2', 'result hub.') }}</em>
@@ -33,11 +33,6 @@
                             rel="noopener noreferrer">Download app ↗</a>
                     </div>
                 @endif
-                <div class="v6-stats justify-content-center">
-                    <div><strong>{{ count($frontendResults) }}</strong><span>Active markets</span></div>
-                    <div><strong>{{ $publishedCount }}</strong><span>Published result records</span></div>
-                    <div><strong>{{ now()->timezone(config('app.timezone'))->year }}</strong><span>Record year</span></div>
-                </div>
             </div>
             <div class="v6-hero-feature">
                 <div class="v6-feature-top"><span>⭐ LATEST RESULT</span><small>{{ $todayLabel }}</small></div>
@@ -70,9 +65,9 @@
     <section class="v6-section" id="today-results">
         <div class="v6-wrap">
             <header class="v6-section-heading">
-                <div><span class="v6-eyebrow eyebrow-blue">DAILY RESULTS</span>
-                    <h2>Today at a glance</h2>
-                    <p>Quickly check what’s published and what’s still on the way.</p>
+                <div class="text-center"><span class="v6-eyebrow eyebrow-blue">DAILY RESULTS</span>
+                    <h2>Today Satta King Results</h2>
+                    <p>🎉 चेक करें अपना रिजल्ट!</p>
                 </div><span class="v6-heading-date">{{ $todayLabel }}</span>
             </header>
             <div class="v6-daily-grid">
@@ -111,7 +106,7 @@
     <section class="v6-section v6-market-section" id="markets">
         <div class="v6-wrap">
             <header class="v6-section-heading">
-                <div><span class="v6-eyebrow eyebrow-purple">MARKET DIRECTORY</span>
+                <div class="text-center"><span class="v6-eyebrow eyebrow-purple">MARKET DIRECTORY</span>
                     <h2>Pick your market</h2>
                     <p>Search by name or filter the directory by today’s result status.</p>
                 </div><span class="v6-count-chip">{{ count($marketResults) }} markets</span>
@@ -147,7 +142,7 @@
     <section class="v6-chart-promo" id="monthly-records">
         <div class="v6-wrap">
             <div class="v6-chart-promo-head">
-                <div><span class="v6-eyebrow eyebrow-cyan">MONTHLY RECORDS · {{ strtoupper($monthLabel) }}</span>
+                <div class="text-center"><span class="v6-eyebrow eyebrow-cyan">MONTHLY RECORDS · {{ strtoupper($monthLabel) }}</span>
                     <h2>History, made easy to explore.</h2>
                     <p>See daily numbers across your selected markets.</p>
                 </div><a class="v6-btn v6-btn-blue" href="{{ route('charts.index') }}">Full chart archive ↗</a>
@@ -194,7 +189,7 @@
     <section class="v6-section" id="records">
         <div class="v6-wrap">
             <header class="v6-section-heading">
-                <div><span class="v6-eyebrow eyebrow-gold">HISTORICAL ARCHIVE</span>
+                <div class="text-center"><span class="v6-eyebrow eyebrow-gold">HISTORICAL ARCHIVE</span>
                     <h2>Explore every market</h2>
                     <p>Open a market to browse its saved monthly records.</p>
                 </div>
@@ -233,7 +228,7 @@
     </section>
     <section class="v6-disclaimer">
         <div class="v6-wrap"><span class="v6-disclaimer-icon">i</span>
-            <div><b>Information notice</b>
+            <div class="text-center"><b>Information notice</b>
                 <p>{{ filled(setting('disclaimer_content')) ? Str::limit(setting('disclaimer_content'), 200, '…') : 'Please review the information and local requirements before using public result records.' }}
                 </p>
             </div><a href="{{ route('page', ['page' => 'disclaimer']) }}">Read disclaimer ↗</a>
