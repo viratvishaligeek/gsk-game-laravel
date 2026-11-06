@@ -29,7 +29,7 @@
                 </p>
                 @if (filled(setting('app_download_url')))
                     <div class="v6-hero-actions justify-content-center">
-                        <a class="btn btn-success btn-lg" href="{{ setting('app_download_url') }}" target="_blank"
+                        <a class="btn btn-success btn-lg v6-app-download" href="{{ setting('app_download_url') }}" target="_blank"
                             rel="noopener noreferrer">Download app ↗</a>
                     </div>
                 @endif
