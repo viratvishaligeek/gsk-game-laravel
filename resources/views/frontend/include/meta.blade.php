@@ -79,7 +79,7 @@
 @if (filled(setting('site_favicon')) && is_file(public_path('logos/' . basename(setting('site_favicon')))))
     <link rel="icon" href="{{ $canonicalBase . '/logos/' . basename(setting('site_favicon')) }}">
 @endif
-<meta name="theme-color" content="#17345c">
+<meta name="theme-color" content="#f7f9ff">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="{{ $siteName }}">
 <meta property="og:title" content="{{ $ogTitle }}">
