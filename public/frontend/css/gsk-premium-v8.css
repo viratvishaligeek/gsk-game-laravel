@@ -44,7 +44,6 @@ body{background:var(--gsk8-paper);color:var(--gsk8-ink);-webkit-font-smoothing:a
 .v6-shortcut-grid{border:1px solid var(--gsk8-line);box-shadow:var(--gsk8-shadow)}
 .v6-shortcut-grid>a{transition:background .18s ease,transform .18s ease}
 .v6-shortcut-grid>a:hover{background:#fafbff}
-.v6-section{padding-block:clamp(38px,5vw,66px)}
 .v6-section-heading h2,.v6-chart-promo h2{color:#17213d}
 .v6-section-heading p,.v6-chart-promo-head p{color:var(--gsk8-muted)}
 .v6-daily-card,.v6-market-card,.v6-month-panel,.v6-archive-grid,.v6-faq,.v6-disclaimer{
@@ -133,7 +132,7 @@ body{background:var(--gsk8-paper);color:var(--gsk8-ink);-webkit-font-smoothing:a
 /* Swipe-first market discovery on narrow screens; search and status filters remain intact. */
 @media(max-width:640px){
   .v6-market-grid{display:flex;gap:12px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;padding:2px 2px 14px;margin-right:-2px;scrollbar-width:thin}
-  .v6-market-grid>.gsk-v3-market-item{flex:0 0 min(84vw,330px);min-width:0;scroll-snap-align:start}
+  .v6-market-grid>.gsk-v3-market-item{flex:0 0 min(84vw,225px);min-width:0;scroll-snap-align:start}
   .v6-market-grid>.v6-empty{flex:0 0 100%}
   .v6-market-grid::-webkit-scrollbar{height:5px}
   .v6-market-grid::-webkit-scrollbar-thumb{background:#cbd5ed;border-radius:99px}
