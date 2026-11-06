@@ -27,10 +27,11 @@ class HomepageLayoutRegressionTest extends TestCase
             ->assertDontSee('site-theme.css', false)
             ->assertDontSee('Delhi Bazaar', false)
             ->assertDontSee('03:15 PM', false)
-            ->assertSame(1, substr_count($response->getContent(), 'name="theme-color"'))
             ->assertDontSee('static-home.css', false)
             ->assertDontSee('static-home.js', false)
             ->assertDontSee('bootstrap-icons', false);
+
+        $this->assertSame(1, substr_count($response->getContent(), 'name="theme-color"'));
     }
 
     public function test_homepage_sections_render_once_in_configured_positions_and_inactive_sections_stay_hidden(): void
