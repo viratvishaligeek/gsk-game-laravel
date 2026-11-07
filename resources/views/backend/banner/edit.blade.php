@@ -101,7 +101,7 @@
                 const reader = new FileReader();
                 $(reader).on('load', function (event) {
                     $('#imagePreview').attr('src', event.target.result);
-                };
+                });
                 reader.readAsDataURL(file);
             });
         });
