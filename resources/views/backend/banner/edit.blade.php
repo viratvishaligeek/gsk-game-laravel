@@ -99,7 +99,7 @@
                 const file = this.files && this.files[0];
                 if (!file) return;
                 const reader = new FileReader();
-                reader.onload = function (event) {
+                $(reader).on('load', function (event) {
                     $('#imagePreview').attr('src', event.target.result);
                 };
                 reader.readAsDataURL(file);
