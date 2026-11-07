@@ -10,21 +10,10 @@
 @section('meta_keywords', $game->name . ', Satta King result, monthly result chart')
 @section('robots_content', request()->query->count() > 0 ? 'noindex,follow' : setting('robots_default', 'index,follow'))
 @section('content')
-    <header class="v6-market-hero">
-        <div class="v6-wrap">
-            <nav class="v6-breadcrumb"><a href="{{ route('index') }}">Home</a> / <a
-                    href="{{ route('index') }}#markets">Markets</a> / {{ $game->name }}</nav><span
-                class="v6-eyebrow eyebrow-purple">MARKET HISTORY</span>
-            <h1>{{ $game->name }}</h1>
-            <p>Explore saved results for this market, one date at a time. Choose a month and year to view its archive.</p>
-            <div class="v6-market-summary"><a href="{{ route('index') }}#markets">← All markets</a><a
-                    href="{{ route('charts.index', ['game_id' => $game->id]) }}">Compare charts ↗</a><a
-                    href="{{ route('community.index') }}">Community ↗</a></div>
-        </div>
-    </header>
+
     <section class="v6-wrap v6-market-workspace">
         <aside class="v6-period-panel"><span class="v6-eyebrow eyebrow-blue">ARCHIVE FILTER</span>
-            <h2>Choose a period</h2>
+            <h2>अपना समय चुनें</h2>
             <p class="small text-secondary">Results refresh when the month or year changes.</p>
             <form method="GET" action="{{ route('frontend.market', ['slug' => $game->slug]) }}" data-result-filter
                 data-endpoint="{{ route('frontend.chart') }}"><input type="hidden" data-csrf-token
@@ -47,8 +36,6 @@
                     </select>
                 </div><button class="v6-btn v6-btn-blue w-100" type="submit">Update results ↗</button>
             </form>
-            <div class="mt-4 pt-3 border-top"><small class="text-secondary">SELECTED MARKET</small><strong
-                    class="d-block">{{ $game->name }}</strong></div>
         </aside>
         <section class="v6-archive-panel" aria-labelledby="archive-heading">
             <header class="v6-archive-panel-head">
