@@ -1,9 +1,19 @@
-window.addEventListener('DOMContentLoaded', event => {
-    // Simple-DataTables
-    // https://github.com/fiduswriter/Simple-DataTables/wiki
+$(function () {
+    // Simple-DataTables initializer used by the standard admin listing pages.
+    var $table = $('#datatablesSimple');
 
-    const datatablesSimple = document.getElementById('datatablesSimple');
-    if (datatablesSimple) {
-        new simpleDatatables.DataTable(datatablesSimple);
+    if (!$table.length || typeof window.simpleDatatables === 'undefined') {
+        return;
+    }
+
+    if ($table.data('simpleDatatablesInitialized')) {
+        return;
+    }
+
+    try {
+        new window.simpleDatatables.DataTable($table.get(0));
+        $table.data('simpleDatatablesInitialized', true);
+    } catch (error) {
+        window.console.error('Unable to initialize the admin data table.', error);
     }
 });
