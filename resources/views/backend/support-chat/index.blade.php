@@ -528,8 +528,11 @@
                 var types=['audio/webm;codecs=opus','audio/webm','audio/mp4'], mime='';
                 $.each(types,function(_,type){if(MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(type)){mime=type;return false;}});
                 recorder=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream);
-                recorder.ondataavailable=function(event){if(event.data && event.data.size)chunks.push(event.data);};
-                recorder.onstop=function(){
+                $(recorder).on('dataavailable.adminChat', function (event) {
+                    var mediaEvent = event.originalEvent || event;
+                    if (mediaEvent.data && mediaEvent.data.size) chunks.push(mediaEvent.data);
+                });
+                $(recorder).on('stop.adminChat', function () {
                     var type=recorder.mimeType||'audio/webm', ext=type.indexOf('mp4')!==-1?'mp4':'webm';
                     recordedFile=new File([new Blob(chunks,{type:type})],'voice-message.'+ext,{type:type});
                     renderComposerPreview(recordedFile,true);
