@@ -100,7 +100,7 @@
                 $(reader).on('load', function (event) {
                     $('#imagePreview').attr('src', event.target.result);
                     $('#imagePreviewContainer').removeClass('d-none');
-                };
+                });
                 reader.readAsDataURL(file);
             });
         });
