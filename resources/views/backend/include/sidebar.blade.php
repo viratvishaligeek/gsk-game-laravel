@@ -164,7 +164,7 @@
 <script>
     $(function () {
         $('#admin-site-select').on('change', function () {
-            if (this.form) this.form.submit();
+            $(this).closest('form').trigger('submit');
         });
     });
 </script>
