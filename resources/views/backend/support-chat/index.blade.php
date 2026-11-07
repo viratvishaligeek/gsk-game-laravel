@@ -537,7 +537,7 @@
                     recordedFile=new File([new Blob(chunks,{type:type})],'voice-message.'+ext,{type:type});
                     renderComposerPreview(recordedFile,true);
                     if(mediaStream){mediaStream.getTracks().forEach(function(track){track.stop();});mediaStream=null;}
-                };
+                });
                 recorder.start(); $('#record-voice').addClass('text-danger').html('<i class="fas fa-stop"></i>');
             }).catch(function(){window.alert('Microphone permission was denied or unavailable.');});
         });
