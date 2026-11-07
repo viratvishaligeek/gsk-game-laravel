@@ -21,6 +21,8 @@
                 var form = $button.closest('form').get(0);
                 var name = $button.data('name') || 'User';
                 var amount = $button.data('amount') || '0';
+                var safeName = $('<div>').text(name).html();
+                var safeAmount = $('<div>').text(amount).html();
 
                 if (!form || !window.Swal || typeof window.Swal.fire !== 'function') {
                     if (form && window.confirm('Approve Wallet Top-up?')) {
@@ -31,7 +33,7 @@
 
                 window.Swal.fire({
                     title: 'Approve Wallet Top-up?',
-                    html: '<div class="text-center"><p class="mb-1">User: <strong>' + $('<div>').text(name).html() + '</strong></p><p>Amount: <strong class="text-success">₹' + $('<div>').text(amount).html() + '</strong></p><small class="text-muted">This amount will be credited to the user's wallet.</small></div>',
+                    html: '<div class="text-center"><p class="mb-1">User: <strong>' + safeName + '</strong></p><p>Amount: <strong class="text-success">₹' + safeAmount + '</strong></p><small class="text-muted">This amount will be credited to the user&#39;s wallet.</small></div>',
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#1cc88a',
