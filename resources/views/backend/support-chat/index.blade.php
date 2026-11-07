@@ -480,12 +480,13 @@
         function notifyAdmin(message) {
             if ('Notification' in window && Notification.permission==='granted') {
                 var notification=new Notification('New support message',{body:message.body||'User sent an attachment.'});
-                notification.onclick=function(){window.focus();notification.close();};
+                $(notification).on('click.adminChat', function () { window.focus(); this.close(); });
             }
         }
 
-        $('#body').on('input.adminChat',function(){
-            this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';
+        $('#body').on('input.adminChat', function () {
+            var $body = $(this);
+            $body.css('height', 'auto').css('height', Math.min($body.prop('scrollHeight'), 120) + 'px');
             updateSendButton();
         });
         $('#attachment').on('change.adminChat',function(){
